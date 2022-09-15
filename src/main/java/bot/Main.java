@@ -68,7 +68,6 @@ public class Main {
                         .create().join();
                 userTextChannelMap.put(event.getUser().getIdAsString(), serverTextChannel.getIdAsString());
                 userServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel.getIdAsString());
-                duoUserServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel.getIdAsString());
 
                 System.out.println("Created channel:");
                 System.out.println(serverVoiceChannel.getName());
@@ -76,14 +75,16 @@ public class Main {
                 System.out.println(duoUserServerVoiceChannelMap);
                 event.getUser().move(serverVoiceChannel);
 
-                boolean isCompletedCreateChannel = FALSE;
+//                boolean isCompletedCreateChannel = FALSE;
                 for (Message x : profMessages) {
                     if (x.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
                         ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(serverTextChannel.getIdAsString()).get();
                         serverTextChannel1.sendMessage("y.ren [名前] で部屋の名前を変える.");
                         serverTextChannel1.sendMessage("y.del でチャンネルを削除.");
                         serverTextChannel1.sendMessage(x.getContent());
-                        isCompletedCreateChannel = TRUE;
+//                        if (userServerVoiceChannelMap.containsKey(event.getUser().getIdAsString())) {
+//                            isCompletedCreateChannel = TRUE;
+//                        }
                         break;
                     }
                 }
@@ -92,15 +93,20 @@ public class Main {
                         ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(serverTextChannel.getIdAsString()).get();
                         serverTextChannel1.sendMessage(x.getContent());
                         serverTextChannel1.sendMessage(event.getUser().getMentionTag());
-                        isCompletedCreateChannel = TRUE;
+//                        if (userServerVoiceChannelMap.containsKey(event.getUser().getIdAsString())) {
+//                            isCompletedCreateChannel = TRUE;
+//                        }
                         break;
                     }
                 }
-                if (isCompletedCreateChannel){
-                    isCompletedCreateChannel = FALSE;
-                    return;
-                }
+//                if (isCompletedCreateChannel){
+//                    isCompletedCreateChannel = FALSE;
+//                    return;
+//                }
             }
+//            ServerVoiceChannel serverVoiceChannel2 = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getChannel().getIdAsString())).get();
+//            duoUserServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel2.getIdAsString());
+
             for (User x : event.getChannel().getConnectedUsers()) {
                 ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(userTextChannelMap.get(x.getIdAsString())).get();
                 ServerVoiceChannel serverVoiceChannel1 = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(x.getIdAsString())).get();
