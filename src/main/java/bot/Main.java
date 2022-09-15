@@ -3,11 +3,13 @@ package bot;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.Permissionable;
 import org.javacord.api.entity.channel.*;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.user.User;
 
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +60,7 @@ public class Main {
                         .setCategory(api.getChannelCategoryById("1012943676332331118").get())
                         .create().join();
                 serverTextChannel = new ServerTextChannelBuilder(event.getServer())
-                        .setName(event.getUser().getIdAsString())
+                        .setName(String.format("%sの部屋", event.getUser().getDisplayName(event.getServer())))
                         .setCategory(api.getChannelCategoryById("1019540126336032819").get())
                         .create().join();
                 userTextChannelMap.put(event.getUser().getIdAsString(), serverTextChannel.getIdAsString());
