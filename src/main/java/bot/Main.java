@@ -33,7 +33,6 @@ public class Main {
         Map<String, String> userTextChannelMap = new HashMap();
         Map<String, String> userServerVoiceChannelMap = new HashMap();
         Map<String, String> duoUserVoiceChannelMap = new HashMap();
-//        Map<String, String> serverVoiceChannelServerTextchannelMap = new HashMap();
         List<String> duoUsers = new ArrayList<>();
         api.addServerVoiceChannelMemberJoinListener(event -> {
             MessageSet profMessages = null;
@@ -62,11 +61,8 @@ public class Main {
                         .setName(event.getUser().getIdAsString())
                         .setCategory(api.getChannelCategoryById("1019540126336032819").get())
                         .create().join();
-                //               userTextChannelMap.put(serverVoiceChannel.getIdAsString(), serverTextChannel.getIdAsString());
-//               userServerVoiceChannelMap.put(serverTextChannel.getIdAsString(), serverVoiceChannel.getIdAsString());
                 userTextChannelMap.put(event.getUser().getIdAsString(), serverTextChannel.getIdAsString());
                 userServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel.getIdAsString());
-//                serverVoiceChannelServerTextchannelMap.put(serverVoiceChannel.getIdAsString(), serverTextChannel.getIdAsString());
                 event.getUser().move(serverVoiceChannel);
                 for (Message x : profMessages) {
                     if (x.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
@@ -86,14 +82,8 @@ public class Main {
                 }
             }
             for (User x : event.getChannel().getConnectedUsers()) {
-//                    if (!userServerVoiceChannelMap.containsKey(x.getIdAsString())) {
                 ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(userTextChannelMap.get(x.getIdAsString())).get();
                 ServerVoiceChannel serverVoiceChannel1 = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(x.getIdAsString())).get();
-//                if (event.getChannel().getConnectedUsers().stream().count() == 2){
-////                        userServerVoiceChannelMap.put(x.getIdAsString(), event.getChannel().getIdAsString());
-//                    duoUsers.add(event.getUser().getIdAsString());
-//                    System.out.println(duoUsers);
-//                }
                 for (Message x2 : profMessages) {
                     if (x2.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
                         serverTextChannel1.sendMessage(x2.getContent());
@@ -109,34 +99,19 @@ public class Main {
                 }
             }
 
-//                for (User x2 : event.getChannel().getConnectedUsers()){
-//                    duoUserVoiceChannelMap.put(x2.getIdAsString()  ,event.getChannel().getIdAsString());
-////                    userServerVoiceChannelMap.put(x2.getIdAsString(), event.getChannel().getIdAsString());
-//                }
-//            for (User x2 : event.getChannel().getConnectedUsers()){
-//                if (userServerVoiceChannelMap.containsKey(x2.getIdAsString())){
-//
-//                }
-//            }
-
         });
         api.addServerVoiceChannelMemberLeaveListener(event -> {
-//            if (userServerVoiceChannelMap.containsKey(event.getUser().getIdAsString())){
-//                return;
-//            }
             if (userServerVoiceChannelMap.containsKey(event.getUser().getIdAsString())) {
                 ServerTextChannel serverTextChannel = api.getServerTextChannelById(userTextChannelMap.get(event.getUser().getIdAsString())).get();
                 ServerVoiceChannel serverVoiceChannel = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getUser().getIdAsString())).get();
 
                 if (serverVoiceChannel.getConnectedUserIds().isEmpty()) {
-//                if (event.getChannel().equals(serverVoiceChannel)){
                     serverVoiceChannel.delete();
                     serverTextChannel.delete();
                     userServerVoiceChannelMap.remove(event.getUser().getIdAsString());
                     userTextChannelMap.remove(event.getUser().getIdAsString());
                     duoUsers.remove(event.getUser().getIdAsString());
                     System.out.println("deleted.");
-//                }
                 }
             }
         });
