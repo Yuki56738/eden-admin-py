@@ -1,5 +1,6 @@
 package bot;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.channel.*;
@@ -18,7 +19,9 @@ import static java.lang.Boolean.TRUE;
 
 public class Main {
     public static void main(String[] args) {
-        String TOKEN = "MTAxODcyMzAzOTYyMzUyNDM1Mw.GiDrfF.xNoYD5DHIXJ5ZM1pc2DLl70UwENNcMv9qTXmKM";
+        String TOKEN = null;
+        Dotenv dotenv = Dotenv.load();
+        TOKEN = dotenv.get("DISCORD_TOKEN");
         DiscordApi api = new DiscordApiBuilder()
                 .setToken(TOKEN)
                 .setAllIntents()
