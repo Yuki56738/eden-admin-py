@@ -33,6 +33,7 @@ public class Main {
 //        Map<String, String> duoUserVoiceChannelMap = new HashMap();
 //        List<String> duoUsersList = new ArrayList<>();
         Map<String, String> duoUserServerVoiceChannelMap = new HashMap();
+//        Map<ServerVoiceChannel, Role> serverVoiceChannelRoleMap = new HashMap<>();
         api.addServerVoiceChannelMemberJoinListener(event -> {
             MessageSet profMessages = null;
             MessageSet prof2Messages = null;
@@ -58,6 +59,11 @@ public class Main {
 //                role.addUser(event.getUser());
                 Role everyoneRole = api.getRoleById("994483180927201400").get();
                 Role memberRole = api.getRoleById("997644021067415642").get();
+//                Role role = new RoleBuilder(event.getServer())
+//                        .setName(event.getUser().getName())
+//                        .create().join();
+//                serverVoiceChannelRoleMap.put(serverVoiceChannel, role);
+//                role.addUser(event.getUser());
 
                 serverVoiceChannel = new ServerVoiceChannelBuilder(event.getServer())
                         .addPermissionOverwrite(everyoneRole, allDeniedPermissions)
@@ -165,7 +171,7 @@ public class Main {
             ServerTextChannel serverTextChannel = api.getServerTextChannelById(userTextChannelMap.get(event.getMessageAuthor().getIdAsString())).get();
             if (event.getMessageContent().startsWith("y.ren")) {
                 serverVoiceChannel.updateName(event.getMessageContent().replaceAll("y.ren", ""));
-            }else if (event.getMessageContent().startsWith("y.del")){
+            } else if (event.getMessageContent().startsWith("y.del")) {
                 serverVoiceChannel.delete();
                 serverTextChannel.delete();
                 System.out.println("deleting...");
@@ -179,7 +185,7 @@ public class Main {
             } else if (event.getMessageContent().startsWith("y.lim")) {
                 String msg = event.getMessageContent();
                 msg = msg.replace("y.lim ", "");
-                int newLimit = new Integer(msg);
+                int newLimit = Integer.valueOf(msg);
                 serverVoiceChannel.updateUserLimit(newLimit);
             }
         });
