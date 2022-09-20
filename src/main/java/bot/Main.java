@@ -33,6 +33,7 @@ public class Main {
 //        Map<String, String> duoUserVoiceChannelMap = new HashMap();
 //        List<String> duoUsersList = new ArrayList<>();
         Map<String, String> duoUserServerVoiceChannelMap = new HashMap();
+        Map<ServerVoiceChannel, Role> serverVoiceChannelRoleMap = new HashMap<>();
 //        Map<ServerVoiceChannel, Role> serverVoiceChannelRoleMap = new HashMap<>();
         api.addServerVoiceChannelMemberJoinListener(event -> {
             MessageSet profMessages = null;
@@ -54,25 +55,34 @@ public class Main {
                 System.out.println(event.getUser().getDisplayName(event.getServer()));
                 Permissions allDeniedPermissions = new PermissionsBuilder().setAllDenied().build();
                 Permissions permissions1 = Permissions.fromBitmask(Long.valueOf("689379286592"));
+                Permissions permissions2 = Permissions.fromBitmask(Long.valueOf("36701696"));
                 Role everyoneRole = api.getRoleById("994483180927201400").get();
                 Role memberRole = api.getRoleById("997644021067415642").get();
+                Role tempRole;
+                tempRole = new RoleBuilder(event.getServer())
+                        .setName(event.getUser().getConnectedVoiceChannel(event.getServer()).get().getIdAsString())
+                        .create().join();
+
 
                 serverVoiceChannel = new ServerVoiceChannelBuilder(event.getServer())
                         .addPermissionOverwrite(everyoneRole, allDeniedPermissions)
-                        .addPermissionOverwrite(memberRole, permissions1)
+                        .addPermissionOverwrite(memberRole, permissions2)
                         .setName(String.format("%sの部屋", event.getUser().getDisplayName(event.getServer())))
                         .setUserlimit(2)
                         .setCategory(api.getChannelCategoryById("1012943676332331118").get())
                         .create().join();
                 serverTextChannel = new ServerTextChannelBuilder(event.getServer())
                         .addPermissionOverwrite(everyoneRole, allDeniedPermissions)
-                        .addPermissionOverwrite(memberRole, permissions1)
+//                        .addPermissionOverwrite(memberRole, allDeniedPermissions)
+//                        .addPermissionOverwrite(memberRole, permissions2)
+                        .addPermissionOverwrite(tempRole, permissions1)
                         .setName(String.format("%sの部屋", event.getUser().getDisplayName(event.getServer())))
                         .setCategory(api.getChannelCategoryById("1019540126336032819").get())
                         .create().join();
-
+                event.getUser().addRole(tempRole).join();
                 userTextChannelMap.put(event.getUser().getIdAsString(), serverTextChannel.getIdAsString());
                 userServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel.getIdAsString());
+                serverVoiceChannelRoleMap.put(serverVoiceChannel, tempRole);
                 System.out.println("Created channel:");
                 System.out.println(serverVoiceChannel.getName());
                 System.out.println(serverTextChannel.getName());
@@ -118,6 +128,8 @@ public class Main {
 
                             serverTextChannel1.sendMessage(x3.getContent());
                             serverTextChannel1.sendMessage(event.getUser().getMentionTag());
+                            Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getIdAsString()).get();
+                            event.getUser().addRole(tempRole).join();
                         }
                     }
                 }
@@ -130,11 +142,13 @@ public class Main {
                 ServerVoiceChannel serverVoiceChannel = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getUser().getIdAsString())).get();
 
                 if (serverVoiceChannel.getConnectedUserIds().isEmpty()) {
-                    serverVoiceChannel.delete();
-                    serverTextChannel.delete();
                     System.out.println("deleting...");
                     System.out.println(userServerVoiceChannelMap);
                     System.out.println(userTextChannelMap);
+                    serverTextChannel.delete();
+                    serverVoiceChannel.delete();
+                    Role tempRole =  api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
+                    tempRole.delete();
                     System.out.println(serverVoiceChannel.getConnectedUsers());
                     System.out.println(serverTextChannel.getName());
                     System.out.println(duoUserServerVoiceChannelMap);
@@ -143,6 +157,7 @@ public class Main {
                     userTextChannelMap.remove(event.getUser().getIdAsString());
 //                    duoUsers.remove(event.getUser().getIdAsString());
                     duoUserServerVoiceChannelMap.remove(event.getUser().getIdAsString());
+                    serverVoiceChannelRoleMap.remove(event.getChannel());
                     System.out.println("deleted.");
                 }
             }
