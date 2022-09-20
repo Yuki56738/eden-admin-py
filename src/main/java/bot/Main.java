@@ -53,17 +53,9 @@ public class Main {
             if (event.getChannel().getIdAsString().equalsIgnoreCase("1019948085876629516")) {
                 System.out.println(event.getUser().getDisplayName(event.getServer()));
                 Permissions allDeniedPermissions = new PermissionsBuilder().setAllDenied().build();
-//                Permissions permissions1 = new PermissionsBuilder().setAllAllowed().build();
                 Permissions permissions1 = Permissions.fromBitmask(Long.valueOf("689379286592"));
-//                Role role = new RoleBuilder(event.getServer()).create();
-//                role.addUser(event.getUser());
                 Role everyoneRole = api.getRoleById("994483180927201400").get();
                 Role memberRole = api.getRoleById("997644021067415642").get();
-//                Role role = new RoleBuilder(event.getServer())
-//                        .setName(event.getUser().getName())
-//                        .create().join();
-//                serverVoiceChannelRoleMap.put(serverVoiceChannel, role);
-//                role.addUser(event.getUser());
 
                 serverVoiceChannel = new ServerVoiceChannelBuilder(event.getServer())
                         .addPermissionOverwrite(everyoneRole, allDeniedPermissions)
@@ -87,7 +79,6 @@ public class Main {
                 System.out.println(duoUserServerVoiceChannelMap);
                 event.getUser().move(serverVoiceChannel);
 
-//                boolean isCompletedCreateChannel = FALSE;
                 for (Message x : profMessages) {
                     if (x.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
                         ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(serverTextChannel.getIdAsString()).get();
@@ -95,9 +86,6 @@ public class Main {
                         serverTextChannel1.sendMessage("y.lim [人数] で部屋の人数制限を変える.");
                         serverTextChannel1.sendMessage("y.del でチャンネルを削除.");
                         serverTextChannel1.sendMessage(x.getContent());
-//                        if (userServerVoiceChannelMap.containsKey(event.getUser().getIdAsString())) {
-//                            isCompletedCreateChannel = TRUE;
-//                        }
                         break;
                     }
                 }
@@ -106,16 +94,9 @@ public class Main {
                         ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(serverTextChannel.getIdAsString()).get();
                         serverTextChannel1.sendMessage(x.getContent());
                         serverTextChannel1.sendMessage(event.getUser().getMentionTag());
-//                        if (userServerVoiceChannelMap.containsKey(event.getUser().getIdAsString())) {
-//                            isCompletedCreateChannel = TRUE;
-//                        }
                         break;
                     }
                 }
-//                if (isCompletedCreateChannel){
-//                    isCompletedCreateChannel = FALSE;
-//                    return;
-//                }
             }
 //            ServerVoiceChannel serverVoiceChannel2 = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getChannel().getIdAsString())).get();
 //            duoUserServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel2.getIdAsString());
