@@ -7,10 +7,7 @@ import org.javacord.api.entity.Permissionable;
 import org.javacord.api.entity.channel.*;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageSet;
-import org.javacord.api.entity.permission.Permissions;
-import org.javacord.api.entity.permission.PermissionsBuilder;
-import org.javacord.api.entity.permission.Role;
-import org.javacord.api.entity.permission.RoleBuilder;
+import org.javacord.api.entity.permission.*;
 import org.javacord.api.entity.user.User;
 
 import java.util.HashMap;
@@ -54,23 +51,24 @@ public class Main {
 
             if (event.getChannel().getIdAsString().equalsIgnoreCase("1019948085876629516")) {
                 System.out.println(event.getUser().getDisplayName(event.getServer()));
-                Permissions permissions = new PermissionsBuilder().setAllDenied().build();
-                Permissions permissions1 = new PermissionsBuilder().setAllAllowed().build();
+                Permissions allDeniedPermissions = new PermissionsBuilder().setAllDenied().build();
+//                Permissions permissions1 = new PermissionsBuilder().setAllAllowed().build();
+                Permissions permissions1 = Permissions.fromBitmask(Long.valueOf("689379286592"));
 //                Role role = new RoleBuilder(event.getServer()).create();
 //                role.addUser(event.getUser());
-                Role role = api.getRoleById("994483180927201400").get();
-                Role role1 = api.getRoleById("997644021067415642").get();
+                Role everyoneRole = api.getRoleById("994483180927201400").get();
+                Role memberRole = api.getRoleById("997644021067415642").get();
 
                 serverVoiceChannel = new ServerVoiceChannelBuilder(event.getServer())
-                        .addPermissionOverwrite(role, permissions)
-                        .addPermissionOverwrite(role1, permissions1)
+                        .addPermissionOverwrite(everyoneRole, allDeniedPermissions)
+                        .addPermissionOverwrite(memberRole, permissions1)
                         .setName(String.format("%sの部屋", event.getUser().getDisplayName(event.getServer())))
                         .setUserlimit(2)
                         .setCategory(api.getChannelCategoryById("1012943676332331118").get())
                         .create().join();
                 serverTextChannel = new ServerTextChannelBuilder(event.getServer())
-                        .addPermissionOverwrite(role, permissions)
-                        .addPermissionOverwrite(role1, permissions1)
+                        .addPermissionOverwrite(everyoneRole, allDeniedPermissions)
+                        .addPermissionOverwrite(memberRole, permissions1)
                         .setName(String.format("%sの部屋", event.getUser().getDisplayName(event.getServer())))
                         .setCategory(api.getChannelCategoryById("1019540126336032819").get())
                         .create().join();
