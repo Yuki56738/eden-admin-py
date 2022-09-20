@@ -184,7 +184,7 @@ public class Main {
                 System.out.println(userTextChannelMap);
             } else if (event.getMessageContent().startsWith("y.lim")) {
                 String msg = event.getMessageContent();
-                msg = msg.replace("y.lim ", "");
+                msg = msg.replaceAll("y.lim ", "");
                 int newLimit = Integer.valueOf(msg);
                 serverVoiceChannel.updateUserLimit(newLimit);
             }
