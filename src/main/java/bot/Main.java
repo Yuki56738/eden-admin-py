@@ -164,8 +164,14 @@ public class Main {
             }
         });
         api.addMessageCreateListener(event -> {
-            ServerVoiceChannel serverVoiceChannel = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getMessageAuthor().getIdAsString())).get();
-            ServerTextChannel serverTextChannel = api.getServerTextChannelById(userTextChannelMap.get(event.getMessageAuthor().getIdAsString())).get();
+            ServerVoiceChannel serverVoiceChannel;
+            ServerTextChannel serverTextChannel;
+            try {
+                serverVoiceChannel = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getMessageAuthor().getIdAsString())).get();
+                serverTextChannel = api.getServerTextChannelById(userTextChannelMap.get(event.getMessageAuthor().getIdAsString())).get();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
             if (event.getMessageContent().startsWith("y.ren")) {
                 serverVoiceChannel.updateName(event.getMessageContent().replaceAll("y.ren", ""));
             } else if (event.getMessageContent().startsWith("y.del")) {
