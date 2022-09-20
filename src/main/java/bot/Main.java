@@ -113,15 +113,18 @@ public class Main {
                 duoUserServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel1.getIdAsString());
                 for (Message x2 : profMessages) {
                     if (x2.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
-                        serverTextChannel1.sendMessage(x2.getContent());
-
+                        if (!userServerVoiceChannelMap.containsKey(x2.getAuthor().getIdAsString())) {
+                            serverTextChannel1.sendMessage(x2.getContent());
+                        }
                     }
                 }
                 for (Message x3 : prof2Messages) {
                     if (x3.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
-                        serverTextChannel1.sendMessage(x3.getContent());
-                        serverTextChannel1.sendMessage(event.getUser().getMentionTag());
+                        if (!userServerVoiceChannelMap.containsKey(x3.getAuthor().getIdAsString())) {
 
+                            serverTextChannel1.sendMessage(x3.getContent());
+                            serverTextChannel1.sendMessage(event.getUser().getMentionTag());
+                        }
                     }
                 }
             }
