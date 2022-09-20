@@ -119,6 +119,9 @@ public class Main {
                     if (x2.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
                         if (!userServerVoiceChannelMap.containsKey(x2.getAuthor().getIdAsString())) {
                             serverTextChannel1.sendMessage(x2.getContent());
+                            Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getIdAsString()).get();
+                            event.getUser().addRole(tempRole).join();
+
                         }
                     }
                 }
@@ -128,8 +131,6 @@ public class Main {
 
                             serverTextChannel1.sendMessage(x3.getContent());
                             serverTextChannel1.sendMessage(event.getUser().getMentionTag());
-                            Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getIdAsString()).get();
-                            event.getUser().addRole(tempRole).join();
                         }
                     }
                 }
@@ -168,13 +169,16 @@ public class Main {
             if (event.getMessageContent().startsWith("y.ren")) {
                 serverVoiceChannel.updateName(event.getMessageContent().replaceAll("y.ren", ""));
             } else if (event.getMessageContent().startsWith("y.del")) {
-                serverVoiceChannel.delete();
-                serverTextChannel.delete();
                 System.out.println("deleting...");
                 System.out.println(userServerVoiceChannelMap.get(event.getMessageAuthor().getIdAsString()));
                 System.out.println(userTextChannelMap.get(event.getMessageAuthor().getIdAsString()));
+                serverVoiceChannel.delete();
+                serverTextChannel.delete();
+                Role tempRole =  api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
+                tempRole.delete();
                 userServerVoiceChannelMap.remove(event.getMessageAuthor().getIdAsString());
                 userTextChannelMap.remove(event.getMessageAuthor().getIdAsString());
+                serverVoiceChannelRoleMap.remove(event.getChannel());
                 System.out.println("deleted.");
                 System.out.println(userServerVoiceChannelMap);
                 System.out.println(userTextChannelMap);
