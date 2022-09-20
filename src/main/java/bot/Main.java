@@ -7,17 +7,15 @@ import org.javacord.api.entity.Permissionable;
 import org.javacord.api.entity.channel.*;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageSet;
+import org.javacord.api.entity.permission.Permissions;
+import org.javacord.api.entity.permission.PermissionsBuilder;
+import org.javacord.api.entity.permission.Role;
+import org.javacord.api.entity.permission.RoleBuilder;
 import org.javacord.api.entity.user.User;
 
-import java.security.Permission;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 
 public class Main {
     public static void main(String[] args) {
@@ -29,6 +27,7 @@ public class Main {
                 .setAllIntents()
                 .login().join();
         System.out.println("bot built");
+
 
         TextChannel prof_channel = (TextChannel) api.getChannelById("995656569301774456").get();
         TextChannel prof2_channel = (TextChannel) api.getChannelById("1016234230549843979").get();
@@ -55,20 +54,29 @@ public class Main {
 
             if (event.getChannel().getIdAsString().equalsIgnoreCase("1019948085876629516")) {
                 System.out.println(event.getUser().getDisplayName(event.getServer()));
-
+                Permissions permissions = new PermissionsBuilder().setAllDenied().build();
+                Permissions permissions1 = new PermissionsBuilder().setAllAllowed().build();
+//                Role role = new RoleBuilder(event.getServer()).create();
+//                role.addUser(event.getUser());
+                Role role = api.getRoleById("994483180927201400").get();
+                Role role1 = api.getRoleById("997644021067415642").get();
 
                 serverVoiceChannel = new ServerVoiceChannelBuilder(event.getServer())
+                        .addPermissionOverwrite(role, permissions)
+                        .addPermissionOverwrite(role1, permissions1)
                         .setName(String.format("%sの部屋", event.getUser().getDisplayName(event.getServer())))
                         .setUserlimit(2)
                         .setCategory(api.getChannelCategoryById("1012943676332331118").get())
                         .create().join();
                 serverTextChannel = new ServerTextChannelBuilder(event.getServer())
+                        .addPermissionOverwrite(role, permissions)
+                        .addPermissionOverwrite(role1, permissions1)
                         .setName(String.format("%sの部屋", event.getUser().getDisplayName(event.getServer())))
                         .setCategory(api.getChannelCategoryById("1019540126336032819").get())
                         .create().join();
+
                 userTextChannelMap.put(event.getUser().getIdAsString(), serverTextChannel.getIdAsString());
                 userServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel.getIdAsString());
-
                 System.out.println("Created channel:");
                 System.out.println(serverVoiceChannel.getName());
                 System.out.println(serverTextChannel.getName());
@@ -80,6 +88,7 @@ public class Main {
                     if (x.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
                         ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(serverTextChannel.getIdAsString()).get();
                         serverTextChannel1.sendMessage("y.ren [名前] で部屋の名前を変える.");
+                        serverTextChannel1.sendMessage("y.lim [人数] で部屋の人数制限を変える.");
                         serverTextChannel1.sendMessage("y.del でチャンネルを削除.");
                         serverTextChannel1.sendMessage(x.getContent());
 //                        if (userServerVoiceChannelMap.containsKey(event.getUser().getIdAsString())) {
@@ -169,6 +178,11 @@ public class Main {
                 System.out.println("deleted.");
                 System.out.println(userServerVoiceChannelMap);
                 System.out.println(userTextChannelMap);
+            } else if (event.getMessageContent().startsWith("y.lim")) {
+                String msg = event.getMessageContent();
+                msg = msg.replace("y.lim ", "");
+                int newLimit = new Integer(msg);
+                serverVoiceChannel.updateUserLimit(newLimit);
             }
         });
     }
