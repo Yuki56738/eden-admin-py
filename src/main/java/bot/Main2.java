@@ -1,33 +1,23 @@
 package bot;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import org.javacord.api.DiscordApi;
-import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.entity.Permissionable;
 import org.javacord.api.entity.channel.*;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageSet;
-import org.javacord.api.entity.permission.*;
+import org.javacord.api.entity.permission.Permissions;
+import org.javacord.api.entity.permission.PermissionsBuilder;
+import org.javacord.api.entity.permission.Role;
+import org.javacord.api.entity.permission.RoleBuilder;
 import org.javacord.api.entity.user.User;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class Main {
-    public static void main(String[] args) {
-        String TOKEN = null;
-        Dotenv dotenv = Dotenv.load();
-        TOKEN = dotenv.get("DISCORD_TOKEN");
-        DiscordApi api = new DiscordApiBuilder()
-                .setToken(TOKEN)
-                .setAllIntents()
-                .login().join();
-        System.out.println("bot built");
-
-        Main2.main(api);
+public class Main2 {
+    public static void main(DiscordApi api) {
         TextChannel prof_channel = (TextChannel) api.getChannelById("995656569301774456").get();
-        TextChannel prof2_channel = (TextChannel) api.getChannelById("1016234230549843979").get();
+//        TextChannel prof2_channel = (TextChannel) api.getChannelById("1016234230549843979").get();
         Map<String, String> userTextChannelMap = new HashMap();
         Map<String, String> userServerVoiceChannelMap = new HashMap();
 //        Map<String, String> duoUserVoiceChannelMap = new HashMap();
@@ -37,12 +27,12 @@ public class Main {
 //        Map<ServerVoiceChannel, Role> serverVoiceChannelRoleMap = new HashMap<>();
         api.addServerVoiceChannelMemberJoinListener(event -> {
             MessageSet profMessages = null;
-            MessageSet prof2Messages = null;
+//            MessageSet prof2Messages = null;
             ServerVoiceChannel serverVoiceChannel = null;
             ServerTextChannel serverTextChannel = null;
             try {
                 profMessages = prof_channel.getMessages(1000).get();
-                prof2Messages = prof2_channel.getMessages(1000).get();
+//                prof2Messages = prof2_channel.getMessages(1000).get();
 
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -51,7 +41,7 @@ public class Main {
             }
 
 
-            if (event.getChannel().getIdAsString().equalsIgnoreCase("1019948085876629516")) {
+            if (event.getChannel().getIdAsString().equalsIgnoreCase("1022093347793408010")) {
                 System.out.println(event.getUser().getDisplayName(event.getServer()));
                 Permissions allDeniedPermissions = new PermissionsBuilder().setAllDenied().build();
                 Permissions permissions1 = Permissions.fromBitmask(Long.valueOf("689379286592"));
@@ -68,8 +58,8 @@ public class Main {
                         .addPermissionOverwrite(everyoneRole, allDeniedPermissions)
                         .addPermissionOverwrite(memberRole, permissions2)
                         .setName(String.format("%sの部屋", event.getUser().getDisplayName(event.getServer())))
-                        .setUserlimit(2)
-                        .setCategory(api.getChannelCategoryById("1012943676332331118").get())
+                        .setUserlimit(5)
+                        .setCategory(api.getChannelCategoryById("1019608718310133780").get())
                         .create().join();
                 serverTextChannel = new ServerTextChannelBuilder(event.getServer())
                         .addPermissionOverwrite(everyoneRole, allDeniedPermissions)
@@ -77,7 +67,7 @@ public class Main {
 //                        .addPermissionOverwrite(memberRole, permissions2)
                         .addPermissionOverwrite(tempRole, permissions1)
                         .setName(String.format("%sの部屋", event.getUser().getDisplayName(event.getServer())))
-                        .setCategory(api.getChannelCategoryById("1019540126336032819").get())
+                        .setCategory(api.getChannelCategoryById("1019608718310133780").get())
                         .create().join();
                 event.getUser().addRole(tempRole).join();
                 userTextChannelMap.put(event.getUser().getIdAsString(), serverTextChannel.getIdAsString());
@@ -99,14 +89,14 @@ public class Main {
                         break;
                     }
                 }
-                for (Message x : prof2Messages) {
-                    if (x.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
-                        ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(serverTextChannel.getIdAsString()).get();
-                        serverTextChannel1.sendMessage(x.getContent());
-                        serverTextChannel1.sendMessage(event.getUser().getMentionTag());
-                        break;
-                    }
-                }
+//                for (Message x : prof2Messages) {
+//                    if (x.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
+//                        ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(serverTextChannel.getIdAsString()).get();
+//                        serverTextChannel1.sendMessage(x.getContent());
+//                        serverTextChannel1.sendMessage(event.getUser().getMentionTag());
+//                        break;
+//                    }
+//                }
             }
 //            ServerVoiceChannel serverVoiceChannel2 = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getChannel().getIdAsString())).get();
 //            duoUserServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel2.getIdAsString());
@@ -125,15 +115,15 @@ public class Main {
                         }
                     }
                 }
-                for (Message x3 : prof2Messages) {
-                    if (x3.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
-                        if (!userServerVoiceChannelMap.containsKey(x3.getAuthor().getIdAsString())) {
-
-                            serverTextChannel1.sendMessage(x3.getContent());
-                            serverTextChannel1.sendMessage(event.getUser().getMentionTag());
-                        }
-                    }
-                }
+//                for (Message x3 : prof2Messages) {
+//                    if (x3.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
+//                        if (!userServerVoiceChannelMap.containsKey(x3.getAuthor().getIdAsString())) {
+//
+//                            serverTextChannel1.sendMessage(x3.getContent());
+//                            serverTextChannel1.sendMessage(event.getUser().getMentionTag());
+//                        }
+//                    }
+//                }
             }
 
         });
@@ -197,3 +187,4 @@ public class Main {
         });
     }
 }
+
