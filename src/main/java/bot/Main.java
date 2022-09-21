@@ -148,7 +148,7 @@ public class Main {
                     System.out.println(userTextChannelMap);
                     serverTextChannel.delete();
                     serverVoiceChannel.delete();
-                    Role tempRole =  api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
+                    Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
                     tempRole.delete();
                     System.out.println(serverVoiceChannel.getConnectedUsers());
                     System.out.println(serverTextChannel.getName());
@@ -169,7 +169,7 @@ public class Main {
             try {
                 serverVoiceChannel = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getMessageAuthor().getIdAsString())).get();
                 serverTextChannel = api.getServerTextChannelById(userTextChannelMap.get(event.getMessageAuthor().getIdAsString())).get();
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
             if (event.getMessageContent().startsWith("y.ren")) {
@@ -180,7 +180,7 @@ public class Main {
                 System.out.println(userTextChannelMap.get(event.getMessageAuthor().getIdAsString()));
                 serverVoiceChannel.delete();
                 serverTextChannel.delete();
-                Role tempRole =  api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
+                Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
                 tempRole.delete();
                 userServerVoiceChannelMap.remove(event.getMessageAuthor().getIdAsString());
                 userTextChannelMap.remove(event.getMessageAuthor().getIdAsString());
