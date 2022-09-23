@@ -77,7 +77,7 @@ public class Main {
 //                        .addPermissionOverwrite(memberRole, permissions2)
                         .addPermissionOverwrite(tempRole, permissions1)
                         .setName(String.format("%sの部屋", event.getUser().getDisplayName(event.getServer())))
-                        .setCategory(api.getChannelCategoryById("1019540126336032819").get())
+                        .setCategory(api.getChannelCategoryById("1012943676332331118").get())
                         .create().join();
                 event.getUser().addRole(tempRole).join();
                 userTextChannelMap.put(event.getUser().getIdAsString(), serverTextChannel.getIdAsString());
@@ -115,6 +115,7 @@ public class Main {
                 ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(userTextChannelMap.get(x.getIdAsString())).get();
                 ServerVoiceChannel serverVoiceChannel1 = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(x.getIdAsString())).get();
                 duoUserServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel1.getIdAsString());
+
                 for (Message x2 : profMessages) {
                     if (x2.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
                         if (!userServerVoiceChannelMap.containsKey(x2.getAuthor().getIdAsString())) {
@@ -141,25 +142,27 @@ public class Main {
             if (userServerVoiceChannelMap.containsKey(event.getUser().getIdAsString()) || duoUserServerVoiceChannelMap.containsKey(event.getUser().getIdAsString())) {
                 ServerTextChannel serverTextChannel = api.getServerTextChannelById(userTextChannelMap.get(event.getUser().getIdAsString())).get();
                 ServerVoiceChannel serverVoiceChannel = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getUser().getIdAsString())).get();
+                Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(serverVoiceChannel).getIdAsString()).get();
+                if (event.getUser().getRoles(event.getServer()).contains(tempRole)) {
+                    if (serverVoiceChannel.getConnectedUserIds().isEmpty()) {
+                        System.out.println("deleting...");
+                        System.out.println(userServerVoiceChannelMap);
+                        System.out.println(userTextChannelMap);
+                        serverTextChannel.delete();
+                        serverVoiceChannel.delete();
+                        tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
+                        tempRole.delete();
+                        System.out.println(serverVoiceChannel.getConnectedUsers());
+                        System.out.println(serverTextChannel.getName());
+                        System.out.println(duoUserServerVoiceChannelMap);
 
-                if (serverVoiceChannel.getConnectedUserIds().isEmpty()) {
-                    System.out.println("deleting...");
-                    System.out.println(userServerVoiceChannelMap);
-                    System.out.println(userTextChannelMap);
-                    serverTextChannel.delete();
-                    serverVoiceChannel.delete();
-                    Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
-                    tempRole.delete();
-                    System.out.println(serverVoiceChannel.getConnectedUsers());
-                    System.out.println(serverTextChannel.getName());
-                    System.out.println(duoUserServerVoiceChannelMap);
-
-                    userServerVoiceChannelMap.remove(event.getUser().getIdAsString());
-                    userTextChannelMap.remove(event.getUser().getIdAsString());
+                        userServerVoiceChannelMap.remove(event.getUser().getIdAsString());
+                        userTextChannelMap.remove(event.getUser().getIdAsString());
 //                    duoUsers.remove(event.getUser().getIdAsString());
-                    duoUserServerVoiceChannelMap.remove(event.getUser().getIdAsString());
-                    serverVoiceChannelRoleMap.remove(event.getChannel());
-                    System.out.println("deleted.");
+                        duoUserServerVoiceChannelMap.remove(event.getUser().getIdAsString());
+                        serverVoiceChannelRoleMap.remove(event.getChannel());
+                        System.out.println("deleted.");
+                    }
                 }
             }
         });
@@ -172,29 +175,32 @@ public class Main {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            if (event.getMessageContent().startsWith("y.ren")) {
-                serverVoiceChannel.updateName(event.getMessageContent().replaceAll("y.ren", ""));
-            } else if (event.getMessageContent().startsWith("y.del")) {
-                System.out.println("deleting...");
-                System.out.println(userServerVoiceChannelMap.get(event.getMessageAuthor().getIdAsString()));
-                System.out.println(userTextChannelMap.get(event.getMessageAuthor().getIdAsString()));
-                serverVoiceChannel.delete();
-                serverTextChannel.delete();
-                Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
-                tempRole.delete();
-                userServerVoiceChannelMap.remove(event.getMessageAuthor().getIdAsString());
-                userTextChannelMap.remove(event.getMessageAuthor().getIdAsString());
-                serverVoiceChannelRoleMap.remove(event.getChannel());
-                System.out.println("deleted.");
-                System.out.println(userServerVoiceChannelMap);
-                System.out.println(userTextChannelMap);
-            } else if (event.getMessageContent().startsWith("y.lim")) {
-                String msg = event.getMessageContent();
-                msg = msg.replaceAll("y.lim ", "");
-                int newLimit = Integer.valueOf(msg);
-                serverVoiceChannel.updateUserLimit(newLimit);
+            User user = event.getMessage().getUserAuthor().get();
+            Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(serverVoiceChannel).getIdAsString()).get();
+            if (user.getRoles(event.getServer().get()).contains(tempRole)) {
+                if (event.getMessageContent().startsWith("y.ren")) {
+                    serverVoiceChannel.updateName(event.getMessageContent().replaceAll("y.ren", ""));
+                } else if (event.getMessageContent().startsWith("y.del")) {
+                    System.out.println("deleting...");
+                    System.out.println(userServerVoiceChannelMap.get(event.getMessageAuthor().getIdAsString()));
+                    System.out.println(userTextChannelMap.get(event.getMessageAuthor().getIdAsString()));
+                    serverVoiceChannel.delete();
+                    serverTextChannel.delete();
+                    tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
+                    tempRole.delete();
+                    userServerVoiceChannelMap.remove(event.getMessageAuthor().getIdAsString());
+                    userTextChannelMap.remove(event.getMessageAuthor().getIdAsString());
+                    serverVoiceChannelRoleMap.remove(event.getChannel());
+                    System.out.println("deleted.");
+                    System.out.println(userServerVoiceChannelMap);
+                    System.out.println(userTextChannelMap);
+                } else if (event.getMessageContent().startsWith("y.lim")) {
+                    String msg = event.getMessageContent();
+                    msg = msg.replaceAll("y.lim ", "");
+                    int newLimit = Integer.valueOf(msg);
+                    serverVoiceChannel.updateUserLimit(newLimit);
+                }
             }
-
         });
     }
 }

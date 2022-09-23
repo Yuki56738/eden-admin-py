@@ -1,5 +1,6 @@
 package bot;
 
+import com.google.gson.Gson;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.*;
 import org.javacord.api.entity.message.Message;
@@ -10,6 +11,12 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.permission.RoleBuilder;
 import org.javacord.api.entity.user.User;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -22,7 +29,7 @@ public class Main2 {
         Map<String, String> userServerVoiceChannelMap = new HashMap();
 //        Map<String, String> duoUserVoiceChannelMap = new HashMap();
 //        List<String> duoUsersList = new ArrayList<>();
-        Map<String, String> duoUserServerVoiceChannelMap = new HashMap();
+//        Map<String, String> duoUserServerVoiceChannelMap = new HashMap();
         Map<ServerVoiceChannel, Role> serverVoiceChannelRoleMap = new HashMap<>();
 //        Map<ServerVoiceChannel, Role> serverVoiceChannelRoleMap = new HashMap<>();
         api.addServerVoiceChannelMemberJoinListener(event -> {
@@ -73,10 +80,10 @@ public class Main2 {
                 userTextChannelMap.put(event.getUser().getIdAsString(), serverTextChannel.getIdAsString());
                 userServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel.getIdAsString());
                 serverVoiceChannelRoleMap.put(serverVoiceChannel, tempRole);
+
                 System.out.println("Created channel:");
                 System.out.println(serverVoiceChannel.getName());
                 System.out.println(serverTextChannel.getName());
-                System.out.println(duoUserServerVoiceChannelMap);
                 event.getUser().move(serverVoiceChannel);
 
                 for (Message x : profMessages) {
@@ -104,13 +111,13 @@ public class Main2 {
             for (User x : event.getChannel().getConnectedUsers()) {
                 ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(userTextChannelMap.get(x.getIdAsString())).get();
                 ServerVoiceChannel serverVoiceChannel1 = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(x.getIdAsString())).get();
-                duoUserServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel1.getIdAsString());
                 for (Message x2 : profMessages) {
                     if (x2.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
                         if (!userServerVoiceChannelMap.containsKey(x2.getAuthor().getIdAsString())) {
                             serverTextChannel1.sendMessage(x2.getContent());
                             Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getIdAsString()).get();
                             event.getUser().addRole(tempRole).join();
+                            userServerVoiceChannelMap.put(event.getUser().getIdAsString(), event.getChannel().getIdAsString());
 
                         }
                     }
@@ -128,30 +135,29 @@ public class Main2 {
 
         });
         api.addServerVoiceChannelMemberLeaveListener(event -> {
-            if (userServerVoiceChannelMap.containsKey(event.getUser().getIdAsString()) || duoUserServerVoiceChannelMap.containsKey(event.getUser().getIdAsString())) {
+            if (userServerVoiceChannelMap.containsKey(event.getUser().getIdAsString()) ) {
                 ServerTextChannel serverTextChannel = api.getServerTextChannelById(userTextChannelMap.get(event.getUser().getIdAsString())).get();
                 ServerVoiceChannel serverVoiceChannel = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getUser().getIdAsString())).get();
-
+                Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(serverVoiceChannel).getIdAsString()).get();
+                if (event.getUser().getRoles(event.getServer()).contains(tempRole)) {
                 if (serverVoiceChannel.getConnectedUserIds().isEmpty()) {
                     System.out.println("deleting...");
                     System.out.println(userServerVoiceChannelMap);
                     System.out.println(userTextChannelMap);
                     serverTextChannel.delete();
                     serverVoiceChannel.delete();
-                    Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
+                    tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
                     tempRole.delete();
                     System.out.println(serverVoiceChannel.getConnectedUsers());
                     System.out.println(serverTextChannel.getName());
-                    System.out.println(duoUserServerVoiceChannelMap);
 
                     userServerVoiceChannelMap.remove(event.getUser().getIdAsString());
                     userTextChannelMap.remove(event.getUser().getIdAsString());
 //                    duoUsers.remove(event.getUser().getIdAsString());
-                    duoUserServerVoiceChannelMap.remove(event.getUser().getIdAsString());
                     serverVoiceChannelRoleMap.remove(event.getChannel());
                     System.out.println("deleted.");
                 }
-            }
+            }}
         });
         api.addMessageCreateListener(event -> {
             ServerVoiceChannel serverVoiceChannel;
