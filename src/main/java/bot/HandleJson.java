@@ -2,10 +2,7 @@ package bot;
 
 import com.google.gson.Gson;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -22,5 +19,11 @@ public class HandleJson {
         Gson gson = new Gson();
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(path));
         gson.toJson(map, outputStreamWriter);
+    }
+    public static HashMap readJsonFile(String path) throws FileNotFoundException {
+        Gson gson = new Gson();
+        InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(path));
+        HashMap tmpMap = gson.fromJson(inputStreamReader, HashMap.class);
+        return tmpMap;
     }
 }

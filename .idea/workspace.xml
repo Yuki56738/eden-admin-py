@@ -10,11 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="714f193d-09be-487d-a700-332611f6cda6" name="変更" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/showProfile_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sshConfigs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/webServers.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bot/CreateJsonFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/HandleJson.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bot/HandleJson.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/HandleJson.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,7 +101,7 @@
       <workItem from="1663756076139" duration="6671000" />
       <workItem from="1663768125633" duration="649000" />
       <workItem from="1663769037153" duration="1337000" />
-      <workItem from="1663903767911" duration="5067000" />
+      <workItem from="1663903767911" duration="5523000" />
     </task>
     <servers />
   </component>
