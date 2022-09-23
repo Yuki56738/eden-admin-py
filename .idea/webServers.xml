@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="d435a362-a1f9-495d-a79b-92c598e06e78" name="ms.risaton.net">
+        <fileTransfer accessType="SFTP" host="ms.risaton.net" port="22" sshConfigId="d1471cfc-515e-4563-b297-3c322451e2ab" sshConfig="ubuntu@ms.risaton.net:22 agent" authAgent="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
