@@ -28,24 +28,17 @@ public class Main2 {
 
     public static void main(DiscordApi api) {
         TextChannel prof_channel = (TextChannel) api.getChannelById("995656569301774456").get();
-//        TextChannel prof2_channel = (TextChannel) api.getChannelById("1016234230549843979").get();
         Map<String, String> userTextChannelMap = new HashMap();
         Map<String, String> userServerVoiceChannelMap = new HashMap();
-//        Map<String, String> duoUserVoiceChannelMap = new HashMap();
-//        List<String> duoUsersList = new ArrayList<>();
-//        Map<String, String> duoUserServerVoiceChannelMap = new HashMap();
         Map<ServerVoiceChannel, Role> serverVoiceChannelRoleMap = new HashMap<>();
         Map<String, List<String>> serverVoiceChannelUserListMap = new HashMap<>();
         Map<String, String> vcTxtMap = new HashMap<>();
-//        Map<ServerVoiceChannel, Role> serverVoiceChannelRoleMap = new HashMap<>();
         api.addServerVoiceChannelMemberJoinListener(event -> {
             MessageSet profMessages = null;
-//            MessageSet prof2Messages = null;
             ServerVoiceChannel serverVoiceChannel = null;
             ServerTextChannel serverTextChannel = null;
             try {
                 profMessages = prof_channel.getMessages(1000).get();
-//                prof2Messages = prof2_channel.getMessages(1000).get();
 
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -89,16 +82,6 @@ public class Main2 {
                 vcTxtMap.put(serverVoiceChannel.getIdAsString(), serverTextChannel.getIdAsString());
                 System.out.println("***vcTxtMap:");
                 System.out.println(vcTxtMap);
-//                event.getUser().move(serverVoiceChannel);
-
-
-//                try {
-//                    HandleJson.createJsonFile(userServerVoiceChannelMap, "userServerVoiceChannelMap.json");
-//                } catch (FileNotFoundException e) {
-//                    throw new RuntimeException(e);
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
                 System.out.println("Created channel:");
                 System.out.println(serverVoiceChannel.getName());
                 System.out.println(serverTextChannel.getName());
@@ -113,81 +96,50 @@ public class Main2 {
                 for (Message x : profMessages) {
                     if (x.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
                         ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(serverTextChannel.getIdAsString()).get();
-
-
-                        serverTextChannel1.sendMessage("y.ren [名前] で部屋の名前を変える.");
-                        serverTextChannel1.sendMessage("y.lim [人数] で部屋の人数制限を変える.");
-                        serverTextChannel1.sendMessage("y.del でチャンネルを削除.");
+                        String msgToSend = "y.ren [名前] で部屋の名前を変える\n" +
+                                "例｜y.ren 私のおうち\n" +
+                                "y.lim [人数] で部屋の人数制限を変える\n" +
+                                "例｜y.lim 4（半角）\n" +
+                                "y.del でチャンネルを削除";
+                        serverTextChannel1.sendMessage(msgToSend);
                         serverTextChannel1.sendMessage(x.getContent());
 
                         serverTextChannel1.sendMessage(event.getUser().getMentionTag());
                         break;
                     }
                 }
-//                for (Message x : prof2Messages) {
-//                    if (x.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
-//                        ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(serverTextChannel.getIdAsString()).get();
-//                        serverTextChannel1.sendMessage(x.getContent());
-//                        serverTextChannel1.sendMessage(event.getUser().getMentionTag());
-//                        break;
-//                    }
-//                }
-            }
-            vcTxtMap.put(serverVoiceChannel.getIdAsString(), serverTextChannel.getIdAsString());
-//            ServerVoiceChannel serverVoiceChannel2 = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getChannel().getIdAsString())).get();
-//            duoUserServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel2.getIdAsString());
+                vcTxtMap.put(serverVoiceChannel.getIdAsString(), serverTextChannel.getIdAsString());
+                for (User x : event.getChannel().getConnectedUsers()) {
+                    List<String> userList = serverVoiceChannelUserListMap.get(event.getChannel().getIdAsString());
+                    userList.add(x.getIdAsString());
+                    serverVoiceChannelUserListMap.put(event.getChannel().getIdAsString(), userList);
 
-            for (User x : event.getChannel().getConnectedUsers()) {
-                List<String> userList = serverVoiceChannelUserListMap.get(event.getChannel().getIdAsString());
-                userList.add(x.getIdAsString());
-                serverVoiceChannelUserListMap.put(event.getChannel().getIdAsString(), userList);
+                    ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(vcTxtMap.get(x.getIdAsString())).get();
+                    ServerVoiceChannel serverVoiceChannel1 = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(x.getIdAsString())).get();
 
-                ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(vcTxtMap.get(x.getIdAsString())).get();
-                ServerVoiceChannel serverVoiceChannel1 = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(x.getIdAsString())).get();
+                    System.out.println(String.format("in for loop: %s", serverVoiceChannelUserListMap.toString()));
+                    for (Message x2 : profMessages) {
+                        if (x2.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
+                            if (!userServerVoiceChannelMap.containsKey(x2.getAuthor().getIdAsString())) {
+                                serverTextChannel1.sendMessage(x2.getContent());
+                                serverTextChannel1.sendMessage(event.getUser().getMentionTag());
+                                tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getIdAsString()).get();
+                                event.getUser().addRole(tempRole).join();
+                                userServerVoiceChannelMap.put(event.getUser().getIdAsString(), event.getChannel().getIdAsString());
 
-                System.out.println(String.format("in for loop: %s", serverVoiceChannelUserListMap.toString()));
-                for (Message x2 : profMessages) {
-                    if (x2.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
-                        if (!userServerVoiceChannelMap.containsKey(x2.getAuthor().getIdAsString())) {
-                            serverTextChannel1.sendMessage(x2.getContent());
-                            serverTextChannel1.sendMessage(event.getUser().getMentionTag());
-                            Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getIdAsString()).get();
-                            event.getUser().addRole(tempRole).join();
-                            userServerVoiceChannelMap.put(event.getUser().getIdAsString(), event.getChannel().getIdAsString());
-//                            List<String> userList1 = serverVoiceChannelUserListMap.get(event.getChannel().getIdAsString());
-//                            userList1.add(event.getUser().getIdAsString());
-//                            serverVoiceChannelUserListMap.put(event.getChannel().getIdAsString(), userList1);
-
+                            }
                         }
                     }
                 }
-//                for (Message x3 : prof2Messages) {
-//                    if (x3.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
-//                        if (!userServerVoiceChannelMap.containsKey(x3.getAuthor().getIdAsString())) {
-//
-//                            serverTextChannel1.sendMessage(x3.getContent());
-//                            serverTextChannel1.sendMessage(event.getUser().getMentionTag());
-//                        }
-//                    }
-//                }
-            }
 
+            }
         });
         api.addServerVoiceChannelMemberLeaveListener(event -> {
-//            if (userServerVoiceChannelMap.containsKey(event.getUser().getIdAsString())) {
             List<String> userList = serverVoiceChannelUserListMap.get(event.getChannel().getIdAsString());
             System.out.println(String.format("in memberLeaveListener: userList: %s", userList));
-//            if (event.getChannel().getIdAsString().equalsIgnoreCase("1022093347793408010")){
-//                return;
-//            }
-//            if (userList.contains(event.getUser().getIdAsString())) {
-//            if (serverVoiceChannelUserListMap.containsKey(event.getChannel().getIdAsString())) {
-//            if (userList.contains(event.getUser().getIdAsString())) {
 
             for (String x : userList) {
                 if (x.equalsIgnoreCase(event.getUser().getIdAsString())) {
-//                    ServerTextChannel serverTextChannel = api.getServerTextChannelById(userTextChannelMap.get(event.getUser().getIdAsString())).get();
-//                    ServerVoiceChannel serverVoiceChannel = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getUser().getIdAsString())).get();
                     ServerTextChannel serverTextChannel = null;
 
                     try {
@@ -195,23 +147,8 @@ public class Main2 {
                     } catch (Exception e) {
 
                     }
-//                    ServerVoiceChannel serverVoiceChannel = api.getServerVoiceChannelById(getKey(vcTxtMap, serverTextChannel.getIdAsString())).get();
-
-//                if (event.getChannel().getIdAsString().equalsIgnoreCase(serverVoiceChannel.getIdAsString())) {
-//                    return;
-//                }
-//                if (event.getChannel().getIdAsString().equalsIgnoreCase(NEXTVC)){
-//                    NEXTVC = null;
-//                    return;
-//                }
-//                    Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(serverVoiceChannel).getIdAsString()).get();
-//                if (event.getUser().getRoles(event.getServer()).contains(tempRole)) {
-//                if (serverVoiceChannel.getConnectedUserIds().isEmpty()) {
-//                if (event.get){
-//                if (event.getNewChannel().isEmpty()){
                     System.out.println("***connected users:*** ");
                     System.out.println(event.getChannel().getConnectedUsers().stream().count());
-//                        if (event.getChannel().getConnectedUserIds().isEmpty()){
                     if (event.getChannel().getConnectedUsers().stream().count() == 1 || event.getChannel().getConnectedUserIds().isEmpty()) {
                         System.out.println(String.format("***delete channels hit!!****"));
 
@@ -244,11 +181,9 @@ public class Main2 {
         api.addMessageCreateListener(event -> {
             ServerVoiceChannel serverVoiceChannel = null;
             ServerTextChannel serverTextChannel = null;
-            if (!vcTxtMap.containsValue(event.getChannel().getIdAsString())){
+            if (!vcTxtMap.containsValue(event.getChannel().getIdAsString())) {
                 return;
             }
-//            serverVoiceChannel = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getMessageAuthor().getIdAsString())).get();
-//            serverTextChannel = api.getServerTextChannelById(userTextChannelMap.get(event.getMessageAuthor().getIdAsString())).get();
             serverTextChannel = api.getServerTextChannelById(vcTxtMap.get(event.getMessageAuthor().getConnectedVoiceChannel().get().getIdAsString())).get();
             serverVoiceChannel = api.getServerVoiceChannelById(getKey(vcTxtMap, event.getChannel().getIdAsString())).get();
 
