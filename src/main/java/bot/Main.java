@@ -11,6 +11,7 @@ import org.javacord.api.entity.permission.*;
 import org.javacord.api.entity.user.User;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -33,6 +34,7 @@ public class Main {
 //        Map<String, String> duoUserVoiceChannelMap = new HashMap();
 //        List<String> duoUsersList = new ArrayList<>();
         Map<String, String> duoUserServerVoiceChannelMap = new HashMap();
+        //
         Map<ServerVoiceChannel, Role> serverVoiceChannelRoleMap = new HashMap<>();
 //        Map<ServerVoiceChannel, Role> serverVoiceChannelRoleMap = new HashMap<>();
         api.addServerVoiceChannelMemberJoinListener(event -> {
@@ -143,7 +145,7 @@ public class Main {
                 ServerTextChannel serverTextChannel = api.getServerTextChannelById(userTextChannelMap.get(event.getUser().getIdAsString())).get();
                 ServerVoiceChannel serverVoiceChannel = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(event.getUser().getIdAsString())).get();
                 Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(serverVoiceChannel).getIdAsString()).get();
-                if (event.getUser().getRoles(event.getServer()).contains(tempRole)) {
+//                if (event.getUser().getRoles(event.getServer()).contains(tempRole)) {
                     if (serverVoiceChannel.getConnectedUserIds().isEmpty()) {
                         System.out.println("deleting...");
                         System.out.println(userServerVoiceChannelMap);
@@ -162,7 +164,7 @@ public class Main {
                         duoUserServerVoiceChannelMap.remove(event.getUser().getIdAsString());
                         serverVoiceChannelRoleMap.remove(event.getChannel());
                         System.out.println("deleted.");
-                    }
+//                    }
                 }
             }
         });

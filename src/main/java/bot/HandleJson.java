@@ -1,29 +1,32 @@
 package bot;
 
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonWriter;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 
 public class HandleJson {
-    public static void createJsonFile(HashMap map, String path) throws FileNotFoundException {
-        if (!Files.exists(Paths.get(path))) {
-            try {
-                Files.createFile(Paths.get(path));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    public static void createJsonFile(Map map, String path) throws IOException {
+//        if (!Files.exists(Paths.get(path))) {
+//            try {
+//                Files.createFile(Paths.get(path));
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
         Gson gson = new Gson();
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(path));
-        gson.toJson(map, outputStreamWriter);
+        JsonWriter jsonWriter = new JsonWriter(outputStreamWriter);
+        gson.toJson(map, map.getClass(), jsonWriter);
     }
-    public static HashMap readJsonFile(String path) throws FileNotFoundException {
+    public static Map readJsonFile(String path) throws FileNotFoundException {
         Gson gson = new Gson();
         InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(path));
-        HashMap tmpMap = gson.fromJson(inputStreamReader, HashMap.class);
+        Map tmpMap = gson.fromJson(inputStreamReader, Map.class);
         return tmpMap;
     }
 }
