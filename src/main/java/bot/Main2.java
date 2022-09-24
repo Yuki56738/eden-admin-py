@@ -177,7 +177,6 @@ public class Main2 {
                 }
             }
         });
-        ;
         api.addMessageCreateListener(event -> {
             ServerVoiceChannel serverVoiceChannel = null;
             ServerTextChannel serverTextChannel = null;
