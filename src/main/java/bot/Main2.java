@@ -11,10 +11,7 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.permission.RoleBuilder;
 import org.javacord.api.entity.user.User;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -28,7 +25,7 @@ public class Main2 {
 
     public static void main(DiscordApi api) {
         TextChannel prof_channel = (TextChannel) api.getChannelById("995656569301774456").get();
-        Map<String, String> userTextChannelMap = new HashMap();
+//        Map<String, String> userTextChannelMap = new HashMap();
         Map<String, String> userServerVoiceChannelMap = new HashMap();
         Map<ServerVoiceChannel, Role> serverVoiceChannelRoleMap = new HashMap<>();
         Map<String, List<String>> serverVoiceChannelUserListMap = new HashMap<>();
@@ -76,7 +73,7 @@ public class Main2 {
                         .setCategory(api.getChannelCategoryById("1019608718310133780").get())
                         .create().join();
                 event.getUser().addRole(tempRole).join();
-                userTextChannelMap.put(event.getUser().getIdAsString(), serverTextChannel.getIdAsString());
+//                userTextChannelMap.put(event.getUser().getIdAsString(), serverTextChannel.getIdAsString());
                 userServerVoiceChannelMap.put(event.getUser().getIdAsString(), serverVoiceChannel.getIdAsString());
                 serverVoiceChannelRoleMap.put(serverVoiceChannel, tempRole);
                 vcTxtMap.put(serverVoiceChannel.getIdAsString(), serverTextChannel.getIdAsString());
@@ -91,7 +88,6 @@ public class Main2 {
                 userList1.add(event.getUser().getIdAsString());
                 serverVoiceChannelUserListMap.put(serverVoiceChannel.getIdAsString(), userList1);
                 System.out.println(String.format("in first vc event: %s", serverVoiceChannelUserListMap));
-                NEXTVC = serverVoiceChannel.getIdAsString();
 
                 for (Message x : profMessages) {
                     if (x.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
@@ -105,10 +101,23 @@ public class Main2 {
                         serverTextChannel1.sendMessage(x.getContent());
 
                         serverTextChannel1.sendMessage(event.getUser().getMentionTag());
-                        break;
                     }
                 }
                 vcTxtMap.put(serverVoiceChannel.getIdAsString(), serverTextChannel.getIdAsString());
+//                Gson gson = new Gson();
+//                System.out.println("JSON: ");
+//                System.out.println(gson.toJson(vcTxtMap));
+//                System.out.println(serverVoiceChannelUserListMap);
+//                try {
+//                    FileWriter fileWriter = new FileWriter("vcTxtMap.json");
+//                    PrintWriter printWriter = new PrintWriter(new BufferedWriter(fileWriter));
+//                    printWriter.println(gson.toJson(vcTxtMap));
+//                    printWriter.close();
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e);
+//                }
+
+
                 for (User x : event.getChannel().getConnectedUsers()) {
                     List<String> userList = serverVoiceChannelUserListMap.get(event.getChannel().getIdAsString());
                     userList.add(x.getIdAsString());
@@ -126,11 +135,23 @@ public class Main2 {
                                 tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getIdAsString()).get();
                                 event.getUser().addRole(tempRole).join();
                                 userServerVoiceChannelMap.put(event.getUser().getIdAsString(), event.getChannel().getIdAsString());
-
                             }
                         }
                     }
                 }
+
+//                gson = new Gson();
+//                System.out.println("JSON: ");
+//                System.out.println(gson.toJson(vcTxtMap));
+//                System.out.println(serverVoiceChannelUserListMap);
+//                try {
+//                    FileWriter fileWriter = new FileWriter("vcTxtMap.json");
+//                    PrintWriter printWriter = new PrintWriter(new BufferedWriter(fileWriter));
+//                    printWriter.println(gson.toJson(vcTxtMap));
+//                    printWriter.close();
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e);
+//                }
 
             }
         });
@@ -154,7 +175,7 @@ public class Main2 {
 
                         System.out.println("deleting...");
                         System.out.println(userServerVoiceChannelMap);
-                        System.out.println(userTextChannelMap);
+//                        System.out.println(userTextChannelMap);
                         serverTextChannel.delete();
                         event.getChannel().delete();
                         Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
@@ -164,7 +185,7 @@ public class Main2 {
                         System.out.println(serverTextChannel.getName());
 
                         userServerVoiceChannelMap.remove(event.getUser().getIdAsString());
-                        userTextChannelMap.remove(event.getUser().getIdAsString());
+//                        userTextChannelMap.remove(event.getUser().getIdAsString());
 //                    duoUsers.remove(event.getUser().getIdAsString());
                         serverVoiceChannelRoleMap.remove(event.getChannel());
                         serverVoiceChannelUserListMap.remove(event.getChannel().getIdAsString());
@@ -178,8 +199,14 @@ public class Main2 {
             }
         });
         api.addMessageCreateListener(event -> {
-            ServerVoiceChannel serverVoiceChannel = null;
-            ServerTextChannel serverTextChannel = null;
+            if (event.getMessageContent().equalsIgnoreCase("y.save")){
+                createJsonFile(vcTxtMap, "vcTxtMap.json");
+                createJsonFile(userServerVoiceChannelMap,"userServerVoiceChannelMap.json");
+                createJsonFile(serverVoiceChannelRoleMap, "serverVoiceChannelRoleMap.json");
+                createJsonFile(serverVoiceChannelUserListMap,"serverVoiceChannelUserListMap.json" );
+            }
+            ServerVoiceChannel serverVoiceChannel;
+            ServerTextChannel serverTextChannel;
             if (!vcTxtMap.containsValue(event.getChannel().getIdAsString())) {
                 return;
             }
@@ -192,17 +219,18 @@ public class Main2 {
             } else if (event.getMessageContent().startsWith("y.del")) {
                 System.out.println("deleting...");
                 System.out.println(userServerVoiceChannelMap.get(event.getMessageAuthor().getIdAsString()));
-                System.out.println(userTextChannelMap.get(event.getMessageAuthor().getIdAsString()));
+//                System.out.println(userTextChannelMap.get(event.getMessageAuthor().getIdAsString()));
                 serverVoiceChannel.delete();
                 serverTextChannel.delete();
                 Role tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getId()).get();
                 tempRole.delete();
                 userServerVoiceChannelMap.remove(event.getMessageAuthor().getIdAsString());
-                userTextChannelMap.remove(event.getMessageAuthor().getIdAsString());
+//                userTextChannelMap.remove(event.getMessageAuthor().getIdAsString());
                 serverVoiceChannelRoleMap.remove(event.getChannel());
                 System.out.println("deleted.");
                 System.out.println(userServerVoiceChannelMap);
-                System.out.println(userTextChannelMap);
+
+//                System.out.println(userTextChannelMap);
             } else if (event.getMessageContent().startsWith("y.lim")) {
                 String msg = event.getMessageContent();
                 msg = msg.replaceAll("y.lim ", "");
@@ -219,6 +247,20 @@ public class Main2 {
             }
         }
         return null;
+    }
+    public static void createJsonFile(Object object, String filename){
+        Gson gson = new Gson();
+        System.out.println("JSON: ");
+        System.out.println(gson.toJson(object));
+        try {
+            FileWriter fileWriter = new FileWriter(filename);
+            PrintWriter printWriter = new PrintWriter(new BufferedWriter(fileWriter));
+            printWriter.println(gson.toJson(object));
+            printWriter.close();
+        } catch (IOException e) {
+            System.out.println(e);
+//            return;
+        }
     }
 }
 
