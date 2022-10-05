@@ -90,7 +90,7 @@ public class Main2 {
                 System.out.println(String.format("in first vc event: %s", serverVoiceChannelUserListMap));
 
                 for (Message x : profMessages) {
-                    if (x.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
+                    if (x.getUserAuthor().get().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
                         ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(serverTextChannel.getIdAsString()).get();
                         String msgToSend = "y.ren [名前] で部屋の名前を変える\n" +
                                 "例｜y.ren 私のおうち\n" +
@@ -116,29 +116,29 @@ public class Main2 {
 //                } catch (IOException e) {
 //                    throw new RuntimeException(e);
 //                }
+            }
 
+            for (User x : event.getChannel().getConnectedUsers()) {
+                List<String> userList = serverVoiceChannelUserListMap.get(event.getChannel().getIdAsString());
+                userList.add(x.getIdAsString());
+                serverVoiceChannelUserListMap.put(event.getChannel().getIdAsString(), userList);
 
-                for (User x : event.getChannel().getConnectedUsers()) {
-                    List<String> userList = serverVoiceChannelUserListMap.get(event.getChannel().getIdAsString());
-                    userList.add(x.getIdAsString());
-                    serverVoiceChannelUserListMap.put(event.getChannel().getIdAsString(), userList);
-
-                    ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(vcTxtMap.get(x.getIdAsString())).get();
-                    ServerVoiceChannel serverVoiceChannel1 = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(x.getIdAsString())).get();
-
-                    System.out.println(String.format("in for loop: %s", serverVoiceChannelUserListMap.toString()));
-                    for (Message x2 : profMessages) {
-                        if (x2.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
-                            if (!userServerVoiceChannelMap.containsKey(x2.getAuthor().getIdAsString())) {
-                                serverTextChannel1.sendMessage(x2.getContent());
-                                serverTextChannel1.sendMessage(event.getUser().getMentionTag());
-                                tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getIdAsString()).get();
-                                event.getUser().addRole(tempRole).join();
-                                userServerVoiceChannelMap.put(event.getUser().getIdAsString(), event.getChannel().getIdAsString());
-                            }
+                ServerTextChannel serverTextChannel1 = api.getServerTextChannelById(vcTxtMap.get(event.getChannel().getIdAsString())).get();
+                ServerVoiceChannel serverVoiceChannel1 = api.getServerVoiceChannelById(userServerVoiceChannelMap.get(x.getIdAsString())).get();
+                Role tempRole = null;
+                System.out.println(String.format("in for loop: %s", serverVoiceChannelUserListMap.toString()));
+                for (Message x2 : profMessages) {
+                    if (x2.getAuthor().getIdAsString().equalsIgnoreCase(event.getUser().getIdAsString())) {
+                        if (!userServerVoiceChannelMap.containsKey(x2.getAuthor().getIdAsString())) {
+                            serverTextChannel1.sendMessage(x2.getContent());
+                            serverTextChannel1.sendMessage(event.getUser().getMentionTag());
+                            tempRole = api.getRoleById(serverVoiceChannelRoleMap.get(event.getChannel()).getIdAsString()).get();
+                            event.getUser().addRole(tempRole).join();
+                            userServerVoiceChannelMap.put(event.getUser().getIdAsString(), event.getChannel().getIdAsString());
                         }
                     }
                 }
+            }
 
 //                gson = new Gson();
 //                System.out.println("JSON: ");
@@ -153,7 +153,7 @@ public class Main2 {
 //                    throw new RuntimeException(e);
 //                }
 
-            }
+//            }
         });
         api.addServerVoiceChannelMemberLeaveListener(event -> {
             List<String> userList = serverVoiceChannelUserListMap.get(event.getChannel().getIdAsString());
@@ -199,11 +199,11 @@ public class Main2 {
             }
         });
         api.addMessageCreateListener(event -> {
-            if (event.getMessageContent().equalsIgnoreCase("y.save")){
+            if (event.getMessageContent().equalsIgnoreCase("y.save")) {
                 createJsonFile(vcTxtMap, "vcTxtMap.json");
-                createJsonFile(userServerVoiceChannelMap,"userServerVoiceChannelMap.json");
+                createJsonFile(userServerVoiceChannelMap, "userServerVoiceChannelMap.json");
                 createJsonFile(serverVoiceChannelRoleMap, "serverVoiceChannelRoleMap.json");
-                createJsonFile(serverVoiceChannelUserListMap,"serverVoiceChannelUserListMap.json" );
+                createJsonFile(serverVoiceChannelUserListMap, "serverVoiceChannelUserListMap.json");
             }
             ServerVoiceChannel serverVoiceChannel;
             ServerTextChannel serverTextChannel;
@@ -238,6 +238,30 @@ public class Main2 {
                 serverVoiceChannel.updateUserLimit(newLimit);
             }
         });
+        api.addReactionAddListener(event -> {
+            if (event.getChannel().getIdAsString().equalsIgnoreCase("1021255885542137939") || event.getChannel().getIdAsString().equalsIgnoreCase("1019526924478971905")) {
+                TextChannel textChannel = api.getTextChannelById("1024881096518803466").get();
+//               textChannel.sendMessage(event.getUser().get().getMentionTag() + " " + event.getMessageAuthor().get().getDisplayName());
+//               User user = (User) event.getMessageAuthor().get();
+                User user = null;
+                try {
+                    user = event.requestMessage().get().getUserAuthor().get();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+
+//               try {
+//                   System.out.println(event.requestMessage().get().getContent());
+//               } catch (InterruptedException e) {
+//                   throw new RuntimeException(e);
+//               } catch (ExecutionException e) {
+//                   throw new RuntimeException(e);
+//               }
+                textChannel.sendMessage(String.format("%sから%s宛にメンションがありました！", event.getUser().get().getMentionTag(), user.getMentionTag()));
+            }
+        });
     }
 
     public static <K, V> K getKey(Map<K, V> map, V value) {
@@ -248,7 +272,8 @@ public class Main2 {
         }
         return null;
     }
-    public static void createJsonFile(Object object, String filename){
+
+    public static void createJsonFile(Object object, String filename) {
         Gson gson = new Gson();
         System.out.println("JSON: ");
         System.out.println(gson.toJson(object));
