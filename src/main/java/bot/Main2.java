@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Main2 {
-    public static String NEXTVC;
 
     public static void main(DiscordApi api) {
         TextChannel prof_channel = (TextChannel) api.getChannelById("995656569301774456").get();
