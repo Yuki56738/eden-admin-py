@@ -31,6 +31,7 @@ public class Main {
                 .setAllIntents()
                 .login().join();
         System.out.println("bot built");
+        api.updateActivity("Created by Yuki.");
 
         Main2.main(api);
         TextChannel prof_channel = (TextChannel) api.getChannelById("995656569301774456").get();
