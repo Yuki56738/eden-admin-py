@@ -55,7 +55,7 @@ async def on_message(message: Message):
         msg = message.content
         msg = re.sub("y.ren ", "", msg)
         try:
-            txt1 = vcTxt.get(message.author.voice.channel.id)
+            txt1 = vcTxt.get(str(message.author.voice.channel.id))
             txt1 = bot.get_channel(txt1)
         except:
             return
@@ -89,7 +89,7 @@ async def on_message(message: Message):
         msg = message.content
         msg = re.sub("y.lim ", "", msg)
         try:
-            txt1 = vcTxt.get(message.author.voice.channel.id)
+            txt1 = vcTxt.get(str(message.author.voice.channel.id))
             txt1 = bot.get_channel(txt1)
         except:
             return
@@ -158,9 +158,9 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
             except:
                 pass
             return
-        role1 = vcRole.get(after.channel.id)
+        role1 = vcRole.get(str(after.channel.id))
         role1 = member.guild.get_role(role1)
-        txt1 = vcTxt.get(after.channel.id)
+        txt1 = vcTxt.get(str(after.channel.id))
         txt1 = bot.get_channel(txt1)
         await member.add_roles(role1)
         prof_channel = bot.get_channel(995656569301774456)
