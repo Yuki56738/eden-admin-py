@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 import discord
 from discord import *
 
-# load_dotenv()
-# TOKEN = os.environ.get("DISCORD_TOKEN")
+load_dotenv()
+TOKEN = os.environ.get("DISCORD_TOKEN")
 
 intents = discord.Intents.all()
 bot = discord.Bot(intents=intents)
@@ -97,4 +97,4 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
             vcTxt.pop(before.channel.id)
 
 
-bot.run(sys.argv[1])
+bot.run(TOKEN)
