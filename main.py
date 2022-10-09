@@ -25,8 +25,9 @@ async def on_reaction_add(reaction: Reaction, user: User):
     print(reaction.message.author)
     print(user.name)
 
-    txt2 = bot.get_channel(977138017095520259)
-    await txt2.send(f"{user.mention} から {reaction.message.author.mention} へ募集がありました！")
+    txt2 = bot.get_channel(1024881096518803466)
+    if reaction.message.channel.id == 1021255885542137939:
+        await txt2.send(f"{user.mention} から {reaction.message.author.mention} へ募集がありました！")
 
 
 @bot.event
@@ -45,7 +46,7 @@ async def on_message(message: Message):
         return
     if message.content.startswith("y.show"):
         msg = message.content
-        prof_channel = bot.get_channel(1018726552936128553)
+        prof_channel = bot.get_channel(995656569301774456)
         prof_messages = await prof_channel.history(limit=1000).flatten()
         print(prof_messages)
         for x in prof_messages:
@@ -63,10 +64,10 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
     # print("hit.")
     print(before.channel)
     print(after.channel)
-    if not member.guild.id == 977138017095520256:
+    if not member.guild.id == 994483180927201400:
         return
     if before.channel is None:
-        if after.channel.id == 1028601419131002930:
+        if after.channel.id == 1019948085876629516:
             print("hit.")
             # await member.guild.system_channel.send("hit.")
             role1 = await member.guild.create_role(name=f"{member.name}の部屋")
@@ -76,7 +77,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
                                                                                              member.guild.default_role: PermissionOverwrite().from_pair(
                                                                                                  Permissions.general(),
                                                                                                  Permissions.text())},
-                                                          category=bot.get_channel(977138017095520258))
+                                                          category=bot.get_channel(1012943676332331118))
             vcRole[vc1.id] = role1.id
             print(vcRole)
             await member.add_roles(role1)
@@ -85,11 +86,11 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
                                                                                                   member.guild.default_role: PermissionOverwrite().from_pair(
                                                                                                       Permissions.none(),
                                                                                                       Permissions.all())},
-                                                          category=bot.get_channel(977138017095520258))
+                                                          category=bot.get_channel(1012943676332331118))
             vcTxt[vc1.id] = txt1.id
             print(after.channel.members)
             print(len(after.channel.members))
-            prof_channel = bot.get_channel(1018726552936128553)
+            prof_channel = bot.get_channel(995656569301774456)
             prof_messages = await prof_channel.history(limit=1000).flatten()
             print(prof_messages)
             for x in prof_messages:
@@ -101,7 +102,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
         txt1 = vcTxt.get(after.channel.id)
         txt1 = bot.get_channel(txt1)
         await member.add_roles(role1)
-        prof_channel = bot.get_channel(1018726552936128553)
+        prof_channel = bot.get_channel(995656569301774456)
         prof_messages = await prof_channel.history(limit=1000).flatten()
         print(prof_messages)
         for x in prof_messages:
