@@ -18,6 +18,8 @@ vcTxt = {}
 @bot.event
 async def on_ready():
     print(f"Logged in as: {bot.user}")
+    # bot.activity = "Created by Yuki."
+    await bot.change_presence(activity=Game(name="Created by Yuki."))
 
 
 @bot.event
@@ -32,6 +34,11 @@ async def on_reaction_add(reaction: Reaction, user: User):
 
 @bot.event
 async def on_message(message: Message):
+    if message.author.bot:
+        return
+    if message.content.startswith("y.help"):
+        msgToSend = Embed(title="Yukiの管理BOT", description="y.show または my.show -> 自分の自己紹介を表示する。")
+        await message.channel.send(embed=msgToSend, delete_after=3 * 60)
     if message.content.startswith(".debug"):
         print(f"vcRole: {vcRole}")
         print(f"vcTxt: {vcTxt}")
@@ -47,7 +54,7 @@ async def on_message(message: Message):
         vc1 = message.author.voice.channel
         await vc1.edit(name=msg)
         return
-    if message.content.startswith("y.show"):
+    if message.content.startswith("y.show") or message.content.startswith("my.show"):
         msg = message.content
         msg = re.sub("y.show ", "", msg)
         prof_channel = bot.get_channel(995656569301774456)
@@ -58,7 +65,7 @@ async def on_message(message: Message):
         for x in prof_messages:
             # if x.author.id == xuser.id:
             if x.author.id == message.author.id:
-                await message.channel.send(x.content)
+                await message.channel.send(x.content, delete_after=3 * 60)
                 print(f"{x.author.name}: {x.content}")
             if msg in x.author.name:
                 print(f"{x.author.name}: {x.content}")
@@ -111,12 +118,22 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
             vcTxt[vc1.id] = txt1.id
             print(after.channel.members)
             print(len(after.channel.members))
-            prof_channel = bot.get_channel(995656569301774456)
-            prof_messages = await prof_channel.history(limit=1000).flatten()
-            print(prof_messages)
-            for x in prof_messages:
-                if x.author.id == member.id:
-                    await txt1.send(x.content)
+            msgToSend = """y.ren [名前] で部屋の名前を変える
+            例｜y.ren 私のおうち
+            y.lim [人数] で部屋の人数制限を変える
+            例｜y.lim 4（半角
+            y.del でチャンネルを削除"""
+            await txt1.send(msgToSend)
+
+            try:
+                prof_channel = bot.get_channel(995656569301774456)
+                prof_messages = await prof_channel.history(limit=1000).flatten()
+                print(prof_messages)
+                for x in prof_messages:
+                    if x.author.id == member.id:
+                        await txt1.send(x.content)
+            except:
+                pass
             return
         role1 = vcRole.get(after.channel.id)
         role1 = member.guild.get_role(role1)
