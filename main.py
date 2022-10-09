@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 import discord
 from discord import *
+import json
 
 load_dotenv()
 TOKEN = os.environ.get("DISCORD_TOKEN")
@@ -32,8 +33,13 @@ async def on_reaction_add(reaction: Reaction, user: User):
         await txt2.send(f"{user.mention} から {reaction.message.author.mention} へ募集がありました！")
 
 
+
+
+
 @bot.event
 async def on_message(message: Message):
+    global vcRole
+    global vcTxt
     if message.author.bot:
         return
     if message.content.startswith("y.help"):
@@ -42,6 +48,9 @@ async def on_message(message: Message):
     if message.content.startswith(".debug"):
         print(f"vcRole: {vcRole}")
         print(f"vcTxt: {vcTxt}")
+        for x in vcTxt:
+            print(x)
+            print(type(x))
     if message.content.startswith("y.ren"):
         msg = message.content
         msg = re.sub("y.ren ", "", msg)
@@ -85,13 +94,27 @@ async def on_message(message: Message):
         except:
             return
         await message.author.voice.channel.edit(user_limit=int(msg))
-
+    if message.content.startswith("y.save"):
+        # await message.guild.system_channel.send("Saving bot state...")
+        print("Saving bot state...")
+        with open("vcTxt.json", "w") as f:
+            # tmpJson:dict = json.load(f)
+            json.dump(vcTxt, f)
+        with open("vcRole.json", "w") as f:
+            json.dump(vcRole, f)
+    if message.content.startswith("y.load"):
+        # await message.guild.system_channel.send("Loading bot state...")
+        print("Loading bot state...")
+        with open("vcTxt.json", "r") as f:
+            vcTxt = json.load(f)
+        with open("vcRole.json", "r") as f:
+            vcRole = json.load(f)
 
 @bot.event
 async def on_voice_state_update(member: Member, before: VoiceState, after: VoiceState):
     # print("hit.")
-    print(before.channel)
-    print(after.channel)
+    # print(before.channel)
+    # print(after.channel)
     if not member.guild.id == 994483180927201400:
         return
     if before.channel is None:
@@ -106,7 +129,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
                                                                                                  Permissions.general(),
                                                                                                  Permissions.text())},
                                                           category=bot.get_channel(1012943676332331118))
-            vcRole[vc1.id] = role1.id
+            vcRole[str(vc1.id)] = role1.id
             print(vcRole)
             await member.add_roles(role1)
             await member.move_to(vc1)
@@ -115,7 +138,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
                                                                                                       Permissions.none(),
                                                                                                       Permissions.all())},
                                                           category=bot.get_channel(1012943676332331118))
-            vcTxt[vc1.id] = txt1.id
+            vcTxt[str(vc1.id)] = txt1.id
             print(after.channel.members)
             print(len(after.channel.members))
             msgToSend = """y.ren [名前] で部屋の名前を変える
@@ -151,15 +174,17 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
         print(before.channel.members)
         print(len(before.channel.members))
         if len(before.channel.members) == 0:
-            role1 = vcRole.get(before.channel.id)
-            role1 = member.guild.get_role(role1)
-            txt1 = vcTxt.get(before.channel.id)
+            txt1 = vcTxt.get(str(before.channel.id))
+            print(txt1)
+            print(type(txt1))
             txt1 = bot.get_channel(txt1)
+            await txt1.delete()
+            role1 = vcRole.get(str(before.channel.id))
+            role1 = member.guild.get_role(role1)
             await role1.delete()
             await before.channel.delete()
-            await txt1.delete()
-            vcRole.pop(before.channel.id)
-            vcTxt.pop(before.channel.id)
+            vcRole.pop(str(before.channel.id))
+            vcTxt.pop(str(before.channel.id))
 
 
 bot.run(TOKEN)
