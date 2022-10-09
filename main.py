@@ -38,24 +38,45 @@ async def on_message(message: Message):
     if message.content.startswith("y.ren"):
         msg = message.content
         msg = re.sub("y.ren ", "", msg)
-        txt1 = vcTxt.get(message.author.voice.channel.id)
-        txt1 = bot.get_channel(txt1)
+        try:
+            txt1 = vcTxt.get(message.author.voice.channel.id)
+            txt1 = bot.get_channel(txt1)
+        except:
+            return
         await txt1.edit(name=msg)
         vc1 = message.author.voice.channel
         await vc1.edit(name=msg)
         return
     if message.content.startswith("y.show"):
         msg = message.content
+        msg = re.sub("y.show ", "", msg)
         prof_channel = bot.get_channel(995656569301774456)
         prof_messages = await prof_channel.history(limit=1000).flatten()
-        print(prof_messages)
+        # print(prof_messages)
+        # for xuser in message.author.voice.channel.members:
+        # msgToSend = ""
         for x in prof_messages:
+            # if x.author.id == xuser.id:
             if x.author.id == message.author.id:
                 await message.channel.send(x.content)
+                print(f"{x.author.name}: {x.content}")
+            if msg in x.author.name:
+                print(f"{x.author.name}: {x.content}")
+            try:
+                for xuser in message.author.voice.channel.members:
+                    if x.author.id == xuser.id:
+                        print(x.content)
+            except:
+                pass
         return
     if message.content.startswith("y.lim"):
         msg = message.content
         msg = re.sub("y.lim ", "", msg)
+        try:
+            txt1 = vcTxt.get(message.author.voice.channel.id)
+            txt1 = bot.get_channel(txt1)
+        except:
+            return
         await message.author.voice.channel.edit(user_limit=int(msg))
 
 
