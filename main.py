@@ -14,13 +14,24 @@ bot = discord.Bot(intents=intents)
 
 vcRole = {}
 vcTxt = {}
+txtMsg = {}
 
 
 @bot.event
 async def on_ready():
+    global vcRole
+    global vcTxt
+    global txtMsg
     print(f"Logged in as: {bot.user}")
     # bot.activity = "Created by Yuki."
     await bot.change_presence(activity=Game(name="Created by Yuki."))
+    with open("vcTxt.json", "r") as f:
+        vcTxt = json.load(f)
+    with open("vcRole.json", "r") as f:
+        vcRole = json.load(f)
+    with open("txtMsg.json", "r") as f:
+        txtMsg = json.load(f)
+    print("Loaded bot state.")
 
 
 @bot.event
@@ -33,13 +44,11 @@ async def on_reaction_add(reaction: Reaction, user: User):
         await txt2.send(f"{user.mention} から {reaction.message.author.mention} へ募集がありました！")
 
 
-
-
-
 @bot.event
 async def on_message(message: Message):
     global vcRole
     global vcTxt
+    global txtMsg
     if message.author.bot:
         return
     if message.content.startswith("y.help"):
@@ -85,6 +94,15 @@ async def on_message(message: Message):
             except:
                 pass
         return
+    if message.channel.id == 996367967925305464:
+        try:
+            msg1 = txtMsg.get(str(message.channel.id))
+            msg1 = bot.get_message(msg1)
+            await msg1.delete()
+        except:
+            pass
+        msg2 = await message.channel.send(embed=Embed(description="テスト"))
+        txtMsg[str(message.channel.id)] = msg2.id
     if message.content.startswith("y.lim"):
         msg = message.content
         msg = re.sub("y.lim ", "", msg)
@@ -102,6 +120,8 @@ async def on_message(message: Message):
             json.dump(vcTxt, f)
         with open("vcRole.json", "w") as f:
             json.dump(vcRole, f)
+        with open("txtMsg.json", "w") as f:
+            json.dump(txtMsg, f)
     if message.content.startswith("y.load"):
         # await message.guild.system_channel.send("Loading bot state...")
         print("Loading bot state...")
@@ -109,6 +129,9 @@ async def on_message(message: Message):
             vcTxt = json.load(f)
         with open("vcRole.json", "r") as f:
             vcRole = json.load(f)
+        with open ("txtMsg.json", "r") as f:
+            txtMsg = json.load(f)
+
 
 @bot.event
 async def on_voice_state_update(member: Member, before: VoiceState, after: VoiceState):
@@ -117,47 +140,48 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
     # print(after.channel)
     if not member.guild.id == 994483180927201400:
         return
-    if before.channel is None:
-        if after.channel.id == 1019948085876629516:
-            print("hit.")
-            # await member.guild.system_channel.send("hit.")
-            role1 = await member.guild.create_role(name=f"{member.name}の部屋")
-            # perm1 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.none())
-            perm1 = PermissionOverwrite().from_pair(Permissions.all(), Permissions.none())
-            vc1 = await member.guild.create_voice_channel(f"{member.name}の部屋", overwrites={role1: perm1,
-                                                                                             member.guild.default_role: PermissionOverwrite().from_pair(
-                                                                                                 Permissions.general(),
-                                                                                                 Permissions.text())},
-                                                          category=bot.get_channel(1012943676332331118))
-            vcRole[str(vc1.id)] = role1.id
-            print(vcRole)
-            await member.add_roles(role1)
-            await member.move_to(vc1)
-            txt1 = await member.guild.create_text_channel(name=f"{member.name}の部屋", overwrites={role1: perm1,
-                                                                                                  member.guild.default_role: PermissionOverwrite().from_pair(
-                                                                                                      Permissions.none(),
-                                                                                                      Permissions.all())},
-                                                          category=bot.get_channel(1012943676332331118))
-            vcTxt[str(vc1.id)] = txt1.id
-            print(after.channel.members)
-            print(len(after.channel.members))
-            msgToSend = """y.ren [名前] で部屋の名前を変える
+        # if before.channel is None:
+    if not after.channel is None and after.channel.id == 1019948085876629516:
+        print("hit.")
+        # await member.guild.system_channel.send("hit.")
+        role1 = await member.guild.create_role(name=f"{member.name}の部屋")
+        # perm1 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.none())
+        perm1 = PermissionOverwrite().from_pair(Permissions.all(), Permissions.none())
+        vc1 = await member.guild.create_voice_channel(f"{member.name}の部屋", overwrites={role1: perm1,
+                                                                                         member.guild.default_role: PermissionOverwrite().from_pair(
+                                                                                             Permissions.general(),
+                                                                                             Permissions.text())},
+                                                      category=bot.get_channel(1012943676332331118))
+        vcRole[str(vc1.id)] = role1.id
+        print(vcRole)
+        await member.add_roles(role1)
+        await member.move_to(vc1)
+        txt1 = await member.guild.create_text_channel(name=f"{member.name}の部屋", overwrites={role1: perm1,
+                                                                                              member.guild.default_role: PermissionOverwrite().from_pair(
+                                                                                                  Permissions.none(),
+                                                                                                  Permissions.all())},
+                                                      category=bot.get_channel(1012943676332331118))
+        vcTxt[str(vc1.id)] = txt1.id
+        print(after.channel.members)
+        print(len(after.channel.members))
+        msgToSend = """y.ren [名前] で部屋の名前を変える
             例｜y.ren 私のおうち
             y.lim [人数] で部屋の人数制限を変える
             例｜y.lim 4（半角
             y.del でチャンネルを削除"""
-            await txt1.send(msgToSend)
+        await txt1.send(msgToSend)
 
-            try:
-                prof_channel = bot.get_channel(995656569301774456)
-                prof_messages = await prof_channel.history(limit=1000).flatten()
-                print(prof_messages)
-                for x in prof_messages:
-                    if x.author.id == member.id:
-                        await txt1.send(x.content)
-            except:
-                pass
-            return
+        try:
+            prof_channel = bot.get_channel(995656569301774456)
+            prof_messages = await prof_channel.history(limit=1000).flatten()
+            print(prof_messages)
+            for x in prof_messages:
+                if x.author.id == member.id:
+                    await txt1.send(x.content)
+        except:
+            pass
+        return
+    try:
         role1 = vcRole.get(str(after.channel.id))
         role1 = member.guild.get_role(role1)
         txt1 = vcTxt.get(str(after.channel.id))
@@ -165,26 +189,27 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
         await member.add_roles(role1)
         prof_channel = bot.get_channel(995656569301774456)
         prof_messages = await prof_channel.history(limit=1000).flatten()
-        print(prof_messages)
         for x in prof_messages:
             if x.author.id == member.id:
                 await txt1.send(x.content)
+    except:
+        pass
 
-    if after.channel is None:
-        print(before.channel.members)
-        print(len(before.channel.members))
-        if len(before.channel.members) == 0:
-            txt1 = vcTxt.get(str(before.channel.id))
-            print(txt1)
-            print(type(txt1))
-            txt1 = bot.get_channel(txt1)
-            await txt1.delete()
-            role1 = vcRole.get(str(before.channel.id))
-            role1 = member.guild.get_role(role1)
-            await role1.delete()
-            await before.channel.delete()
-            vcRole.pop(str(before.channel.id))
-            vcTxt.pop(str(before.channel.id))
+    # if after.channel is None:
+    #     print(before.channel.members)
+    #     print(len(before.channel.members))
+    if not before.channel is None and len(before.channel.members) == 0:
+        txt1 = vcTxt.get(str(before.channel.id))
+        print(txt1)
+        print(type(txt1))
+        txt1 = bot.get_channel(txt1)
+        await txt1.delete()
+        role1 = vcRole.get(str(before.channel.id))
+        role1 = member.guild.get_role(role1)
+        await role1.delete()
+        await before.channel.delete()
+        vcRole.pop(str(before.channel.id))
+        vcTxt.pop(str(before.channel.id))
 
 
 bot.run(TOKEN)
