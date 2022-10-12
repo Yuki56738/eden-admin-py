@@ -129,7 +129,7 @@ async def on_message(message: Message):
             vcTxt = json.load(f)
         with open("vcRole.json", "r") as f:
             vcRole = json.load(f)
-        with open ("txtMsg.json", "r") as f:
+        with open("txtMsg.json", "r") as f:
             txtMsg = json.load(f)
 
 
@@ -145,13 +145,27 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
         print("hit.")
         # await member.guild.system_channel.send("hit.")
         role1 = await member.guild.create_role(name=f"{member.name}の部屋")
+        memberRole = member.guild.get_role(997644021067415642)
         # perm1 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.none())
-        perm1 = PermissionOverwrite().from_pair(Permissions.all(), Permissions.none())
+        perm1 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.none())
+        perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
+        # perm2.update(connect=True)
+        # perm2.update(speak=True)
+        # perm2.update(use_slash_commands=True)
+        perm2.update(connect=True)
+        perm2.update(speak=True)
+        # perm1.update(value=689379286592)
+        perm1.update(read_message_history=True)
+        perm1.update(read_messages=True)
+        perm1.update(send_messages=True)
+        perm1.update(use_slash_commands=True)
         vc1 = await member.guild.create_voice_channel(f"{member.name}の部屋", overwrites={role1: perm1,
+                                                                                         memberRole: perm2,
                                                                                          member.guild.default_role: PermissionOverwrite().from_pair(
-                                                                                             Permissions.general(),
-                                                                                             Permissions.text())},
-                                                      category=bot.get_channel(1012943676332331118))
+                                                                                             Permissions.none(),
+                                                                                             Permissions.all())
+                                                                                         },
+                                                      category=bot.get_channel(1012943676332331118), user_limit=2)
         vcRole[str(vc1.id)] = role1.id
         print(vcRole)
         await member.add_roles(role1)
@@ -162,8 +176,6 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
                                                                                                   Permissions.all())},
                                                       category=bot.get_channel(1012943676332331118))
         vcTxt[str(vc1.id)] = txt1.id
-        print(after.channel.members)
-        print(len(after.channel.members))
         msgToSend = """y.ren [名前] で部屋の名前を変える
             例｜y.ren 私のおうち
             y.lim [人数] で部屋の人数制限を変える
