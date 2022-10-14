@@ -96,13 +96,29 @@ async def on_message(message: Message):
         return
     if message.channel.id == 996367967925305464:
         try:
-            msg1 = txtMsg.get(str(message.channel.id))
-            msg1 = bot.get_message(msg1)
+            msg1_id = txtMsg[str(message.channel.id)]
+            msg1 = bot.get_message(msg1_id)
             await msg1.delete()
         except:
             pass
-        msg2 = await message.channel.send(embed=Embed(description="テスト"))
+        msg2 = await message.channel.send(embed=Embed(description="""
+頭に思い浮かぶ言葉を呟こう！猥談・規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止とします。なお、会話が盛り上がる場合は返信は良しとしますが、できれば 🏢チャット等で話しましょう。"""))
         txtMsg[str(message.channel.id)] = msg2.id
+    if message.channel.id == 995656569301774456:
+        msg3 = await message.channel.send(embed=Embed(description="""
+【 名前／年齢／性別 】　　　　　
+【 趣味／好きな話題 】
+【 診断結果(MBTI) 】
+【 サーバを知った場所 】
+【 ボイスチャットに参加できる時間帯 】
+【一言】"""))
+        txtMsg[str(message.channel.id)] = msg3.id
+        try:
+            msg3_id = txtMsg[str(message.channel.id)]
+            msg3 = bot.get_message(msg3_id)
+            await msg3.delete()
+        except:
+            pass
     if message.content.startswith("y.lim"):
         msg = message.content
         msg = re.sub("y.lim ", "", msg)
@@ -186,7 +202,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
         try:
             prof_channel = bot.get_channel(995656569301774456)
             prof_messages = await prof_channel.history(limit=1000).flatten()
-            print(prof_messages)
+            # print(prof_messages)
             for x in prof_messages:
                 if x.author.id == member.id:
                     await txt1.send(x.content)
