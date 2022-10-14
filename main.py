@@ -33,7 +33,6 @@ async def on_ready():
         txtMsg = json.load(f)
     print("Loaded bot state.")
 
-
 @bot.event
 async def on_reaction_add(reaction: Reaction, user: User):
     print(reaction.message.author)
@@ -95,16 +94,26 @@ async def on_message(message: Message):
                 pass
         return
     if message.channel.id == 996367967925305464:
+        # try:
+        msg1_id = int(0)
         try:
-            msg1_id = txtMsg[str(message.channel.id)]
-            msg1 = bot.get_message(msg1_id)
+            msg1_id = txtMsg[str(996367967925305464)]
+            msg1 = await message.channel.fetch_message(msg1_id)
             await msg1.delete()
         except:
             pass
+        # except:
+        #     pass
         msg2 = await message.channel.send(embed=Embed(description="""
 頭に思い浮かぶ言葉を呟こう！猥談・規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止とします。なお、会話が盛り上がる場合は返信は良しとしますが、できれば 🏢チャット等で話しましょう。"""))
-        txtMsg[str(message.channel.id)] = msg2.id
+        txtMsg[str(996367967925305464)] = msg2.id
     if message.channel.id == 995656569301774456:
+        try:
+            msg1_id = txtMsg[str(message.channel.id)]
+            msg1 = await message.channel.fetch_message(msg1_id)
+            await msg1.delete()
+        except:
+            pass
         msg3 = await message.channel.send(embed=Embed(description="""
 【 名前／年齢／性別 】　　　　　
 【 趣味／好きな話題 】
@@ -112,13 +121,33 @@ async def on_message(message: Message):
 【 サーバを知った場所 】
 【 ボイスチャットに参加できる時間帯 】
 【一言】"""))
-        txtMsg[str(message.channel.id)] = msg3.id
+        txtMsg[str(995656569301774456)] = msg3.id
+    if message.channel.id == 1016234230549843979:
         try:
-            msg3_id = txtMsg[str(message.channel.id)]
-            msg3 = bot.get_message(msg3_id)
-            await msg3.delete()
+            msg4_id = txtMsg[str(message.channel.id)]
+            msg4 = await message.channel.fetch_message(msg4_id)
+            await msg4.delete()
         except:
             pass
+        msg2 = await message.channel.send(embed=Embed(description="""
+【 名前／年齢 ／性別 】／／
+【 対象／好み 】例：女性／カワボ／／
+【 S or M 】
+【 好きなプレイ 】例：イチャ甘／／
+【 嫌いなプレイ 】例：バチボコ／／
+【 セーフワード 】例：エンド
+【 寝落ちの可否 】
+【 公開 ／複数 】例：OK／複数は女性のみ
+【ＰＲ】 
+【 固定について 】・いる or いない
+　　　　　　　  　・作りたい or 作りたくない
+【 固定の価値観 】例：ネット彼氏、彼女、プレイが好き
+―――――――――――――――――
+＊固定さん以外との関係　　
+  【 DM・フレンド申請 】〇 or ✕
+  【 エロイプ 】〇 or ✕
+  【 個室の利用 】〇 or ✕"""))
+        txtMsg[str(message.channel.id)] = msg2.id
     if message.content.startswith("y.lim"):
         msg = message.content
         msg = re.sub("y.lim ", "", msg)
