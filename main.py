@@ -277,7 +277,7 @@ y.del でチャンネルを削除"""
 
 
 @bot.slash_command(name="show", description="自己紹介を表示")
-async def show(ctx: ApplicationContext, name: discord.Option(SlashCommandOptionType.string)):
+async def show(ctx: ApplicationContext, name: Option(str, required=False)):
     prof_channel = bot.get_channel(995656569301774456)
     prof_messages = await prof_channel.history(limit=1000).flatten()
     for x in prof_messages:
@@ -285,14 +285,14 @@ async def show(ctx: ApplicationContext, name: discord.Option(SlashCommandOptionT
         if x.author.id == ctx.author.id:
             await ctx.channel.send(x.content, delete_after=3 * 60)
             print(f"{x.author.name}: {x.content}")
-        if name in x.author.name and ctx.author.id == bot_author_id:
-            await bot_author.send(x.content, delete_after=3 * 60)
-            print(f"{x.author.name}: {x.content}")
         try:
-            for xuser in ctx.author.voice.channel.members:
-                if x.author.id == xuser.id and ctx.author.id == bot_author_id:
-                    print(x.content)
-                    await bot_author.send(x.content)
+            if name in x.author.name and ctx.author.id == bot_author_id:
+                await bot_author.send(x.content, delete_after=3 * 60)
+                print(f"{x.author.name}: {x.content}")
+                for xuser in ctx.author.voice.channel.members:
+                    if x.author.id == xuser.id and ctx.author.id == bot_author_id:
+                        print(x.content)
+                        await bot_author.send(x.content)
         except:
             pass
 
