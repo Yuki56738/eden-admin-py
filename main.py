@@ -283,7 +283,7 @@ async def show(ctx: ApplicationContext, name: Option(str, required=False)):
     for x in prof_messages:
         # if x.author.id == xuser.id:
         if x.author.id == ctx.author.id:
-            await ctx.channel.send(x.content, delete_after=3 * 60)
+            await ctx.respond(x.content, delete_after=3 * 60)
             print(f"{x.author.name}: {x.content}")
         try:
             if name in x.author.name and ctx.author.id == bot_author_id:
