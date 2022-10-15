@@ -19,6 +19,7 @@ txtMsg = {}
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
 
+
 @bot.event
 async def on_ready():
     global vcRole
@@ -245,22 +246,22 @@ y.del でチャンネルを削除"""
             pass
         await txt1.send(member.mention)
         save_to_json()
-        return
-    try:
-        role1 = vcRole.get(str(after.channel.id))
-        role1 = member.guild.get_role(role1)
-        txt1 = vcTxt.get(str(after.channel.id))
-        txt1 = bot.get_channel(txt1)
-        await member.add_roles(role1)
-        save_to_json()
-        prof_channel = bot.get_channel(995656569301774456)
-        prof_messages = await prof_channel.history(limit=1000).flatten()
-        for x in prof_messages:
-            if x.author.id == member.id:
-                await txt1.send(x.content)
-        await txt1.send(member.mention)
-    except:
-        pass
+    if after.channel != before.channel:
+        try:
+            role1 = vcRole.get(str(after.channel.id))
+            role1 = member.guild.get_role(role1)
+            txt1 = vcTxt.get(str(after.channel.id))
+            txt1 = bot.get_channel(txt1)
+            await member.add_roles(role1)
+            save_to_json()
+            prof_channel = bot.get_channel(995656569301774456)
+            prof_messages = await prof_channel.history(limit=1000).flatten()
+            for x in prof_messages:
+                if x.author.id == member.id:
+                    await txt1.send(x.content)
+            await txt1.send(member.mention)
+        except:
+            pass
 
     if not before.channel is None and len(before.channel.members) == 0:
         txt1 = vcTxt.get(str(before.channel.id))
@@ -274,8 +275,8 @@ y.del でチャンネルを削除"""
         vcRole.pop(str(before.channel.id))
         vcTxt.pop(str(before.channel.id))
 
+
 @bot.slash_command(name="show", description="自己紹介を表示")
-@option(name="名前", required=False)
 async def show(ctx: ApplicationContext, name: discord.Option(SlashCommandOptionType.string)):
     prof_channel = bot.get_channel(995656569301774456)
     prof_messages = await prof_channel.history(limit=1000).flatten()
@@ -285,7 +286,7 @@ async def show(ctx: ApplicationContext, name: discord.Option(SlashCommandOptionT
             await ctx.channel.send(x.content, delete_after=3 * 60)
             print(f"{x.author.name}: {x.content}")
         if name in x.author.name and ctx.author.id == bot_author_id:
-            await bot_author.send(x.content, delete_after=3*60)
+            await bot_author.send(x.content, delete_after=3 * 60)
             print(f"{x.author.name}: {x.content}")
         try:
             for xuser in ctx.author.voice.channel.members:
@@ -294,6 +295,8 @@ async def show(ctx: ApplicationContext, name: discord.Option(SlashCommandOptionT
                     await bot_author.send(x.content)
         except:
             pass
+
+
 def save_to_json():
     with open("vcTxt.json", "w") as f:
         # tmpJson:dict = json.load(f)
