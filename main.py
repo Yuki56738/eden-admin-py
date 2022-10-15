@@ -16,6 +16,8 @@ vcRole = {}
 vcTxt = {}
 txtMsg = {}
 
+bot_author_id = 451028171131977738
+bot_author = bot.get_user(bot_author_id)
 
 @bot.event
 async def on_ready():
@@ -272,7 +274,26 @@ y.del でチャンネルを削除"""
         vcRole.pop(str(before.channel.id))
         vcTxt.pop(str(before.channel.id))
 
-
+@bot.slash_command(name="show", description="自己紹介を表示")
+@option(name="名前", required=False)
+async def show(ctx: ApplicationContext, name: discord.Option(SlashCommandOptionType.string)):
+    prof_channel = bot.get_channel(995656569301774456)
+    prof_messages = await prof_channel.history(limit=1000).flatten()
+    for x in prof_messages:
+        # if x.author.id == xuser.id:
+        if x.author.id == ctx.author.id:
+            await ctx.channel.send(x.content, delete_after=3 * 60)
+            print(f"{x.author.name}: {x.content}")
+        if name in x.author.name and ctx.author.id == bot_author_id:
+            await bot_author.send(x.content, delete_after=3*60)
+            print(f"{x.author.name}: {x.content}")
+        try:
+            for xuser in ctx.author.voice.channel.members:
+                if x.author.id == xuser.id and ctx.author.id == bot_author_id:
+                    print(x.content)
+                    await bot_author.send(x.content)
+        except:
+            pass
 def save_to_json():
     with open("vcTxt.json", "w") as f:
         # tmpJson:dict = json.load(f)
