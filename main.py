@@ -36,9 +36,6 @@ async def on_ready():
 
 @bot.event
 async def on_reaction_add(reaction: Reaction, user: User):
-    print(reaction.message.author)
-    print(user.name)
-
     txt2 = bot.get_channel(1024881096518803466)
     if reaction.message.channel.id == 1021255885542137939:
         await txt2.send(f"{user.mention} から {reaction.message.author.mention} へ募集がありました！")
@@ -57,9 +54,6 @@ async def on_message(message: Message):
     if message.content.startswith(".debug"):
         print(f"vcRole: {vcRole}")
         print(f"vcTxt: {vcTxt}")
-        for x in vcTxt:
-            print(x)
-            print(type(x))
     if message.content.startswith("y.ren"):
         msg = message.content
         msg = re.sub("y.ren ", "", msg)
@@ -108,6 +102,7 @@ async def on_message(message: Message):
         msg2 = await message.channel.send(embed=Embed(description="""
 頭に思い浮かぶ言葉を呟こう！猥談・規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止とします。なお、会話が盛り上がる場合は返信は良しとしますが、できれば 🏢チャット等で話しましょう。"""))
         txtMsg[str(996367967925305464)] = msg2.id
+        save_to_json()
     if message.channel.id == 995656569301774456:
         try:
             msg1_id = txtMsg[str(message.channel.id)]
@@ -123,6 +118,7 @@ async def on_message(message: Message):
 【 ボイスチャットに参加できる時間帯 】
 【一言】"""))
         txtMsg[str(995656569301774456)] = msg3.id
+        save_to_json()
     if message.channel.id == 1016234230549843979:
         try:
             msg4_id = txtMsg[str(message.channel.id)]
@@ -149,6 +145,7 @@ async def on_message(message: Message):
   【 エロイプ 】〇 or ✕
   【 個室の利用 】〇 or ✕"""))
         txtMsg[str(message.channel.id)] = msg2.id
+        save_to_json()
     if message.content.startswith("y.lim"):
         msg = message.content
         msg = re.sub("y.lim ", "", msg)
@@ -168,6 +165,7 @@ async def on_message(message: Message):
             json.dump(vcRole, f)
         with open("txtMsg.json", "w") as f:
             json.dump(txtMsg, f)
+        print("Saved bot state.")
     if message.content.startswith("y.load"):
         # await message.guild.system_channel.send("Loading bot state...")
         print("Loading bot state...")
@@ -177,6 +175,7 @@ async def on_message(message: Message):
             vcRole = json.load(f)
         with open("txtMsg.json", "r") as f:
             txtMsg = json.load(f)
+        print("Loaded bot state.")
 
 
 @bot.event
@@ -219,7 +218,6 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
                                                                                          },
                                                       category=bot.get_channel(1012943676332331118), user_limit=2)
         vcRole[str(vc1.id)] = role1.id
-        print(vcRole)
         await member.add_roles(role1)
         await member.move_to(vc1)
         txt1 = await member.guild.create_text_channel(name=f"{member.name}の部屋", overwrites={role1: perm1,
@@ -235,16 +233,16 @@ y.lim [人数] で部屋の人数制限を変える
 例｜y.lim 4（半角
 y.del でチャンネルを削除"""
         await txt1.send(msgToSend)
-
         try:
             prof_channel = bot.get_channel(995656569301774456)
             prof_messages = await prof_channel.history(limit=1000).flatten()
-            # print(prof_messages)
             for x in prof_messages:
                 if x.author.id == member.id:
                     await txt1.send(x.content)
         except:
             pass
+        await txt1.send(member.mention)
+        save_to_json()
         return
     try:
         role1 = vcRole.get(str(after.channel.id))
@@ -252,29 +250,38 @@ y.del でチャンネルを削除"""
         txt1 = vcTxt.get(str(after.channel.id))
         txt1 = bot.get_channel(txt1)
         await member.add_roles(role1)
+        save_to_json()
         prof_channel = bot.get_channel(995656569301774456)
         prof_messages = await prof_channel.history(limit=1000).flatten()
         for x in prof_messages:
             if x.author.id == member.id:
                 await txt1.send(x.content)
+        await txt1.send(member.mention)
     except:
         pass
 
-    # if after.channel is None:
-    #     print(before.channel.members)
-    #     print(len(before.channel.members))
     if not before.channel is None and len(before.channel.members) == 0:
         txt1 = vcTxt.get(str(before.channel.id))
-        print(txt1)
-        print(type(txt1))
         txt1 = bot.get_channel(txt1)
         await txt1.delete()
         role1 = vcRole.get(str(before.channel.id))
         role1 = member.guild.get_role(role1)
         await role1.delete()
         await before.channel.delete()
+        save_to_json()
         vcRole.pop(str(before.channel.id))
         vcTxt.pop(str(before.channel.id))
+
+
+def save_to_json():
+    with open("vcTxt.json", "w") as f:
+        # tmpJson:dict = json.load(f)
+        json.dump(vcTxt, f)
+    with open("vcRole.json", "w") as f:
+        json.dump(vcRole, f)
+    with open("txtMsg.json", "w") as f:
+        json.dump(txtMsg, f)
+    print("Saved bot state.")
 
 
 bot.run(TOKEN)
