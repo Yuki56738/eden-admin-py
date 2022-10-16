@@ -16,26 +16,27 @@ vcRole = {}
 vcTxt = {}
 txtMsg = {}
 guildsettings = {
-                    # "guild_id": {
-                    #     "prof_channel": "prof_channel",
-                    #     "member_role": "role id",
-                    #     "create_vc_channel": "vcid",
-                    #     "category": "id"
-                    # }
-                        "994483180927201400": {
-                            "prof_channel": 995656569301774456,
-                            "member_role": 997644021067415642,
-                            "create_vc_channel": 1019948085876629516,
-                            "vc_category" : 1012943676332331118,
-                            "mention_channel": 1031256109555666966
-                        },
-                        "977138017095520256":{
-                            "prof_channel": 1018726552936128553,
-                            "member_role": 1028601169498615858,
-                            "create_vc_channel": 1028601419131002930,
-                            "vc_category": 977138017095520258
-                        }
-                 }
+    # "guild_id": {
+    #     "prof_channel": "prof_channel",
+    #     "member_role": "role id",
+    #     "create_vc_channel": "vcid",
+    #     "category": "id"
+    # }
+    "994483180927201400": {
+        "prof_channel": 995656569301774456,
+        "member_role": 997644021067415642,
+        "create_vc_channel": 1019948085876629516,
+        "vc_category": 1012943676332331118,
+        "mention_channel": 1031256109555666966
+    },
+    "977138017095520256": {
+        "prof_channel": 1018726552936128553,
+        "member_role": 1028601169498615858,
+        "create_vc_channel": 1028601419131002930,
+        "vc_category": 977138017095520258,
+        "mention_channel": 977138017095520259
+    }
+}
 
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
@@ -213,7 +214,7 @@ async def on_message(message: Message):
         memberRole = message.guild.get_role(guildsettings[str(message.guild.id)]["member_role"])
         memberPerm = PermissionOverwrite().from_pair(Permissions.advanced().general(), Permissions.all())
         memberPerm.update(view_channel=True)
-        await vc1.edit(overwrites={message.guild.default_role: memberPerm})
+        await vc1.edit(overwrites={memberRole: memberPerm})
     if message.mentions:
         try:
             vc1 = message.author.voice.channel
@@ -242,6 +243,7 @@ async def on_message(message: Message):
                     await vc1.edit(overwrites={x: perm1})
         except:
             pass
+
 
 @bot.event
 async def on_voice_state_update(member: Member, before: VoiceState, after: VoiceState):
@@ -295,11 +297,11 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
                                                       category=cat1)
         vcTxt[str(vc1.id)] = txt1.id
         msgToSend = """
-y.ren [名前] で部屋の名前を変える
-例｜y.ren 私のおうち
-y.lim [人数] で部屋の人数制限を変える
-例｜y.lim 4（半角
-y.close でこの部屋に入れる人を限定する。"""
+/name [名前] で部屋の名前を変える
+例｜/name 私のおうち
+/limit [人数] で部屋の人数制限を変える
+例｜/limit 4（半角
+/close でこの部屋に入れる人を限定する。ルームキーにてメンションされた人は入れるようになる。"""
         await txt1.send(msgToSend)
         try:
             # prof_channel = bot.get_channel(995656569301774456)
@@ -348,25 +350,96 @@ y.close でこの部屋に入れる人を限定する。"""
 
 
 @bot.slash_command(name="show", description="自己紹介を表示")
-async def show(ctx: ApplicationContext, name: Option(str, required=False, description="名前")):
-    prof_channel_id = guildsettings[str(member.guild.id)]["prof_channel"]
+async def show(ctx: ApplicationContext, name: Option(str, required=True, description="名前")):
+    prof_channel_id = guildsettings[str(ctx.guild.id)]["prof_channel"]
     prof_channel = bot.get_channel(prof_channel_id)
     prof_messages = await prof_channel.history(limit=1000).flatten()
+    # await ctx.respond("自己紹介...", ephemeral=True, delete_after=3*60)
+    # print(ctx.author.guild_permissions)
+    tosendmsg = ""
     for x in prof_messages:
         # if x.author.id == xuser.id:
         if x.author.id == ctx.author.id:
-            await ctx.respond(x.content, delete_after=3 * 60)
+            # await ctx.send_followup(x.content, delete_after=3 * 60, ephemeral=True)
+            # tosendmsg = tosendmsg + x.content
             print(f"{x.author.name}: {x.content}")
-        try:
-            if name in x.author.name and ctx.author.id == bot_author_id:
-                await bot_author.send(x.content, delete_after=3 * 60)
-                print(f"{x.author.name}: {x.content}")
-                for xuser in ctx.author.voice.channel.members:
-                    if x.author.id == xuser.id and ctx.author.id == bot_author_id:
-                        print(x.content)
-                        await bot_author.send(x.content)
-        except:
-            pass
+
+        # for xuser in ctx.author.voice.channel.members:
+        #     if x.author.id == xuser.id and not ctx.author.id:
+        #         print(x.content)
+        #         # await ctx.send_followup(x.content, delete_after=3*60, ephemeral=True)
+        #         tosendmsg = tosendmsg + x.content
+
+        if name in x.author.display_name:
+            # await ctx.send_followup(x.content, delete_after=3 * 60, ephemeral=True)
+            tosendmsg = tosendmsg + x.content
+            print(f"{x.author.name}: {x.content}")
+    if tosendmsg == "":
+        tosendmsg = "該当なし"
+    await ctx.respond(embed=Embed(description=tosendmsg), delete_after=3 * 60, ephemeral=True)
+
+
+@bot.slash_command(name="close", description="この部屋に入れる人を限定する。")
+async def close(ctx: ApplicationContext):
+    try:
+        vcTxt[str(ctx.author.voice.channel.id)]
+    except:
+        return
+    vc1 = ctx.author.voice.channel
+    role1 = ctx.guild.get_role(vcRole[str(ctx.author.voice.channel.id)])
+    perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
+    perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
+    # perm2.update(connect=True)
+    # perm2.update(speak=True)
+    # perm2.update(use_slash_commands=True)
+    perm2.update(connect=True)
+    perm2.update(speak=True)
+    # perm1.update(value=689379286592)
+    perm1.update(read_message_history=True)
+    perm1.update(read_messages=True)
+    perm1.update(send_messages=True)
+    perm1.update(use_slash_commands=True)
+    perm1.update(connect=True, speak=True)
+    perms1 = Permissions.advanced().general().voice()
+    perm1.update(mute_members=False)
+    perm1.update(move_members=False, deafen_members=False)
+    perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
+    # memberRole = message.author.guild.get_role(997644021067415642)
+    memberRole = ctx.guild.get_role(guildsettings[str(ctx.guild.id)]["member_role"])
+    memberPerm = PermissionOverwrite().from_pair(Permissions.advanced().general(), Permissions.all())
+    memberPerm.update(view_channel=True)
+    await vc1.edit(overwrites={role1: perm1,
+                               memberRole: memberPerm,
+                               ctx.guild.default_role: PermissionOverwrite().from_pair(
+                                   Permissions.none(),
+                                   Permissions.all())
+                               }
+                   )
+    await ctx.respond(embed=Embed(description="完了."))
+
+
+@bot.slash_command(description="この部屋の名前を変える.")
+async def name(ctx: ApplicationContext, name: Option(str, description="名前", required=True)):
+    try:
+        txt1 = vcTxt.get(str(ctx.author.voice.channel.id))
+        txt1 = bot.get_channel(txt1)
+    except:
+        return
+    await txt1.edit(name=name)
+    vc1 = ctx.author.voice.channel
+    await vc1.edit(name=name)
+    await ctx.respond(embed=Embed(description="完了."))
+
+
+@bot.slash_command(description="部屋の人数制限を変える")
+async def limit(ctx: ApplicationContext, lim: Option(int, description="人数", required=True)):
+    try:
+        txt1 = vcTxt.get(str(ctx.author.voice.channel.id))
+        txt1 = bot.get_channel(txt1)
+    except:
+        return
+    await ctx.author.voice.channel.edit(user_limit=int(lim))
+    await ctx.respond(embed=Embed(description="完了."))
 
 
 def save_to_json():
