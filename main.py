@@ -22,7 +22,19 @@ guildsettings = {
                     #     "create_vc_channel": "vcid",
                     #     "category": "id"
                     # }
-
+                        "994483180927201400": {
+                            "prof_channel": 995656569301774456,
+                            "member_role": 997644021067415642,
+                            "create_vc_channel": 1019948085876629516,
+                            "vc_category" : 1012943676332331118,
+                            "mention_channel": 1031256109555666966
+                        },
+                        "977138017095520256":{
+                            "prof_channel": 1018726552936128553,
+                            "member_role": 1028601169498615858,
+                            "create_vc_channel": 1028601419131002930,
+                            "vc_category": 977138017095520258
+                        }
                  }
 
 bot_author_id = 451028171131977738
@@ -47,10 +59,12 @@ async def on_ready():
 
 
 @bot.event
-async def on_reaction_add(reaction: Reaction, user: User):
+async def on_raw_reaction_add(reaction: RawReactionActionEvent):
+    print("reaction")
     txt2 = bot.get_channel(1024881096518803466)
-    if reaction.message.channel.id == 1021255885542137939:
-        await txt2.send(f"{user.mention} から {reaction.message.author.mention} へ募集がありました！")
+    msg1 = await reaction.member.guild.get_channel(1021255885542137939).fetch_message(reaction.message_id)
+    if reaction.channel_id == 1021255885542137939:
+        await txt2.send(f"{reaction.member.mention} から {msg1.author.mention} へ募集がありました！")
 
 
 @bot.event
@@ -81,7 +95,8 @@ async def on_message(message: Message):
     if message.content.startswith("y.show") or message.content.startswith("my.show"):
         msg = message.content
         msg = re.sub("y.show ", "", msg)
-        prof_channel = bot.get_channel(995656569301774456)
+        # prof_channel = bot.get_channel(995656569301774456)
+        prof_channel = bot.get_channel(guildsettings[str(message.guild.id)]["prof_channel"])
         prof_messages = await prof_channel.history(limit=1000).flatten()
         # print(prof_messages)
         # for xuser in message.author.voice.channel.members:
@@ -194,22 +209,53 @@ async def on_message(message: Message):
         except:
             return
         vc1 = message.author.voice.channel
-        memberRole = message.author.guild.get_role(997644021067415642)
-        await vc1.edit(overwrites={memberRole: PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())})
-
+        # memberRole = message.author.guild.get_role(997644021067415642)
+        memberRole = message.guild.get_role(guildsettings[str(message.guild.id)]["member_role"])
+        memberPerm = PermissionOverwrite().from_pair(Permissions.advanced().general(), Permissions.all())
+        memberPerm.update(view_channel=True)
+        await vc1.edit(overwrites={message.guild.default_role: memberPerm})
+    if message.mentions:
+        try:
+            vc1 = message.author.voice.channel
+            txt1_id = vcTxt[str(str(vc1.id))]
+            txt1 = bot.get_channel(txt1_id)
+            perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
+            perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
+            # perm2.update(connect=True)
+            # perm2.update(speak=True)
+            # perm2.update(use_slash_commands=True)
+            perm2.update(connect=True)
+            perm2.update(speak=True)
+            # perm1.update(value=689379286592)
+            perm1.update(read_message_history=True)
+            perm1.update(read_messages=True)
+            perm1.update(send_messages=True)
+            perm1.update(use_slash_commands=True)
+            perm1.update(connect=True, speak=True)
+            perms1 = Permissions.advanced().general().voice()
+            perm1.update(mute_members=False)
+            perm1.update(move_members=False, deafen_members=False)
+            role1 = message.guild.get_role(vcRole[str(vc1.id)])
+            if message.channel.id == guildsettings[str(message.guild.id)]["mention_channel"]:
+                for x in message.mentions:
+                    await x.add_roles(role1)
+                    await vc1.edit(overwrites={x: perm1})
+        except:
+            pass
 
 @bot.event
 async def on_voice_state_update(member: Member, before: VoiceState, after: VoiceState):
-    # print("hit.")
-    # print(before.channel)
-    # print(after.channel)
-    if not member.guild.id == 994483180927201400:
+    try:
+        guild1 = guildsettings[str(member.guild.id)]
+    except:
         return
-        # if before.channel is None:
-    if not after.channel is None and after.channel.id == 1019948085876629516:
+
+    # if not after.channel is None and after.channel.id == 1019948085876629516:
+    if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel"]:
         print("hit.")
         # await member.guild.system_channel.send("hit.")
-        memberRole = member.guild.get_role(997644021067415642)
+        # memberRole = member.guild.get_role(997644021067415642)
+        memberRole = member.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
         # perm1 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.none())
         perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
         perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
@@ -227,34 +273,38 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
         perms1 = Permissions.advanced().general().voice()
         perm1.update(mute_members=False)
         perm1.update(move_members=False, deafen_members=False)
-        perms1.update(mute_members=False, move_members=False, deafen_members=False)
+        perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
         # perms1.update(connect=True, speak=True)
         role1 = await member.guild.create_role(name=f"{member.name}の部屋", permissions=perms1)
+        cat1 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
         vc1 = await member.guild.create_voice_channel(f"{member.name}の部屋", overwrites={role1: perm1,
                                                                                          memberRole: perm2,
                                                                                          member.guild.default_role: PermissionOverwrite().from_pair(
                                                                                              Permissions.none(),
                                                                                              Permissions.all())
                                                                                          },
-                                                      category=bot.get_channel(1012943676332331118), user_limit=2)
+                                                      category=cat1, user_limit=2)
         vcRole[str(vc1.id)] = role1.id
+        # await role1.edit(position=8)
         await member.add_roles(role1)
         await member.move_to(vc1)
         txt1 = await member.guild.create_text_channel(name=f"{member.name}の部屋", overwrites={role1: perm1,
                                                                                               member.guild.default_role: PermissionOverwrite().from_pair(
                                                                                                   Permissions.none(),
                                                                                                   Permissions.all())},
-                                                      category=bot.get_channel(1012943676332331118))
+                                                      category=cat1)
         vcTxt[str(vc1.id)] = txt1.id
         msgToSend = """
 y.ren [名前] で部屋の名前を変える
 例｜y.ren 私のおうち
 y.lim [人数] で部屋の人数制限を変える
 例｜y.lim 4（半角
-y.close で他の人からこの部屋をみえなくする。"""
+y.close でこの部屋に入れる人を限定する。"""
         await txt1.send(msgToSend)
         try:
-            prof_channel = bot.get_channel(995656569301774456)
+            # prof_channel = bot.get_channel(995656569301774456)
+            prof_channel_id = guildsettings[str(member.guild.id)]["prof_channel"]
+            prof_channel = bot.get_channel(prof_channel_id)
             prof_messages = await prof_channel.history(limit=1000).flatten()
             for x in prof_messages:
                 if x.author.id == member.id:
@@ -272,7 +322,9 @@ y.close で他の人からこの部屋をみえなくする。"""
             txt1 = bot.get_channel(txt1)
             await member.add_roles(role1)
             save_to_json()
-            prof_channel = bot.get_channel(995656569301774456)
+            # prof_channel = bot.get_channel(995656569301774456)
+            prof_channel_id = guildsettings[str(member.guild.id)]["prof_channel"]
+            prof_channel = bot.get_channel(prof_channel_id)
             prof_messages = await prof_channel.history(limit=1000).flatten()
             for x in prof_messages:
                 if x.author.id == member.id:
@@ -296,7 +348,8 @@ y.close で他の人からこの部屋をみえなくする。"""
 
 @bot.slash_command(name="show", description="自己紹介を表示")
 async def show(ctx: ApplicationContext, name: Option(str, required=False, description="名前")):
-    prof_channel = bot.get_channel(995656569301774456)
+    prof_channel_id = guildsettings[str(member.guild.id)]["prof_channel"]
+    prof_channel = bot.get_channel(prof_channel_id)
     prof_messages = await prof_channel.history(limit=1000).flatten()
     for x in prof_messages:
         # if x.author.id == xuser.id:
