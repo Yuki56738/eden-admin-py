@@ -270,7 +270,6 @@ async def on_message(message: Message):
         except:
             pass
 
-
 @bot.event
 async def on_voice_state_update(member: Member, before: VoiceState, after: VoiceState):
     try:
