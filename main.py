@@ -7,6 +7,7 @@ import discord
 from discord import *
 import json
 
+
 # from discord.ui import *
 
 load_dotenv()
@@ -18,32 +19,28 @@ bot = discord.Bot(intents=intents)
 vcRole = {}
 vcTxt = {}
 txtMsg = {}
-guildsettings = {
-    # "guild_id": {
-    #     "prof_channel": "prof_channel",
-    #     "member_role": "role id",
-    #     "create_vc_channel": "vcid",
-    #     "category": "id"
-    # }
-    "994483180927201400": {
-        "prof_channel": 995656569301774456,
-        "member_role": 997644021067415642,
-        "create_vc_channel": 1019948085876629516,
-        "vc_category": 1012943676332331118,
-        "mention_channel": 1031256109555666966,
-        "note_channels": {
-            "996367967925305464": """
-頭に思い浮かぶ言葉を呟こう！猥談・規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止とします。なお、会話が盛り上がる場合は返信は良しとしますが、できれば 🏢チャット等で話しましょう。"""
-        }
-    },
-    "977138017095520256": {
-        "prof_channel": 1018726552936128553,
-        "member_role": 1028601169498615858,
-        "create_vc_channel": 1028601419131002930,
-        "vc_category": 977138017095520258,
-        "mention_channel": 977138017095520259
-    }
-}
+guildsettings = {}
+# guildsettings = {
+#     "994483180927201400": {
+#         "prof_channel": 995656569301774456,
+#         "member_role": 997644021067415642,
+#         "create_vc_channel": 1019948085876629516,
+#         "vc_category": 1012943676332331118,
+#         "mention_channel": 1031256109555666966,
+#         "note_channels": {
+#             "996367967925305464": """
+# 頭に思い浮かぶ言葉を呟こう！猥談・規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止とします。なお、会話が盛り上がる場合は返信は良しとしますが、できれば 🏢チャット等で話しましょう。"""
+#             # "995656569301774456":
+#         }
+#     },
+#     "977138017095520256": {
+#         "prof_channel": 1018726552936128553,
+#         "member_role": 1028601169498615858,
+#         "create_vc_channel": 1028601419131002930,
+#         "vc_category": 977138017095520258,
+#         "mention_channel": 977138017095520259
+#     }
+# }
 
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
@@ -54,6 +51,7 @@ async def on_ready():
     global vcRole
     global vcTxt
     global txtMsg
+    global  guildsettings
     print(f"Logged in as: {bot.user}")
     # bot.activity = "Created by Yuki."
     await bot.change_presence(activity=Game(name="Created by Yuki."))
@@ -63,7 +61,10 @@ async def on_ready():
         vcRole = json.load(f)
     with open("txtMsg.json", "r") as f:
         txtMsg = json.load(f)
+    with open("guildsettings.json", "r", encoding="utf8")as f:
+        guildsettings= json.load(f)
     print("Loaded bot state.")
+
 
 @bot.event
 async def on_raw_reaction_add(reaction: RawReactionActionEvent):
@@ -139,64 +140,64 @@ async def on_message(message: Message):
         msg2 = await message.channel.send(embed=Embed(description=tosendtxt))
         txtMsg[str(message.channel.id)] = msg2.id
         save_to_json()
-    if message.channel.id == 996367967925305464:
-        # try:
-        msg1_id = int(0)
-        try:
-            msg1_id = txtMsg[str(message.channel.id)]
-            msg1 = await message.channel.fetch_message(msg1_id)
-            await msg1.delete()
-        except:
-            pass
-        # except:
-        #     pass
-        msg2 = await message.channel.send(embed=Embed(description="""
-頭に思い浮かぶ言葉を呟こう！猥談・規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止とします。なお、会話が盛り上がる場合は返信は良しとしますが、できれば 🏢チャット等で話しましょう。"""))
-        txtMsg[str(str(message.channel.id))] = msg2.id
-        save_to_json()
-    if message.channel.id == 995656569301774456:
-        try:
-            msg1_id = txtMsg[str(message.channel.id)]
-            msg1 = await message.channel.fetch_message(msg1_id)
-            await msg1.delete()
-        except:
-            pass
-        msg3 = await message.channel.send(embed=Embed(description="""
-【 名前／年齢／性別 】　　　　　
-【 趣味／好きな話題 】
-【 診断結果(MBTI) 】
-【 サーバを知った場所 】
-【 ボイスチャットに参加できる時間帯 】
-【一言】"""))
-        txtMsg[str(995656569301774456)] = msg3.id
-        save_to_json()
-    if message.channel.id == 1016234230549843979:
-        try:
-            msg4_id = txtMsg[str(message.channel.id)]
-            msg4 = await message.channel.fetch_message(msg4_id)
-            await msg4.delete()
-        except:
-            pass
-        msg2 = await message.channel.send(embed=Embed(description="""
-【 名前／年齢 ／性別 】／／
-【 対象／好み 】例：女性／カワボ／／
-【 S or M 】
-【 好きなプレイ 】例：イチャ甘／／
-【 嫌いなプレイ 】例：バチボコ／／
-【 セーフワード 】例：エンド
-【 寝落ちの可否 】
-【 公開 ／複数 】例：OK／複数は女性のみ
-【ＰＲ】 
-【 固定について 】・いる or いない
-　　　　　　　  　・作りたい or 作りたくない
-【 固定の価値観 】例：ネット彼氏、彼女、プレイが好き
-―――――――――――――――――
-＊固定さん以外との関係　　
-  【 DM・フレンド申請 】〇 or ✕
-  【 エロイプ 】〇 or ✕
-  【 個室の利用 】〇 or ✕"""))
-        txtMsg[str(message.channel.id)] = msg2.id
-        save_to_json()
+    #     if message.channel.id == 996367967925305464:
+    #         # try:
+    #         msg1_id = int(0)
+    #         try:
+    #             msg1_id = txtMsg[str(message.channel.id)]
+    #             msg1 = await message.channel.fetch_message(msg1_id)
+    #             await msg1.delete()
+    #         except:
+    #             pass
+    #         # except:
+    #         #     pass
+    #         msg2 = await message.channel.send(embed=Embed(description="""
+    # 頭に思い浮かぶ言葉を呟こう！猥談・規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止とします。なお、会話が盛り上がる場合は返信は良しとしますが、できれば 🏢チャット等で話しましょう。"""))
+    #         txtMsg[str(str(message.channel.id))] = msg2.id
+    #         save_to_json()
+#     if message.channel.id == 995656569301774456:
+#         try:
+#             msg1_id = txtMsg[str(message.channel.id)]
+#             msg1 = await message.channel.fetch_message(msg1_id)
+#             await msg1.delete()
+#         except:
+#             pass
+#         msg3 = await message.channel.send(embed=Embed(description="""
+# 【 名前／年齢／性別 】　　　　　
+# 【 趣味／好きな話題 】
+# 【 診断結果(MBTI) 】
+# 【 サーバを知った場所 】
+# 【 ボイスチャットに参加できる時間帯 】
+# 【一言】"""))
+#         txtMsg[str(995656569301774456)] = msg3.id
+#         save_to_json()
+#     if message.channel.id == 1016234230549843979:
+#         try:
+#             msg4_id = txtMsg[str(message.channel.id)]
+#             msg4 = await message.channel.fetch_message(msg4_id)
+#             await msg4.delete()
+#         except:
+#             pass
+#         msg2 = await message.channel.send(embed=Embed(description="""
+# 【 名前／年齢 ／性別 】／／
+# 【 対象／好み 】例：女性／カワボ／／
+# 【 S or M 】
+# 【 好きなプレイ 】例：イチャ甘／／
+# 【 嫌いなプレイ 】例：バチボコ／／
+# 【 セーフワード 】例：エンド
+# 【 寝落ちの可否 】
+# 【 公開 ／複数 】例：OK／複数は女性のみ
+# 【ＰＲ】
+# 【 固定について 】・いる or いない
+# 　　　　　　　  　・作りたい or 作りたくない
+# 【 固定の価値観 】例：ネット彼氏、彼女、プレイが好き
+# ―――――――――――――――――
+# ＊固定さん以外との関係　　
+#   【 DM・フレンド申請 】〇 or ✕
+#   【 エロイプ 】〇 or ✕
+#   【 個室の利用 】〇 or ✕"""))
+#         txtMsg[str(message.channel.id)] = msg2.id
+#         save_to_json()
     if message.content.startswith("y.lim"):
         msg = message.content
         msg = re.sub("y.lim ", "", msg)
@@ -541,7 +542,30 @@ async def hello(ctx: ApplicationContext):
     await ctx.respond("Hello!")
 
 
+@bot.slash_command(description="設定を表示する")
+async def set_see(ctx: ApplicationContext):
+    if not ctx.author.guild_permissions.administrator:
+        return
+    # with open("tmp.json", "w", encoding="utf8")as f:
+    #     json.dump(guildsettings[str(ctx.guild.id)], f, ensure_ascii=False)
+    # with open("")
+    data = json.loads(str(guildsettings[str(ctx.guild.id)]).replace("'", '"'))
+    await ctx.respond(embed=Embed(description=json.dumps(data, indent=2, ensure_ascii=False)))
+
+@bot.slash_command(description="設定を保存して適応する")
+async def set_save(ctx: ApplicationContext, json1: Option(str, name="json", required=True, description="設定のjson")):
+    if not ctx.author.guild_permissions.administrator:
+        return
+    try:
+        guildsettings[str(ctx.guild.id)] = json.loads(json1)
+        print(json1)
+        save_guild_settings()
+    except:
+        await ctx.respond(embed=Embed(description="エラー。設定は保存されていません！"))
+        return
+    await ctx.respond(embed=Embed(description="設定を保存しました。"))
 def save_to_json():
+    print("Saving bot state...")
     with open("vcTxt.json", "w") as f:
         # tmpJson:dict = json.load(f)
         json.dump(vcTxt, f)
@@ -549,9 +573,16 @@ def save_to_json():
         json.dump(vcRole, f)
     with open("txtMsg.json", "w") as f:
         json.dump(txtMsg, f)
+    print("Saved bot state.")
+
+
+
+
+def save_guild_settings():
+    print("Saving guildsettings...")
     with open("guildsettings.json", "w", encoding="utf8") as f:
         json.dump(guildsettings, f, ensure_ascii=False)
-    print("Saved bot state.")
+    print("Saved guildsettings.")
 
 
 bot.run(TOKEN)
