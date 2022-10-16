@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import discord
 from discord import *
 import json
+# from discord.ui import *
 
 load_dotenv()
 TOKEN = os.environ.get("DISCORD_TOKEN")
@@ -58,8 +59,7 @@ async def on_ready():
     with open("txtMsg.json", "r") as f:
         txtMsg = json.load(f)
     print("Loaded bot state.")
-
-
+    await bot.wait_until_ready()
 @bot.event
 async def on_raw_reaction_add(reaction: RawReactionActionEvent):
     print("reaction")
