@@ -15,6 +15,15 @@ bot = discord.Bot(intents=intents)
 vcRole = {}
 vcTxt = {}
 txtMsg = {}
+guildsettings = {
+                    # "guild_id": {
+                    #     "prof_channel": "prof_channel",
+                    #     "member_role": "role id",
+                    #     "create_vc_channel": "vcid",
+                    #     "category": "id"
+                    # }
+
+                 }
 
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
