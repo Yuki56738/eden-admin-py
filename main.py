@@ -179,6 +179,14 @@ async def on_message(message: Message):
         with open("txtMsg.json", "r") as f:
             txtMsg = json.load(f)
         print("Loaded bot state.")
+    if message.content.startswith("y.close"):
+        try:
+            vcTxt[str(message.author.voice.channel.id)]
+        except:
+            return
+        vc1 = message.author.voice.channel
+        memberRole = message.author.guild.get_role(997644021067415642)
+        await vc1.edit(overwrites={memberRole: PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())})
 
 
 @bot.event
@@ -234,7 +242,7 @@ y.ren [名前] で部屋の名前を変える
 例｜y.ren 私のおうち
 y.lim [人数] で部屋の人数制限を変える
 例｜y.lim 4（半角
-y.del でチャンネルを削除"""
+y.close で他の人からこの部屋をみえなくする。"""
         await txt1.send(msgToSend)
         try:
             prof_channel = bot.get_channel(995656569301774456)
@@ -246,6 +254,7 @@ y.del でチャンネルを削除"""
             pass
         await txt1.send(member.mention)
         save_to_json()
+        return
     if after.channel != before.channel:
         try:
             role1 = vcRole.get(str(after.channel.id))
@@ -277,7 +286,7 @@ y.del でチャンネルを削除"""
 
 
 @bot.slash_command(name="show", description="自己紹介を表示")
-async def show(ctx: ApplicationContext, name: Option(str, required=False)):
+async def show(ctx: ApplicationContext, name: Option(str, required=False, description="名前")):
     prof_channel = bot.get_channel(995656569301774456)
     prof_messages = await prof_channel.history(limit=1000).flatten()
     for x in prof_messages:
