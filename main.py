@@ -270,6 +270,7 @@ async def on_message(message: Message):
         except:
             pass
 
+
 @bot.event
 async def on_voice_state_update(member: Member, before: VoiceState, after: VoiceState):
     try:
@@ -305,20 +306,20 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
         role1 = await member.guild.create_role(name=f"{member.display_name}の部屋", permissions=perms1)
         cat1 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
         vc1 = await member.guild.create_voice_channel(f"{member.display_name}の部屋", overwrites={role1: perm1,
-                                                                                         memberRole: perm2,
-                                                                                         member.guild.default_role: PermissionOverwrite().from_pair(
-                                                                                             Permissions.none(),
-                                                                                             Permissions.all())
-                                                                                         },
+                                                                                                 memberRole: perm2,
+                                                                                                 member.guild.default_role: PermissionOverwrite().from_pair(
+                                                                                                     Permissions.none(),
+                                                                                                     Permissions.all())
+                                                                                                 },
                                                       category=cat1, user_limit=2)
         vcRole[str(vc1.id)] = role1.id
         # await role1.edit(position=8)
         await member.add_roles(role1)
         await member.move_to(vc1)
         txt1 = await member.guild.create_text_channel(name=f"{member.display_name}の部屋", overwrites={role1: perm1,
-                                                                                              member.guild.default_role: PermissionOverwrite().from_pair(
-                                                                                                  Permissions.none(),
-                                                                                                  Permissions.all())},
+                                                                                                      member.guild.default_role: PermissionOverwrite().from_pair(
+                                                                                                          Permissions.none(),
+                                                                                                          Permissions.all())},
                                                       category=cat1)
         vcTxt[str(vc1.id)] = txt1.id
         msgToSend = """
@@ -505,10 +506,16 @@ async def nolook(ctx: ApplicationContext):
     )
     await ctx.respond(embed=Embed(description="完了."))
 
+
 @bot.slash_command()
 async def ping(ctx: ApplicationContext):
     lat = bot.latency
-    await ctx.respond(embed=Embed(description=f"レイテンシーは、{lat*60}ms."))
+    await ctx.respond(embed=Embed(description=f"レイテンシーは、{lat * 60}ms."))
+
+@bot.slash_command(guild_ids=[977138017095520256])
+async def hello(ctx: ApplicationContext):
+    await ctx.respond("Hello!")
+
 def save_to_json():
     with open("vcTxt.json", "w") as f:
         # tmpJson:dict = json.load(f)
