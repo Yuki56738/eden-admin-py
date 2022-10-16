@@ -319,6 +319,7 @@ y.close でこの部屋に入れる人を限定する。"""
             role1 = vcRole.get(str(after.channel.id))
             role1 = member.guild.get_role(role1)
             txt1 = vcTxt.get(str(after.channel.id))
+
             txt1 = bot.get_channel(txt1)
             await member.add_roles(role1)
             save_to_json()
