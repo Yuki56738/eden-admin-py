@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import discord
 from discord import *
 import json
+
 # from discord.ui import *
 
 load_dotenv()
@@ -29,7 +30,11 @@ guildsettings = {
         "member_role": 997644021067415642,
         "create_vc_channel": 1019948085876629516,
         "vc_category": 1012943676332331118,
-        "mention_channel": 1031256109555666966
+        "mention_channel": 1031256109555666966,
+        "note_channels": {
+            "996367967925305464": """
+頭に思い浮かぶ言葉を呟こう！猥談・規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止とします。なお、会話が盛り上がる場合は返信は良しとしますが、できれば 🏢チャット等で話しましょう。"""
+        }
     },
     "977138017095520256": {
         "prof_channel": 1018726552936128553,
@@ -59,7 +64,7 @@ async def on_ready():
     with open("txtMsg.json", "r") as f:
         txtMsg = json.load(f)
     print("Loaded bot state.")
-    await bot.wait_until_ready()
+
 @bot.event
 async def on_raw_reaction_add(reaction: RawReactionActionEvent):
     print("reaction")
@@ -117,11 +122,28 @@ async def on_message(message: Message):
             except:
                 pass
         return
+    isExist = False
+    try:
+        guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
+        isExist = True
+    except:
+        pass
+    if isExist == True:
+        try:
+            msg1_id = txtMsg[str(message.channel.id)]
+            msg1 = await message.channel.fetch_message(msg1_id)
+            await msg1.delete()
+        except:
+            pass
+        tosendtxt = guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
+        msg2 = await message.channel.send(embed=Embed(description=tosendtxt))
+        txtMsg[str(message.channel.id)] = msg2.id
+        save_to_json()
     if message.channel.id == 996367967925305464:
         # try:
         msg1_id = int(0)
         try:
-            msg1_id = txtMsg[str(996367967925305464)]
+            msg1_id = txtMsg[str(message.channel.id)]
             msg1 = await message.channel.fetch_message(msg1_id)
             await msg1.delete()
         except:
@@ -130,7 +152,7 @@ async def on_message(message: Message):
         #     pass
         msg2 = await message.channel.send(embed=Embed(description="""
 頭に思い浮かぶ言葉を呟こう！猥談・規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止とします。なお、会話が盛り上がる場合は返信は良しとしますが、できれば 🏢チャット等で話しましょう。"""))
-        txtMsg[str(996367967925305464)] = msg2.id
+        txtMsg[str(str(message.channel.id))] = msg2.id
         save_to_json()
     if message.channel.id == 995656569301774456:
         try:
@@ -323,6 +345,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
                                                       category=cat1)
         vcTxt[str(vc1.id)] = txt1.id
         msgToSend = """
+Created by Yuki.
 /name [名前] で部屋の名前を変える
 例｜/name 私のおうち
 /limit [人数] で部屋の人数制限を変える
@@ -512,9 +535,11 @@ async def ping(ctx: ApplicationContext):
     lat = bot.latency
     await ctx.respond(embed=Embed(description=f"レイテンシーは、{lat * 60}ms."))
 
+
 @bot.slash_command(guild_ids=[977138017095520256])
 async def hello(ctx: ApplicationContext):
     await ctx.respond("Hello!")
+
 
 def save_to_json():
     with open("vcTxt.json", "w") as f:
@@ -524,6 +549,8 @@ def save_to_json():
         json.dump(vcRole, f)
     with open("txtMsg.json", "w") as f:
         json.dump(txtMsg, f)
+    with open("guildsettings.json", "w", encoding="utf8") as f:
+        json.dump(guildsettings, f, ensure_ascii=False)
     print("Saved bot state.")
 
 
