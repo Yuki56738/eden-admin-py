@@ -2,11 +2,12 @@ import asyncio
 import re
 import sys
 import os
+import traceback
+
 from dotenv import load_dotenv
 import discord
 from discord import *
 import json
-
 
 # from discord.ui import *
 
@@ -51,27 +52,38 @@ async def on_ready():
     global vcRole
     global vcTxt
     global txtMsg
-    global  guildsettings
+    global guildsettings
     print(f"Logged in as: {bot.user}")
     # bot.activity = "Created by Yuki."
     await bot.change_presence(activity=Game(name="Created by Yuki."))
-    with open("vcTxt.json", "r") as f:
-        vcTxt = json.load(f)
-    with open("vcRole.json", "r") as f:
-        vcRole = json.load(f)
-    with open("txtMsg.json", "r") as f:
-        txtMsg = json.load(f)
-    with open("guildsettings.json", "r", encoding="utf8")as f:
-        guildsettings= json.load(f)
+    try:
+        with open("guildsettings.json", "r", encoding="utf8") as f:
+            guildsettings = json.load(f)
+        with open("txtMsg.json", "r") as f:
+            txtMsg = json.load(f)
+        with open("vcTxt.json", "r") as f:
+            vcTxt = json.load(f)
+        with open("vcRole.json", "r") as f:
+            vcRole = json.load(f)
+
+
+    except Exception as e:
+        print(traceback.format_exc())
     print("Loaded bot state.")
 
 
 @bot.event
 async def on_raw_reaction_add(reaction: RawReactionActionEvent):
+    global vcRole
+    global vcTxt
+    global txtMsg
+    global guildsettings
     print("reaction")
-    txt2 = bot.get_channel(1024881096518803466)
-    msg1 = await reaction.member.guild.get_channel(1021255885542137939).fetch_message(reaction.message_id)
-    if reaction.channel_id == 1021255885542137939:
+    reaction_channel_id = guildsettings[str(reaction.guild_id)]["reaction_channel"]
+    txt2_id = guildsettings[str(reaction.guild_id)]["reaction_notify_channel"]
+    txt2 = bot.get_channel(txt2_id)
+    msg1 = await reaction.member.guild.get_channel(reaction_channel_id).fetch_message(reaction.message_id)
+    if reaction.channel_id == reaction_channel_id:
         await txt2.send(f"{reaction.member.mention} から {msg1.author.mention} へ募集がありました！")
 
 
@@ -80,6 +92,7 @@ async def on_message(message: Message):
     global vcRole
     global vcTxt
     global txtMsg
+    global guildsettings
     if message.author.bot:
         return
     if message.content.startswith("y.help"):
@@ -88,6 +101,7 @@ async def on_message(message: Message):
     if message.content.startswith(".debug"):
         print(f"vcRole: {vcRole}")
         print(f"vcTxt: {vcTxt}")
+    """
     if message.content.startswith("y.ren"):
         msg = message.content
         msg = re.sub("y.ren ", "", msg)
@@ -100,6 +114,7 @@ async def on_message(message: Message):
         vc1 = message.author.voice.channel
         await vc1.edit(name=msg)
         return
+    
     if message.content.startswith("y.show") or message.content.startswith("my.show"):
         msg = message.content
         msg = re.sub("y.show ", "", msg)
@@ -123,19 +138,20 @@ async def on_message(message: Message):
             except:
                 pass
         return
+    """
     isExist = False
     try:
         guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
         isExist = True
-    except:
-        pass
+    except Exception as e:
+        print(traceback.format_exc())
     if isExist == True:
         try:
             msg1_id = txtMsg[str(message.channel.id)]
             msg1 = await message.channel.fetch_message(msg1_id)
             await msg1.delete()
-        except:
-            pass
+        except Exception as e:
+            print(traceback.format_exc())
         tosendtxt = guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
         msg2 = await message.channel.send(embed=Embed(description=tosendtxt))
         txtMsg[str(message.channel.id)] = msg2.id
@@ -155,49 +171,50 @@ async def on_message(message: Message):
     # 頭に思い浮かぶ言葉を呟こう！猥談・規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止とします。なお、会話が盛り上がる場合は返信は良しとしますが、できれば 🏢チャット等で話しましょう。"""))
     #         txtMsg[str(str(message.channel.id))] = msg2.id
     #         save_to_json()
-#     if message.channel.id == 995656569301774456:
-#         try:
-#             msg1_id = txtMsg[str(message.channel.id)]
-#             msg1 = await message.channel.fetch_message(msg1_id)
-#             await msg1.delete()
-#         except:
-#             pass
-#         msg3 = await message.channel.send(embed=Embed(description="""
-# 【 名前／年齢／性別 】　　　　　
-# 【 趣味／好きな話題 】
-# 【 診断結果(MBTI) 】
-# 【 サーバを知った場所 】
-# 【 ボイスチャットに参加できる時間帯 】
-# 【一言】"""))
-#         txtMsg[str(995656569301774456)] = msg3.id
-#         save_to_json()
-#     if message.channel.id == 1016234230549843979:
-#         try:
-#             msg4_id = txtMsg[str(message.channel.id)]
-#             msg4 = await message.channel.fetch_message(msg4_id)
-#             await msg4.delete()
-#         except:
-#             pass
-#         msg2 = await message.channel.send(embed=Embed(description="""
-# 【 名前／年齢 ／性別 】／／
-# 【 対象／好み 】例：女性／カワボ／／
-# 【 S or M 】
-# 【 好きなプレイ 】例：イチャ甘／／
-# 【 嫌いなプレイ 】例：バチボコ／／
-# 【 セーフワード 】例：エンド
-# 【 寝落ちの可否 】
-# 【 公開 ／複数 】例：OK／複数は女性のみ
-# 【ＰＲ】
-# 【 固定について 】・いる or いない
-# 　　　　　　　  　・作りたい or 作りたくない
-# 【 固定の価値観 】例：ネット彼氏、彼女、プレイが好き
-# ―――――――――――――――――
-# ＊固定さん以外との関係　　
-#   【 DM・フレンド申請 】〇 or ✕
-#   【 エロイプ 】〇 or ✕
-#   【 個室の利用 】〇 or ✕"""))
-#         txtMsg[str(message.channel.id)] = msg2.id
-#         save_to_json()
+    #     if message.channel.id == 995656569301774456:
+    #         try:
+    #             msg1_id = txtMsg[str(message.channel.id)]
+    #             msg1 = await message.channel.fetch_message(msg1_id)
+    #             await msg1.delete()
+    #         except:
+    #             pass
+    #         msg3 = await message.channel.send(embed=Embed(description="""
+    # 【 名前／年齢／性別 】　　　　　
+    # 【 趣味／好きな話題 】
+    # 【 診断結果(MBTI) 】
+    # 【 サーバを知った場所 】
+    # 【 ボイスチャットに参加できる時間帯 】
+    # 【一言】"""))
+    #         txtMsg[str(995656569301774456)] = msg3.id
+    #         save_to_json()
+    #     if message.channel.id == 1016234230549843979:
+    #         try:
+    #             msg4_id = txtMsg[str(message.channel.id)]
+    #             msg4 = await message.channel.fetch_message(msg4_id)
+    #             await msg4.delete()
+    #         except:
+    #             pass
+    #         msg2 = await message.channel.send(embed=Embed(description="""
+    # 【 名前／年齢 ／性別 】／／
+    # 【 対象／好み 】例：女性／カワボ／／
+    # 【 S or M 】
+    # 【 好きなプレイ 】例：イチャ甘／／
+    # 【 嫌いなプレイ 】例：バチボコ／／
+    # 【 セーフワード 】例：エンド
+    # 【 寝落ちの可否 】
+    # 【 公開 ／複数 】例：OK／複数は女性のみ
+    # 【ＰＲ】
+    # 【 固定について 】・いる or いない
+    # 　　　　　　　  　・作りたい or 作りたくない
+    # 【 固定の価値観 】例：ネット彼氏、彼女、プレイが好き
+    # ―――――――――――――――――
+    # ＊固定さん以外との関係　　
+    #   【 DM・フレンド申請 】〇 or ✕
+    #   【 エロイプ 】〇 or ✕
+    #   【 個室の利用 】〇 or ✕"""))
+    #         txtMsg[str(message.channel.id)] = msg2.id
+    #         save_to_json()
+    """
     if message.content.startswith("y.lim"):
         msg = message.content
         msg = re.sub("y.lim ", "", msg)
@@ -264,6 +281,7 @@ async def on_message(message: Message):
                                    }
                        )
         await message.channel.send(embed=Embed(description="完了."))
+    """
     if message.mentions:
         try:
             vc1 = message.author.voice.channel
@@ -291,15 +309,19 @@ async def on_message(message: Message):
                     await x.add_roles(role1)
                     await vc1.edit(overwrites={x: perm1})
         except:
-            pass
+            print(traceback.format_exc())
 
 
 @bot.event
 async def on_voice_state_update(member: Member, before: VoiceState, after: VoiceState):
+    global vcRole
+    global vcTxt
+    global txtMsg
+    global guildsettings
     try:
         guild1 = guildsettings[str(member.guild.id)]
     except:
-        return
+        print(traceback.format_exc())
 
     # if not after.channel is None and after.channel.id == 1019948085876629516:
     if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel"]:
@@ -363,7 +385,7 @@ Created by Yuki.
                 if x.author.id == member.id:
                     await txt1.send(x.content)
         except:
-            pass
+            print(traceback.format_exc())
         await txt1.send(member.mention)
         save_to_json()
         return
@@ -385,15 +407,17 @@ Created by Yuki.
                     await txt1.send(x.content)
             await txt1.send(member.mention)
         except:
-            pass
+            print(traceback.format_exc())
 
     if not before.channel is None and len(before.channel.members) == 0:
-        txt1 = vcTxt.get(str(before.channel.id))
-        txt1 = bot.get_channel(txt1)
+        txt1_id = vcTxt.get(str(before.channel.id))
+        txt1 = bot.get_channel(txt1_id)
         await txt1.delete()
+        vcTxt.pop(str(before.channel.id))
         role1 = vcRole.get(str(before.channel.id))
         role1 = member.guild.get_role(role1)
         await role1.delete()
+        vcRole.pop(str(before.channel.id))
         await before.channel.delete()
         save_to_json()
         vcRole.pop(str(before.channel.id))
@@ -402,6 +426,10 @@ Created by Yuki.
 
 @bot.slash_command(description="自己紹介を表示")
 async def show(ctx: ApplicationContext, name: Option(str, required=True, description="名前")):
+    global vcRole
+    global vcTxt
+    global txtMsg
+    global guildsettings
     prof_channel_id = guildsettings[str(ctx.guild.id)]["prof_channel"]
     prof_channel = bot.get_channel(prof_channel_id)
     prof_messages = await prof_channel.history(limit=1000).flatten()
@@ -423,7 +451,7 @@ async def show(ctx: ApplicationContext, name: Option(str, required=True, descrip
 
         if name in x.author.display_name:
             # await ctx.send_followup(x.content, delete_after=3 * 60, ephemeral=True)
-            tosendmsg = tosendmsg + x.content
+            tosendmsg = tosendmsg + "\n" + x.content
             print(f"{x.author.name}: {x.content}")
     if tosendmsg == "":
         tosendmsg = "該当なし"
@@ -432,9 +460,16 @@ async def show(ctx: ApplicationContext, name: Option(str, required=True, descrip
 
 @bot.slash_command(name="close", description="この部屋に入れる人を限定する。")
 async def close(ctx: ApplicationContext):
-    try:
-        vcTxt[str(ctx.author.voice.channel.id)]
-    except:
+    global vcRole
+    global vcTxt
+    global txtMsg
+    global guildsettings
+    # try:
+    #     vcTxt[str(ctx.author.voice.channel.id)]
+    # except:
+    #     return
+    if not str(ctx.author.voice.channel.id) in vcTxt.keys():
+        print(traceback.format_exc())
         return
     vc1 = ctx.author.voice.channel
     role1 = ctx.guild.get_role(vcRole[str(ctx.author.voice.channel.id)])
@@ -471,10 +506,15 @@ async def close(ctx: ApplicationContext):
 
 @bot.slash_command(description="この部屋の名前を変える.")
 async def name(ctx: ApplicationContext, name: Option(str, description="名前", required=True)):
+    global vcRole
+    global vcTxt
+    global txtMsg
+    global guildsettings
     try:
-        txt1 = vcTxt.get(str(ctx.author.voice.channel.id))
+        txt1 = vcTxt[str(ctx.author.voice.channel.id)]
         txt1 = bot.get_channel(txt1)
     except:
+        print(traceback.format_exc())
         return
     await txt1.edit(name=name)
     vc1 = ctx.author.voice.channel
@@ -484,10 +524,15 @@ async def name(ctx: ApplicationContext, name: Option(str, description="名前", 
 
 @bot.slash_command(description="部屋の人数制限を変える")
 async def limit(ctx: ApplicationContext, lim: Option(int, description="人数", required=True)):
+    global vcRole
+    global vcTxt
+    global txtMsg
+    global guildsettings
     try:
-        txt1 = vcTxt.get(str(ctx.author.voice.channel.id))
+        txt1 = vcTxt[str(ctx.author.voice.channel.id)]
         txt1 = bot.get_channel(txt1)
     except:
+        print(traceback.format_exc())
         return
     await ctx.author.voice.channel.edit(user_limit=int(lim))
     await ctx.respond(embed=Embed(description="完了."))
@@ -495,9 +540,14 @@ async def limit(ctx: ApplicationContext, lim: Option(int, description="人数", 
 
 @bot.slash_command(description="この部屋を見えなくする。")
 async def nolook(ctx: ApplicationContext):
+    global vcRole
+    global vcTxt
+    global txtMsg
+    global guildsettings
     try:
         vcTxt[str(ctx.author.voice.channel.id)]
     except:
+        print(traceback.format_exc())
         return
     vc1 = ctx.author.voice.channel
     role1 = ctx.guild.get_role(vcRole[str(ctx.author.voice.channel.id)])
@@ -544,27 +594,43 @@ async def hello(ctx: ApplicationContext):
 
 @bot.slash_command(description="設定を表示する")
 async def set_see(ctx: ApplicationContext):
+    global vcRole
+    global vcTxt
+    global txtMsg
+    global guildsettings
     if not ctx.author.guild_permissions.administrator:
         return
     # with open("tmp.json", "w", encoding="utf8")as f:
     #     json.dump(guildsettings[str(ctx.guild.id)], f, ensure_ascii=False)
     # with open("")
-    data = json.loads(str(guildsettings[str(ctx.guild.id)]).replace("'", '"'))
-    await ctx.respond(embed=Embed(description=json.dumps(data, indent=2, ensure_ascii=False)))
+    # data = json.loads(str(guildsettings[str(ctx.guild.id)]).replace("'", '"'))
+    await ctx.respond(
+        embed=Embed(description=json.dumps(guildsettings[str(ctx.guild.id)], indent=2, ensure_ascii=False)))
+
 
 @bot.slash_command(description="設定を保存して適応する")
 async def set_save(ctx: ApplicationContext, json1: Option(str, name="json", required=True, description="設定のjson")):
+    global vcRole
+    global vcTxt
+    global txtMsg
+    global guildsettings
     if not ctx.author.guild_permissions.administrator:
         return
     try:
         guildsettings[str(ctx.guild.id)] = json.loads(json1)
         print(json1)
         save_guild_settings()
-    except:
-        await ctx.respond(embed=Embed(description="エラー。設定は保存されていません！"))
+    except Exception as e:
+        await ctx.respond(embed=Embed(description=f"エラー。設定は保存されていません！: {e}"))
         return
     await ctx.respond(embed=Embed(description="設定を保存しました。"))
+
+
 def save_to_json():
+    global vcRole
+    global vcTxt
+    global txtMsg
+    global guildsettings
     print("Saving bot state...")
     with open("vcTxt.json", "w") as f:
         # tmpJson:dict = json.load(f)
@@ -576,9 +642,11 @@ def save_to_json():
     print("Saved bot state.")
 
 
-
-
 def save_guild_settings():
+    global vcRole
+    global vcTxt
+    global txtMsg
+    global guildsettings
     print("Saving guildsettings...")
     with open("guildsettings.json", "w", encoding="utf8") as f:
         json.dump(guildsettings, f, ensure_ascii=False)
