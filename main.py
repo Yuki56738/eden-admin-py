@@ -391,9 +391,9 @@ Created by Yuki.
         return
     if after.channel != before.channel:
         try:
-            role1 = vcRole.get(str(after.channel.id))
+            role1 = vcRole[str(after.channel.id)]
             role1 = member.guild.get_role(role1)
-            txt1 = vcTxt.get(str(after.channel.id))
+            txt1 = vcTxt[str(after.channel.id)]
 
             txt1 = bot.get_channel(txt1)
             await member.add_roles(role1)
@@ -410,18 +410,16 @@ Created by Yuki.
             print(traceback.format_exc())
 
     if not before.channel is None and len(before.channel.members) == 0:
-        txt1_id = vcTxt.get(str(before.channel.id))
+        txt1_id = vcTxt[str(before.channel.id)]
         txt1 = bot.get_channel(txt1_id)
         await txt1.delete()
-        vcTxt.pop(str(before.channel.id))
-        role1 = vcRole.get(str(before.channel.id))
+        role1 = vcRole[str(before.channel.id)]
         role1 = member.guild.get_role(role1)
         await role1.delete()
-        vcRole.pop(str(before.channel.id))
         await before.channel.delete()
-        save_to_json()
         vcRole.pop(str(before.channel.id))
         vcTxt.pop(str(before.channel.id))
+        save_to_json()
 
 
 @bot.slash_command(description="自己紹介を表示")
