@@ -84,7 +84,7 @@ async def on_raw_reaction_add(reaction: RawReactionActionEvent):
     txt2 = bot.get_channel(txt2_id)
     msg1 = await reaction.member.guild.get_channel(reaction_channel_id).fetch_message(reaction.message_id)
     if reaction.channel_id == reaction_channel_id:
-        await txt2.send(f"{reaction.member.mention} から {msg1.author.mention} へ募集がありました！")
+        await txt2.send(f"{reaction.member.mention} から {msg1.author.mention} へ反応がありました！")
 
 
 @bot.event
