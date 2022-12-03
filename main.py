@@ -578,6 +578,56 @@ async def nolook(ctx: ApplicationContext):
     )
     await ctx.respond(embed=Embed(description="完了."))
 
+@bot.slash_command(description="この部屋を見えるようにする。")
+async def look(ctx: ApplicationContext):
+    global vcRole
+    global vcTxt
+    global txtMsg
+    global guildsettings
+    try:
+        vcTxt[str(ctx.author.voice.channel.id)]
+    except:
+        print(traceback.format_exc())
+        return
+    vc1 = ctx.author.voice.channel
+    role1 = ctx.guild.get_role(vcRole[str(ctx.author.voice.channel.id)])
+    perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
+    perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
+    # perm2.update(connect=True)
+    # perm2.update(speak=True)
+    # perm2.update(use_slash_commands=True)
+    perm2.update(connect=True)
+    perm2.update(speak=True)
+    # perm1.update(value=689379286592)
+    perm1.update(read_message_history=True)
+    perm1.update(read_messages=True)
+    perm1.update(send_messages=True)
+    perm1.update(use_slash_commands=True)
+    perm1.update(connect=True, speak=True)
+    perms1 = Permissions.advanced().general().voice()
+    perm1.update(mute_members=False)
+    perm1.update(move_members=False, deafen_members=False)
+    perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
+    # perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
+    memberRole = ctx.guild.get_role(guildsettings[str(ctx.guild.id)]["member_role"])
+    memberPerm = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
+    # perm2.update(connect=True)
+    # perm2.update(speak=True)
+    # perm2.update(use_slash_commands=True)
+    memberPerm.update(connect=True)
+    memberPerm.update(speak=True)
+    # memberRole = message.author.guild.get_role(997644021067415642)
+    # memberRole = ctx.guild.get_role(guildsettings[str(ctx.guild.id)]["member_role"])
+    # memberPerm = PermissionOverwrite().from_pair(Permissions.advanced().none(), Permissions.all())
+    await vc1.edit(overwrites={
+        role1: perm1,
+        memberRole: memberPerm,
+        ctx.guild.default_role: PermissionOverwrite().from_pair(
+            Permissions.none(),
+            Permissions.all())}
+    )
+    await ctx.respond(embed=Embed(description="完了."))
+
 
 @bot.slash_command()
 async def ping(ctx: ApplicationContext):
