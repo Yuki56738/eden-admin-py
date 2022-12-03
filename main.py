@@ -374,7 +374,8 @@ Created by Yuki.
 /limit [人数] で部屋の人数制限を変える
 例｜/limit 4（半角
 /close でこの部屋に入れる人を限定する。ルームキーにてメンションされた人は入れるようになる。
-/nolook でこの部屋を見えなくする。"""
+/nolook でこの部屋を見えなくする。
+/look で、この部屋を見えるようにする。"""
         await txt1.send(msgToSend)
         try:
             # prof_channel = bot.get_channel(995656569301774456)
