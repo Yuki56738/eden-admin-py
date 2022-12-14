@@ -345,7 +345,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
         perm1.update(connect=True, speak=True)
         perms1 = Permissions.advanced().general().voice()
         perm1.update(mute_members=False)
-        perm1.update(move_members=False, deafen_members=False)
+        perm1.update(move_members=False, deafen_members=False, attach_files=True, embed_links=True)
         perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
         # perms1.update(connect=True, speak=True)
         role1 = await member.guild.create_role(name=f"{member.display_name}の部屋", permissions=perms1)
