@@ -21,27 +21,7 @@ vcRole = {}
 vcTxt = {}
 txtMsg = {}
 guildsettings = {}
-# guildsettings = {
-#     "994483180927201400": {
-#         "prof_channel": 995656569301774456,
-#         "member_role": 997644021067415642,
-#         "create_vc_channel": 1019948085876629516,
-#         "vc_category": 1012943676332331118,
-#         "mention_channel": 1031256109555666966,
-#         "note_channels": {
-#             "996367967925305464": """
-# 頭に思い浮かぶ言葉を呟こう！猥談・規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止とします。なお、会話が盛り上がる場合は返信は良しとしますが、できれば 🏢チャット等で話しましょう。"""
-#             # "995656569301774456":
-#         }
-#     },
-#     "977138017095520256": {
-#         "prof_channel": 1018726552936128553,
-#         "member_role": 1028601169498615858,
-#         "create_vc_channel": 1028601419131002930,
-#         "vc_category": 977138017095520258,
-#         "mention_channel": 977138017095520259
-#     }
-# }
+
 
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
@@ -101,44 +81,7 @@ async def on_message(message: Message):
     if message.content.startswith(".debug"):
         print(f"vcRole: {vcRole}")
         print(f"vcTxt: {vcTxt}")
-    """
-    if message.content.startswith("y.ren"):
-        msg = message.content
-        msg = re.sub("y.ren ", "", msg)
-        try:
-            txt1 = vcTxt.get(str(message.author.voice.channel.id))
-            txt1 = bot.get_channel(txt1)
-        except:
-            return
-        await txt1.edit(name=msg)
-        vc1 = message.author.voice.channel
-        await vc1.edit(name=msg)
-        return
-    
-    if message.content.startswith("y.show") or message.content.startswith("my.show"):
-        msg = message.content
-        msg = re.sub("y.show ", "", msg)
-        # prof_channel = bot.get_channel(995656569301774456)
-        prof_channel = bot.get_channel(guildsettings[str(message.guild.id)]["prof_channel"])
-        prof_messages = await prof_channel.history(limit=1000).flatten()
-        # print(prof_messages)
-        # for xuser in message.author.voice.channel.members:
-        # msgToSend = ""
-        for x in prof_messages:
-            # if x.author.id == xuser.id:
-            if x.author.id == message.author.id:
-                await message.channel.send(x.content, delete_after=3 * 60)
-                print(f"{x.author.name}: {x.content}")
-            if msg in x.author.name:
-                print(f"{x.author.name}: {x.content}")
-            try:
-                for xuser in message.author.voice.channel.members:
-                    if x.author.id == xuser.id:
-                        print(x.content)
-            except:
-                pass
-        return
-    """
+
     isExist = False
     try:
         guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
@@ -156,132 +99,7 @@ async def on_message(message: Message):
         msg2 = await message.channel.send(embed=Embed(description=tosendtxt))
         txtMsg[str(message.channel.id)] = msg2.id
         save_to_json()
-    #     if message.channel.id == 996367967925305464:
-    #         # try:
-    #         msg1_id = int(0)
-    #         try:
-    #             msg1_id = txtMsg[str(message.channel.id)]
-    #             msg1 = await message.channel.fetch_message(msg1_id)
-    #             await msg1.delete()
-    #         except:
-    #             pass
-    #         # except:
-    #         #     pass
-    #         msg2 = await message.channel.send(embed=Embed(description="""
-    # 頭に思い浮かぶ言葉を呟こう！猥談・規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止とします。なお、会話が盛り上がる場合は返信は良しとしますが、できれば 🏢チャット等で話しましょう。"""))
-    #         txtMsg[str(str(message.channel.id))] = msg2.id
-    #         save_to_json()
-    #     if message.channel.id == 995656569301774456:
-    #         try:
-    #             msg1_id = txtMsg[str(message.channel.id)]
-    #             msg1 = await message.channel.fetch_message(msg1_id)
-    #             await msg1.delete()
-    #         except:
-    #             pass
-    #         msg3 = await message.channel.send(embed=Embed(description="""
-    # 【 名前／年齢／性別 】　　　　　
-    # 【 趣味／好きな話題 】
-    # 【 診断結果(MBTI) 】
-    # 【 サーバを知った場所 】
-    # 【 ボイスチャットに参加できる時間帯 】
-    # 【一言】"""))
-    #         txtMsg[str(995656569301774456)] = msg3.id
-    #         save_to_json()
-    #     if message.channel.id == 1016234230549843979:
-    #         try:
-    #             msg4_id = txtMsg[str(message.channel.id)]
-    #             msg4 = await message.channel.fetch_message(msg4_id)
-    #             await msg4.delete()
-    #         except:
-    #             pass
-    #         msg2 = await message.channel.send(embed=Embed(description="""
-    # 【 名前／年齢 ／性別 】／／
-    # 【 対象／好み 】例：女性／カワボ／／
-    # 【 S or M 】
-    # 【 好きなプレイ 】例：イチャ甘／／
-    # 【 嫌いなプレイ 】例：バチボコ／／
-    # 【 セーフワード 】例：エンド
-    # 【 寝落ちの可否 】
-    # 【 公開 ／複数 】例：OK／複数は女性のみ
-    # 【ＰＲ】
-    # 【 固定について 】・いる or いない
-    # 　　　　　　　  　・作りたい or 作りたくない
-    # 【 固定の価値観 】例：ネット彼氏、彼女、プレイが好き
-    # ―――――――――――――――――
-    # ＊固定さん以外との関係　　
-    #   【 DM・フレンド申請 】〇 or ✕
-    #   【 エロイプ 】〇 or ✕
-    #   【 個室の利用 】〇 or ✕"""))
-    #         txtMsg[str(message.channel.id)] = msg2.id
-    #         save_to_json()
-    """
-    if message.content.startswith("y.lim"):
-        msg = message.content
-        msg = re.sub("y.lim ", "", msg)
-        try:
-            txt1 = vcTxt.get(str(message.author.voice.channel.id))
-            txt1 = bot.get_channel(txt1)
-        except:
-            return
-        await message.author.voice.channel.edit(user_limit=int(msg))
-    if message.content.startswith("y.save"):
-        # await message.guild.system_channel.send("Saving bot state...")
-        print("Saving bot state...")
-        with open("vcTxt.json", "w") as f:
-            # tmpJson:dict = json.load(f)
-            json.dump(vcTxt, f)
-        with open("vcRole.json", "w") as f:
-            json.dump(vcRole, f)
-        with open("txtMsg.json", "w") as f:
-            json.dump(txtMsg, f)
-        print("Saved bot state.")
-    if message.content.startswith("y.load"):
-        # await message.guild.system_channel.send("Loading bot state...")
-        print("Loading bot state...")
-        with open("vcTxt.json", "r") as f:
-            vcTxt = json.load(f)
-        with open("vcRole.json", "r") as f:
-            vcRole = json.load(f)
-        with open("txtMsg.json", "r") as f:
-            txtMsg = json.load(f)
-        print("Loaded bot state.")
-    if message.content.startswith("y.close"):
-        try:
-            vcTxt[str(message.author.voice.channel.id)]
-        except:
-            return
-        vc1 = message.author.voice.channel
-        role1 = message.guild.get_role(vcRole[str(message.author.voice.channel.id)])
-        perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
-        perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
-        # perm2.update(connect=True)
-        # perm2.update(speak=True)
-        # perm2.update(use_slash_commands=True)
-        perm2.update(connect=True)
-        perm2.update(speak=True)
-        # perm1.update(value=689379286592)
-        perm1.update(read_message_history=True)
-        perm1.update(read_messages=True)
-        perm1.update(send_messages=True)
-        perm1.update(use_slash_commands=True)
-        perm1.update(connect=True, speak=True)
-        perms1 = Permissions.advanced().general().voice()
-        perm1.update(mute_members=False)
-        perm1.update(move_members=False, deafen_members=False)
-        perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
-        # memberRole = message.author.guild.get_role(997644021067415642)
-        memberRole = message.guild.get_role(guildsettings[str(message.guild.id)]["member_role"])
-        memberPerm = PermissionOverwrite().from_pair(Permissions.advanced().general(), Permissions.all())
-        memberPerm.update(view_channel=True)
-        await vc1.edit(overwrites={role1: perm1,
-                                   memberRole: memberPerm,
-                                   message.guild.default_role: PermissionOverwrite().from_pair(
-                                       Permissions.none(),
-                                       Permissions.all())
-                                   }
-                       )
-        await message.channel.send(embed=Embed(description="完了."))
-    """
+
     if message.mentions:
         try:
             vc1 = message.author.voice.channel
