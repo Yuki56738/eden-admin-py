@@ -75,9 +75,9 @@ async def on_message(message: Message):
     global guildsettings
     if message.author.bot:
         return
-    if message.content.startswith("y.help"):
-        msgToSend = Embed(title="Yukiの管理BOT", description="y.show または my.show -> 自分の自己紹介を表示する。")
-        await message.channel.send(embed=msgToSend, delete_after=3 * 60)
+    # if message.content.startswith("y.help"):
+    #     msgToSend = Embed(title="Yukiの管理BOT", description="y.show または my.show -> 自分の自己紹介を表示する。")
+    #     await message.channel.send(embed=msgToSend, delete_after=3 * 60)
     if message.content.startswith(".debug"):
         print(f"vcRole: {vcRole}")
         print(f"vcTxt: {vcTxt}")
@@ -194,7 +194,8 @@ Created by Yuki.
 /close でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
 /nolook でこの部屋を見えなくする。
 /look で、この部屋を見えるようにする。"""
-        await txt1.send(msgToSend)
+        embedToSend = Embed(description=msgToSend)
+        await txt1.send(embedToSend)
         try:
             # prof_channel = bot.get_channel(995656569301774456)
             prof_channel_id = guildsettings[str(member.guild.id)]["prof_channel"]
@@ -223,6 +224,7 @@ Created by Yuki.
             prof_messages = await prof_channel.history(limit=1000).flatten()
             for x in prof_messages:
                 if x.author.id == member.id:
+                    embedToSend = Embed
                     await txt1.send(x.content)
             await txt1.send(member.mention)
         except:
