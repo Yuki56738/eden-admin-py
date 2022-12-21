@@ -11,7 +11,7 @@ import json
 
 # from discord.ui import *
 
-load_dotenv()
+load_dotenv(".envDev")
 TOKEN = os.environ.get("DISCORD_TOKEN")
 
 intents = discord.Intents.all()
@@ -225,7 +225,7 @@ Created by Yuki.
             for x in prof_messages:
                 if x.author.id == member.id:
                     embedToSend = Embed
-                    await txt1.send(x.content)
+                    await txt1.send(embedToSend)
             await txt1.send(member.mention)
         except:
             print(traceback.format_exc())
