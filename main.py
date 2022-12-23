@@ -1,6 +1,3 @@
-import asyncio
-import re
-import sys
 import os
 import traceback
 
@@ -9,10 +6,14 @@ import discord
 from discord import *
 import json
 
+import deepl
+
 # from discord.ui import *
 
 load_dotenv()
 TOKEN = os.environ.get("DISCORD_TOKEN")
+DEEPL_KEY = os.environ.get("DEEPL_KEY")
+
 
 intents = discord.Intents.all()
 bot = discord.Bot(intents=intents)
@@ -515,6 +516,12 @@ def save_to_json():
         json.dump(txtMsg, f)
     print("Saved bot state.")
 
+@bot.slash_command(description="Do translation.")
+async def trans(ctx: ApplicationContext, *, text):
+    translator = deepl.Translator(DEEPL_KEY)
+    result = translator.translate_text(text, target_lang='JA')
+    await ctx.respond(text)
+    await ctx.send(result)
 
 def save_guild_settings():
     global vcRole
