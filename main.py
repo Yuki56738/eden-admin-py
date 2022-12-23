@@ -11,7 +11,7 @@ import json
 
 # from discord.ui import *
 
-load_dotenv("")
+load_dotenv()
 TOKEN = os.environ.get("DISCORD_TOKEN")
 
 intents = discord.Intents.all()
@@ -194,8 +194,9 @@ Created by Yuki.
 /close でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
 /nolook でこの部屋を見えなくする。
 /look で、この部屋を見えるようにする。"""
-        embedToSend = Embed(description=msgToSend)
-        await txt1.send(embed=embedToSend)
+        # embedToSend = Embed(description=msgToSend)
+        await txt1.send(embed=Embed(description=msgToSend))
+        msgToSend2 = ""
         try:
             # prof_channel = bot.get_channel(995656569301774456)
             prof_channel_id = guildsettings[str(member.guild.id)]["prof_channel"]
@@ -204,10 +205,13 @@ Created by Yuki.
             for x in prof_messages:
                 if x.author.id == member.id:
                     # await txt1.send(x.content)
-                    await txt1.send(embed=Embed(description=x.content))
+                    # await txt1.send(embed=Embed(description=x.content))
+                    msgToSend2 += x.content
         except:
             print(traceback.format_exc())
+        # msgToSend2 += member.mention
         await txt1.send(member.mention)
+        await txt1.send(embed=Embed(description=msgToSend2))
         save_to_json()
         return
     if after.channel != before.channel:
