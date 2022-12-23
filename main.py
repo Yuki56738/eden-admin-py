@@ -11,7 +11,7 @@ import json
 
 # from discord.ui import *
 
-load_dotenv(".envDev")
+load_dotenv("")
 TOKEN = os.environ.get("DISCORD_TOKEN")
 
 intents = discord.Intents.all()
@@ -195,7 +195,7 @@ Created by Yuki.
 /nolook でこの部屋を見えなくする。
 /look で、この部屋を見えるようにする。"""
         embedToSend = Embed(description=msgToSend)
-        await txt1.send(embedToSend)
+        await txt1.send(embed=embedToSend)
         try:
             # prof_channel = bot.get_channel(995656569301774456)
             prof_channel_id = guildsettings[str(member.guild.id)]["prof_channel"]
@@ -203,7 +203,8 @@ Created by Yuki.
             prof_messages = await prof_channel.history(limit=1000).flatten()
             for x in prof_messages:
                 if x.author.id == member.id:
-                    await txt1.send(x.content)
+                    # await txt1.send(x.content)
+                    await txt1.send(embed=Embed(description=x.content))
         except:
             print(traceback.format_exc())
         await txt1.send(member.mention)
@@ -225,7 +226,7 @@ Created by Yuki.
             for x in prof_messages:
                 if x.author.id == member.id:
                     embedToSend = Embed
-                    await txt1.send(embedToSend)
+                    await txt1.send(embed=embedToSend)
             await txt1.send(member.mention)
         except:
             print(traceback.format_exc())
