@@ -27,7 +27,10 @@ guildsettings = {}
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
 
-
+# class TestView(discord.ui.View):
+#     @discord.ui.button(label="Button 1", style=ButtonStyle.red)
+#     async def first_button(self, button: discord.ui.Button, interaction: Interaction):
+#         await interaction.response(content="ボタンが押されました。", view=self)
 @bot.event
 async def on_ready():
     global vcRole
@@ -196,7 +199,13 @@ Created by Yuki.
 /nolook でこの部屋を見えなくする。
 /look で、この部屋を見えるようにする。"""
         # embedToSend = Embed(description=msgToSend)
-        await txt1.send(embed=Embed(description=msgToSend))
+        msgDescript = await txt1.send(embed=Embed(description=msgToSend))
+
+
+        #ここにボタン等を配置
+        # await msgDescript.add_reaction()
+        emoji = '👍'
+        await msgDescript.add_reaction(emoji)
         msgToSend2 = ""
         try:
             # prof_channel = bot.get_channel(995656569301774456)
