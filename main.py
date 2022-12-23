@@ -10,7 +10,7 @@ import deepl
 
 # from discord.ui import *
 
-load_dotenv()
+load_dotenv(".envDev")
 TOKEN = os.environ.get("DISCORD_TOKEN")
 DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -31,6 +31,31 @@ bot_author = bot.get_user(bot_author_id)
 #     @discord.ui.button(label="Button 1", style=ButtonStyle.red)
 #     async def first_button(self, button: discord.ui.Button, interaction: Interaction):
 #         await interaction.response(content="ボタンが押されました。", view=self)
+
+class MyView(discord.ui.View):
+    @discord.ui.select( # the decorator that lets you specify the properties of the select menu
+        placeholder = "Choose a Flavor!", # the placeholder text that will be displayed if nothing is selected
+        min_values = 1, # the minimum number of values that must be selected by the users
+        max_values = 1, # the maximum number of values that can be selected by the users
+        options = [ # the list of options from which users can choose, a required field
+            discord.SelectOption(
+                label="Vanilla",
+                description="Pick this if you like vanilla!"
+            ),
+            discord.SelectOption(
+                label="Chocolate",
+                description="Pick this if you like chocolate!"
+            ),
+            discord.SelectOption(
+                label="Strawberry",
+                description="Pick this if you like strawberry!"
+            )
+        ]
+    )
+    async def select_callback(self, select, interaction): # the function called when the user is done selecting options
+        await interaction.response.send_message(f"Awesome! I like {select.values[0]} too!")
+
+
 @bot.event
 async def on_ready():
     global vcRole
@@ -206,6 +231,9 @@ Created by Yuki.
         # await msgDescript.add_reaction()
         emoji = '👍'
         await msgDescript.add_reaction(emoji)
+
+        await txt1.send("Choose a flavor!", view=MyView())
+
         msgToSend2 = ""
         try:
             # prof_channel = bot.get_channel(995656569301774456)
