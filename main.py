@@ -205,8 +205,8 @@ Created by Yuki.
 
         #ここにボタン等を配置
         # await msgDescript.add_reaction()
-        emoji = '👍'
-        await msgDescript.add_reaction(emoji)
+        # emoji = '👍'
+        # await msgDescript.add_reaction(emoji)
         msgToSend2 = ""
         try:
             # prof_channel = bot.get_channel(995656569301774456)
@@ -217,12 +217,13 @@ Created by Yuki.
                 if x.author.id == member.id:
                     # await txt1.send(x.content)
                     # await txt1.send(embed=Embed(description=x.content))
-                    msgToSend2 += x.content
+                    msgToSend2 +=  x.content
+                    await txt1.send(embed=Embed(description=msgToSend2))
         except:
             print(traceback.format_exc())
         # msgToSend2 += member.mention
         await txt1.send(member.mention)
-        await txt1.send(embed=Embed(description=msgToSend2))
+        # await txt1.send(embed=Embed(description=msgToSend2))
         save_to_json()
         return
     if after.channel != before.channel:
@@ -240,8 +241,10 @@ Created by Yuki.
             prof_messages = await prof_channel.history(limit=1000).flatten()
             for x in prof_messages:
                 if x.author.id == member.id:
-                    embedToSend = Embed
-                    await txt1.send(embed=embedToSend)
+                    msgToSend = ""
+                    msgToSend += x.content
+                    # await txt1.send(embed=embedToSend)
+                    await txt1.send(embed=Embed(description=msgToSend))
             await txt1.send(member.mention)
         except:
             print(traceback.format_exc())
