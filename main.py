@@ -2,6 +2,7 @@ import os
 import traceback
 
 from dotenv import load_dotenv
+# pip3 install py-cord[voice] --pre
 import discord
 from discord import *
 import json
@@ -525,7 +526,7 @@ def save_to_json():
         json.dump(txtMsg, f)
     print("Saved bot state.")
 
-@bot.slash_command(description="Do translation.")
+@bot.slash_command(description="Translate to Japanese.")
 async def trans(ctx: ApplicationContext, *, text):
     translator = deepl.Translator(DEEPL_KEY)
     result = translator.translate_text(text, target_lang='JA')
