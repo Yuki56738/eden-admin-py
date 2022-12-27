@@ -15,7 +15,6 @@ load_dotenv()
 TOKEN = os.environ.get("DISCORD_TOKEN")
 DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
-
 intents = discord.Intents.all()
 bot = discord.Bot(intents=intents)
 
@@ -24,9 +23,9 @@ vcTxt = {}
 txtMsg = {}
 guildsettings = {}
 
-
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
+
 
 # class TestView(discord.ui.View):
 #     @discord.ui.button(label="Button 1", style=ButtonStyle.red)
@@ -202,8 +201,7 @@ Created by Yuki.
         # embedToSend = Embed(description=msgToSend)
         msgDescript = await txt1.send(embed=Embed(description=msgToSend))
 
-
-        #ここにボタン等を配置
+        # ここにボタン等を配置
         # await msgDescript.add_reaction()
         # emoji = '👍'
         # await msgDescript.add_reaction(emoji)
@@ -217,7 +215,7 @@ Created by Yuki.
                 if x.author.id == member.id:
                     # await txt1.send(x.content)
                     # await txt1.send(embed=Embed(description=x.content))
-                    msgToSend2 +=  x.content
+                    msgToSend2 += x.content
                     await txt1.send(embed=Embed(description=msgToSend2))
         except:
             print(traceback.format_exc())
@@ -418,6 +416,7 @@ async def nolook(ctx: ApplicationContext):
     )
     await ctx.respond(embed=Embed(description="完了."))
 
+
 @bot.slash_command(description="この部屋を見えるようにする。")
 async def look(ctx: ApplicationContext):
     global vcRole
@@ -529,12 +528,14 @@ def save_to_json():
         json.dump(txtMsg, f)
     print("Saved bot state.")
 
+
 @bot.slash_command(description="Translate to Japanese.")
 async def trans(ctx: ApplicationContext, *, text):
     translator = deepl.Translator(DEEPL_KEY)
     result = translator.translate_text(text, target_lang='JA')
     await ctx.respond(text)
     await ctx.send(result)
+
 
 def save_guild_settings():
     global vcRole
