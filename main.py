@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 # pip3 install py-cord[voice] --pre
 import discord
 from discord import *
+from discord.ext import *
 import json
 
 import deepl
