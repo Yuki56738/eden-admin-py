@@ -64,9 +64,56 @@ class MyModalChangeRoomName(discord.ui.Modal):
 
 
 class MyViewChangeRoomName(discord.ui.View):
-    @discord.ui.button(label="部屋の名前を変える.",style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="部屋の名前を変える.", style=discord.ButtonStyle.blurple)
     async def button_callback(self, button, interaction):
         await interaction.response.send_modal(MyModalChangeRoomName(title="部屋の名前を入力..."))
+
+    @discord.ui.button(label="この部屋に入れる人を限定する.", style=discord.ButtonStyle.red)
+    async def button2_callback(self, button: Button, interaction: Interaction):
+        global vcRole
+        global vcTxt
+        global txtMsg
+        global guildsettings
+        # try:
+        #     vcTxt[str(ctx.author.voice.channel.id)]
+        # except:
+        #     return
+        if not str(interaction.user.voice.channel.id) in vcTxt.keys():
+            print(traceback.format_exc())
+            return
+        vc1 = interaction.user.voice.channel
+        role1 = interaction.guild.get_role(vcRole[str(interaction.user.voice.channel.id)])
+        perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
+        perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
+        # perm2.update(connect=True)
+        # perm2.update(speak=True)
+        # perm2.update(use_slash_commands=True)
+        perm2.update(connect=True)
+        perm2.update(speak=True)
+        # perm1.update(value=689379286592)
+        perm1.update(read_message_history=True)
+        perm1.update(read_messages=True)
+        perm1.update(send_messages=True)
+        perm1.update(use_slash_commands=True)
+        perm1.update(connect=True, speak=True)
+        perms1 = Permissions.advanced().general().voice()
+        perm1.update(mute_members=False)
+        perm1.update(move_members=False, deafen_members=False)
+        perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
+        # memberRole = message.author.guild.get_role(997644021067415642)
+        memberRole = interaction.guild.get_role(guildsettings[str(interaction.guild.id)]["member_role"])
+        memberPerm = PermissionOverwrite().from_pair(Permissions.advanced().general(), Permissions.all())
+        memberPerm.update(view_channel=True)
+        await vc1.edit(overwrites={role1: perm1,
+                                   memberRole: memberPerm,
+                                   interaction.guild.default_role: PermissionOverwrite().from_pair(
+                                       Permissions.none(),
+                                       Permissions.all())
+                                   }
+                       )
+
+        await interaction.response.send_message(embed=Embed(description="完了."))
+
 
 class MyModalChangeRoomLimit(discord.ui.Modal):
     def __init__(self, *args, **kwargs) -> None:
@@ -91,13 +138,13 @@ class MyModalChangeRoomLimit(discord.ui.Modal):
         await interaction.user.voice.channel.edit(user_limit=int(self.children[0].value))
         await interaction.response.send_message(embed=Embed(description="完了."))
 
+
 class MyViewChangeRoomLimit(discord.ui.View):
     @discord.ui.button(label="部屋の人数制限を変える", style=discord.ButtonStyle.green)
     async def button_callback(self, button, interaction):
         await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
-class MyViewRoomNolook(discord.ui.View):
     @discord.ui.button(label="この部屋を見えなくする", style=discord.ButtonStyle.grey)
-    async def button_callback(self, button, interaction: discord.Interaction):
+    async def button2_callback(self, button, interaction: discord.Interaction):
         # await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
         global vcRole
         global vcTxt
@@ -138,6 +185,102 @@ class MyViewRoomNolook(discord.ui.View):
                 Permissions.all())}
         )
         await interaction.response.send_message("完了.")
+
+    @discord.ui.button(label="この部屋を見えるようにする.", style=ButtonStyle.grey,row=1)
+    async def button3_callback(self, button, interaction: Interaction):
+        global vcRole
+        global vcTxt
+        global txtMsg
+        global guildsettings
+        try:
+            vcTxt[str(interaction.user.voice.channel.id)]
+        except:
+            print(traceback.format_exc())
+            return
+        vc1 = interaction.user.voice.channel
+        role1 = interaction.guild.get_role(vcRole[str(interaction.user.voice.channel.id)])
+        perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
+        perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
+        # perm2.update(connect=True)
+        # perm2.update(speak=True)
+        # perm2.update(use_slash_commands=True)
+        perm2.update(connect=True)
+        perm2.update(speak=True)
+        # perm1.update(value=689379286592)
+        perm1.update(read_message_history=True)
+        perm1.update(read_messages=True)
+        perm1.update(send_messages=True)
+        perm1.update(use_slash_commands=True)
+        perm1.update(connect=True, speak=True)
+        perms1 = Permissions.advanced().general().voice()
+        perm1.update(mute_members=False)
+        perm1.update(move_members=False, deafen_members=False)
+        perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
+        # perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
+        memberRole = interaction.guild.get_role(guildsettings[str(interaction.guild.id)]["member_role"])
+        memberPerm = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
+        # perm2.update(connect=True)
+        # perm2.update(speak=True)
+        # perm2.update(use_slash_commands=True)
+        memberPerm.update(connect=True)
+        memberPerm.update(speak=True)
+        # memberRole = message.author.guild.get_role(997644021067415642)
+        # memberRole = ctx.guild.get_role(guildsettings[str(ctx.guild.id)]["member_role"])
+        # memberPerm = PermissionOverwrite().from_pair(Permissions.advanced().none(), Permissions.all())
+        await vc1.edit(overwrites={
+            role1: perm1,
+            memberRole: memberPerm,
+            interaction.guild.default_role: PermissionOverwrite().from_pair(
+                Permissions.none(),
+                Permissions.all())}
+        )
+
+        await interaction.response.send_message(embed=Embed(description="完了."))
+
+
+# class MyViewRoomNolook(discord.ui.View):
+#     @discord.ui.button(label="この部屋を見えなくする", style=discord.ButtonStyle.grey)
+#     async def button_callback(self, button, interaction: discord.Interaction):
+#         # await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
+#         global vcRole
+#         global vcTxt
+#         global txtMsg
+#         global guildsettings
+#         try:
+#             vcTxt[str(interaction.user.voice.channel.id)]
+#         except:
+#             print(traceback.format_exc())
+#             return
+#         vc1 = interaction.user.voice.channel
+#         role1 = interaction.guild.get_role(vcRole[str(interaction.user.voice.channel.id)])
+#         perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
+#         perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
+#         # perm2.update(connect=True)
+#         # perm2.update(speak=True)
+#         # perm2.update(use_slash_commands=True)
+#         perm2.update(connect=True)
+#         perm2.update(speak=True)
+#         # perm1.update(value=689379286592)
+#         perm1.update(read_message_history=True)
+#         perm1.update(read_messages=True)
+#         perm1.update(send_messages=True)
+#         perm1.update(use_slash_commands=True)
+#         perm1.update(connect=True, speak=True)
+#         perms1 = Permissions.advanced().general().voice()
+#         perm1.update(mute_members=False)
+#         perm1.update(move_members=False, deafen_members=False)
+#         perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
+#         # memberRole = message.author.guild.get_role(997644021067415642)
+#         memberRole = interaction.guild.get_role(guildsettings[str(interaction.guild.id)]["member_role"])
+#         memberPerm = PermissionOverwrite().from_pair(Permissions.advanced().none(), Permissions.all())
+#         await vc1.edit(overwrites={
+#             role1: perm1,
+#             memberRole: memberPerm,
+#             interaction.guild.default_role: PermissionOverwrite().from_pair(
+#                 Permissions.none(),
+#                 Permissions.all())}
+#         )
+#         await interaction.response.send_message("完了.")
 
 
 @bot.event
@@ -314,7 +457,7 @@ Created by Yuki.
 
         await txt1.send(view=MyViewChangeRoomName())
         await txt1.send(view=MyViewChangeRoomLimit())
-        await txt1.send(view=MyViewRoomNolook())
+        # await txt1.send(view=MyViewRoomNolook())
 
         # ここにボタン等を配置
         # await msgDescript.add_reaction()
@@ -374,6 +517,7 @@ Created by Yuki.
         vcTxt.pop(str(before.channel.id))
         save_to_json()
 
+
 @bot.slash_command(description="メニューを表示")
 async def menu(ctx: ApplicationContext):
     global vcRole
@@ -388,9 +532,10 @@ async def menu(ctx: ApplicationContext):
         return
     await ctx.respond(view=MyViewChangeRoomName())
     await ctx.send(view=MyViewChangeRoomLimit())
-    await ctx.send(view=MyViewRoomNolook())
+    # await ctx.send(view=MyViewRoomNolook())
     # await txt1.send(view=MyViewChangeRoomName())
     # await txt1.send(view=MyViewChangeRoomLimit())
+
 
 @bot.slash_command(description="自己紹介を表示")
 async def show(ctx: ApplicationContext, name: Option(str, required=True, description="名前")):
