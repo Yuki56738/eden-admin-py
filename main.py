@@ -32,6 +32,43 @@ bot_author = bot.get_user(bot_author_id)
 #     @discord.ui.button(label="Button 1", style=ButtonStyle.red)
 #     async def first_button(self, button: discord.ui.Button, interaction: Interaction):
 #         await interaction.response(content="ボタンが押されました。", view=self)
+
+class MyModal(discord.ui.Modal):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        self.add_item(discord.ui.InputText(label="部屋の名前", style=discord.InputTextStyle.long))
+
+    async def callback(self, interaction: discord.Interaction):
+        # embed = discord.Embed(title="Modal Results")
+        # embed.add_field(name="Long Input", value=self.children[0].value)
+        # await interaction.response.send_message(embeds=[embed])
+        global vcRole
+        global vcTxt
+        global txtMsg
+        global guildsettings
+        try:
+            # txt1 = vcTxt[str(ctx.author.voice.channel.id)]
+            txt1 = vcTxt[str(interaction.user.voice.channel.id)]
+            txt1 = bot.get_channel(txt1)
+        except:
+            print(traceback.format_exc())
+            return
+        await txt1.edit(name=self.children[0].value)
+        # vc1 = ctx.author.voice.channel
+        vc1 = interaction.user.voice.channel
+        await vc1.edit(name=self.children[0].value)
+        await interaction.response.send_message("完了.")
+        # await interaction.message.channel.send(embed=Embed(description="完了."))
+        # await ctx.respond(embed=Embed(description="完了."))
+
+
+class MyViewChangeRoomName(discord.ui.View):
+    @discord.ui.button(label="部屋の名前を変える.")
+    async def button_callback(self, button, interaction):
+        await interaction.response.send_modal(MyModal(title="部屋の名前を入力..."))
+
+
 @bot.event
 async def on_ready():
     global vcRole
@@ -201,6 +238,8 @@ Created by Yuki.
 /look で、この部屋を見えるようにする。"""
         # embedToSend = Embed(description=msgToSend)
         msgDescript = await txt1.send(embed=Embed(description=msgToSend))
+
+        await txt1.send(view=MyViewChangeRoomName())
 
         # ここにボタン等を配置
         # await msgDescript.add_reaction()
