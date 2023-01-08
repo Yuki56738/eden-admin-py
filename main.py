@@ -306,7 +306,9 @@ Created by Yuki.
 例｜/limit 4（半角
 /close でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
 /nolook でこの部屋を見えなくする。
-/look で、この部屋を見えるようにする。"""
+/look で、この部屋を見えるようにする。
+
+/menu で、メニューを表示。"""
         # embedToSend = Embed(description=msgToSend)
         msgDescript = await txt1.send(embed=Embed(description=msgToSend))
 
