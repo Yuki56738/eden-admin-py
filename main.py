@@ -33,7 +33,7 @@ bot_author = bot.get_user(bot_author_id)
 #     async def first_button(self, button: discord.ui.Button, interaction: Interaction):
 #         await interaction.response(content="ボタンが押されました。", view=self)
 
-class MyModal(discord.ui.Modal):
+class MyModalChangeRoomName(discord.ui.Modal):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
@@ -64,9 +64,37 @@ class MyModal(discord.ui.Modal):
 
 
 class MyViewChangeRoomName(discord.ui.View):
-    @discord.ui.button(label="部屋の名前を変える.")
+    @discord.ui.button(label="部屋の名前を変える.",style=discord.ButtonStyle.blurple)
     async def button_callback(self, button, interaction):
-        await interaction.response.send_modal(MyModal(title="部屋の名前を入力..."))
+        await interaction.response.send_modal(MyModalChangeRoomName(title="部屋の名前を入力..."))
+
+class MyModalChangeRoomLimit(discord.ui.Modal):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        self.add_item(discord.ui.InputText(label="人数", style=discord.InputTextStyle.singleline))
+
+    async def callback(self, interaction: discord.Interaction):
+        # embed = discord.Embed(title="Modal Results")
+        # embed.add_field(name="Long Input", value=self.children[0].value)
+        # await interaction.response.send_message(embeds=[embed])
+        global vcRole
+        global vcTxt
+        global txtMsg
+        global guildsettings
+        try:
+            txt1 = vcTxt[str(interaction.user.voice.channel.id)]
+            txt1 = bot.get_channel(txt1)
+        except:
+            print(traceback.format_exc())
+            return
+        await interaction.user.voice.channel.edit(user_limit=int(self.children[0].value))
+        await interaction.response.send_message(embed=Embed(description="完了."))
+
+class MyViewChangeRoomLimit(discord.ui.View):
+    @discord.ui.button(label="部屋の人数制限を変える", style=discord.ButtonStyle.green)
+    async def button_callback(self, button, interaction):
+        await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
 
 
 @bot.event
@@ -240,6 +268,7 @@ Created by Yuki.
         msgDescript = await txt1.send(embed=Embed(description=msgToSend))
 
         await txt1.send(view=MyViewChangeRoomName())
+        await txt1.send(view=MyViewChangeRoomLimit())
 
         # ここにボタン等を配置
         # await msgDescript.add_reaction()
