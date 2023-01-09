@@ -508,14 +508,15 @@ Created by Yuki.
         # perms1.update(connect=True, speak=True)
         role1 = await member.guild.create_role(name=f"（雑・作）{member.display_name}の部屋", permissions=perms1)
         # cat1 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
-        cat2 = after.channel.category
+        catVc = after.channel.category
+        cat2 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
         vc1 = await member.guild.create_voice_channel(f"（雑・作）{member.display_name}の部屋", overwrites={role1: perm1,
-                                                                                                 # memberRole: perm2,
+                                                                                                 memberRole: perm2,
                                                                                                  member.guild.default_role: PermissionOverwrite().from_pair(
                                                                                                      Permissions.none(),
                                                                                                      Permissions.all())
                                                                                                  },
-                                                      category=cat2, user_limit=2)
+                                                      category=catVc, user_limit=2)
         vcRole[str(vc1.id)] = role1.id
         # await role1.edit(position=8)
         await member.add_roles(role1)
@@ -567,8 +568,7 @@ Created by Yuki.
         # await txt1.send(embed=Embed(description=msgToSend2))
         save_to_json()
 
-    if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)][
-        "create_vc_channel_qm_1"]:
+    if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel_qm_1"]:
         print("qm_1 hit.")
         # await member.guild.system_channel.send("hit.")
         # memberRole = member.guild.get_role(997644021067415642)
@@ -594,14 +594,16 @@ Created by Yuki.
         # perms1.update(connect=True, speak=True)
         role1 = await member.guild.create_role(name=f"（猥・エ）{member.display_name}の部屋", permissions=perms1)
         # cat1 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
-        cat2 = after.channel.category
+        # cat2 = after.channel.category
+        cat2 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
+        catVc = after.channel.category
         vc1 = await member.guild.create_voice_channel(f"（猥・エ）{member.display_name}の部屋", overwrites={role1: perm1,
-                                                                                                        # memberRole: perm2,
+                                                                                                        memberRole: perm2,
                                                                                                         member.guild.default_role: PermissionOverwrite().from_pair(
                                                                                                             Permissions.none(),
                                                                                                             Permissions.all())
                                                                                                         },
-                                                      category=cat2, user_limit=2)
+                                                      category=catVc, user_limit=2)
         vcRole[str(vc1.id)] = role1.id
         # await role1.edit(position=8)
         await member.add_roles(role1)
@@ -655,8 +657,7 @@ Created by Yuki.
         save_to_json()
 
 
-    if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)][
-        "create_vc_channel_qm_2"]:
+    if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel_qm_2"]:
         print("qm_2 hit.")
         # await member.guild.system_channel.send("hit.")
         # memberRole = member.guild.get_role(997644021067415642)
@@ -682,14 +683,16 @@ Created by Yuki.
         # perms1.update(connect=True, speak=True)
         role1 = await member.guild.create_role(name=f"（寝）{member.display_name}の部屋", permissions=perms1)
         # cat1 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
-        cat2 = after.channel.category
+        # cat2 = after.channel.category
+        cat2 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
+        catVc = after.channel.category
         vc1 = await member.guild.create_voice_channel(f"（寝）{member.display_name}の部屋", overwrites={role1: perm1,
-                                                                                                        # memberRole: perm2,
+                                                                                                        memberRole: perm2,
                                                                                                         member.guild.default_role: PermissionOverwrite().from_pair(
                                                                                                             Permissions.none(),
                                                                                                             Permissions.all())
                                                                                                         },
-                                                      category=cat2, user_limit=2)
+                                                      category=catVc, user_limit=2)
         vcRole[str(vc1.id)] = role1.id
         # await role1.edit(position=8)
         await member.add_roles(role1)
