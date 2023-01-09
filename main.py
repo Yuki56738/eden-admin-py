@@ -538,7 +538,7 @@ async def menu(ctx: ApplicationContext):
 
 
 @bot.slash_command(description="自己紹介を表示")
-async def show(ctx: ApplicationContext, name: Option(str, required=True, description="名前")):
+async def prof(ctx: ApplicationContext, name: Option(str, required=True, description="名前")):
     global vcRole
     global vcTxt
     global txtMsg
@@ -553,7 +553,7 @@ async def show(ctx: ApplicationContext, name: Option(str, required=True, descrip
         # if x.author.id == xuser.id:
         if x.author.id == ctx.author.id:
             # await ctx.send_followup(x.content, delete_after=3 * 60, ephemeral=True)
-            # tosendmsg = tosendmsg + x.content
+            tosendmsg = tosendmsg + x.content
             print(f"{x.author.name}: {x.content}")
 
         # for xuser in ctx.author.voice.channel.members:
@@ -751,11 +751,11 @@ async def ping(ctx: ApplicationContext):
     await ctx.respond(embed=Embed(description=f"レイテンシーは、{lat * 60}ms."))
 
 
-@bot.slash_command(guild_ids=[977138017095520256])
-async def hello(ctx: ApplicationContext):
-    await ctx.respond("Hello!")
+# @bot.slash_command(guild_ids=[977138017095520256])
+# async def hello(ctx: ApplicationContext):
+#     await ctx.respond("Hello!")
 
-
+"""
 @bot.slash_command(description="設定を表示する")
 async def set_see(ctx: ApplicationContext):
     global vcRole
@@ -788,7 +788,7 @@ async def set_save(ctx: ApplicationContext, json1: Option(str, name="json", requ
         await ctx.respond(embed=Embed(description=f"エラー。設定は保存されていません！: {e}"))
         return
     await ctx.respond(embed=Embed(description="設定を保存しました。"))
-
+"""
 
 def save_to_json():
     global vcRole
