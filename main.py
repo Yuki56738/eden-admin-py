@@ -566,7 +566,7 @@ Created by Yuki.
         await txt1.send(member.mention)
         # await txt1.send(embed=Embed(description=msgToSend2))
         save_to_json()
-        return
+
     if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)][
         "create_vc_channel_qm_1"]:
         print("qm_1 hit.")
@@ -653,7 +653,7 @@ Created by Yuki.
         await txt1.send(member.mention)
         # await txt1.send(embed=Embed(description=msgToSend2))
         save_to_json()
-        return
+
 
     if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)][
         "create_vc_channel_qm_2"]:
