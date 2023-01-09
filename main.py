@@ -592,10 +592,10 @@ Created by Yuki.
         perm1.update(move_members=False, deafen_members=False, attach_files=True, embed_links=True)
         perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
         # perms1.update(connect=True, speak=True)
-        role1 = await member.guild.create_role(name=f"（雑・作）{member.display_name}の部屋", permissions=perms1)
+        role1 = await member.guild.create_role(name=f"（猥・エ）{member.display_name}の部屋", permissions=perms1)
         # cat1 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
         cat2 = after.channel.category
-        vc1 = await member.guild.create_voice_channel(f"（雑・作）{member.display_name}の部屋", overwrites={role1: perm1,
+        vc1 = await member.guild.create_voice_channel(f"（猥・エ）{member.display_name}の部屋", overwrites={role1: perm1,
                                                                                                         # memberRole: perm2,
                                                                                                         member.guild.default_role: PermissionOverwrite().from_pair(
                                                                                                             Permissions.none(),
@@ -606,7 +606,7 @@ Created by Yuki.
         # await role1.edit(position=8)
         await member.add_roles(role1)
         await member.move_to(vc1)
-        txt1 = await member.guild.create_text_channel(name=f"（雑・作）{member.display_name}の部屋",
+        txt1 = await member.guild.create_text_channel(name=f"（猥・エ）{member.display_name}の部屋",
                                                       overwrites={role1: perm1,
                                                                   member.guild.default_role: PermissionOverwrite().from_pair(
                                                                       Permissions.none(),
