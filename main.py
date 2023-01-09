@@ -879,8 +879,11 @@ async def menu(ctx: ApplicationContext):
     except:
         print(traceback.format_exc())
         return
-    await ctx.respond(view=MyViewChangeRoomName())
-    await ctx.send(view=MyViewChangeRoomLimit())
+    res = await ctx.respond(view=MyViewChangeRoomName(), delete_after=3*60)
+
+    res2 = await ctx.send(view=MyViewChangeRoomLimit(), delete_after=3*60)
+    # await res.delete_original_message()
+    # await res2.delete_original_message()
     # await ctx.send(view=MyViewRoomNolook())
     # await txt1.send(view=MyViewChangeRoomName())
     # await txt1.send(view=MyViewChangeRoomLimit())
