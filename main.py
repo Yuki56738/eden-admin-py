@@ -395,7 +395,8 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
     try:
         guild1 = guildsettings[str(member.guild.id)]
     except:
-        print(traceback.format_exc())
+        # print(traceback.format_exc())
+        traceback.format_exc()
 
     # if not after.channel is None and after.channel.id == 1019948085876629516:
     if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel"]:
@@ -424,13 +425,14 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
         # perms1.update(connect=True, speak=True)
         role1 = await member.guild.create_role(name=f"{member.display_name}の部屋", permissions=perms1)
         cat1 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
+        catVc = after.channel.category
         vc1 = await member.guild.create_voice_channel(f"{member.display_name}の部屋", overwrites={role1: perm1,
                                                                                                  memberRole: perm2,
                                                                                                  member.guild.default_role: PermissionOverwrite().from_pair(
                                                                                                      Permissions.none(),
                                                                                                      Permissions.all())
                                                                                                  },
-                                                      category=cat1, user_limit=2)
+                                                      category=catVc, user_limit=2)
         vcRole[str(vc1.id)] = role1.id
         # await role1.edit(position=8)
         await member.add_roles(role1)
@@ -439,7 +441,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
                                                                                                       member.guild.default_role: PermissionOverwrite().from_pair(
                                                                                                           Permissions.none(),
                                                                                                           Permissions.all())},
-                                                      category=cat1)
+                                                      category=catVc)
         vcTxt[str(vc1.id)] = txt1.id
         msgToSend = """
 Created by Yuki.
@@ -768,7 +770,7 @@ Created by Yuki.
                     await txt1.send(embed=Embed(description=msgToSend))
             await txt1.send(member.mention)
         except:
-            print(traceback.format_exc())
+            traceback.format_exc()
 
     if not before.channel is None and len(before.channel.members) == 0:
         txt1_id = vcTxt[str(before.channel.id)]
