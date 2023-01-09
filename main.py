@@ -657,7 +657,7 @@ Created by Yuki.
 
     if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)][
         "create_vc_channel_qm_2"]:
-        print("qm_1 hit.")
+        print("qm_2 hit.")
         # await member.guild.system_channel.send("hit.")
         # memberRole = member.guild.get_role(997644021067415642)
         memberRole = member.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
