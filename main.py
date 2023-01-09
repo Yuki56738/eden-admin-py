@@ -741,7 +741,7 @@ Created by Yuki.
         await txt1.send(member.mention)
         # await txt1.send(embed=Embed(description=msgToSend2))
         save_to_json()
-        return
+
 
 
     if before.channel != after.channel:
