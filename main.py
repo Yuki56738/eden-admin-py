@@ -294,19 +294,24 @@ async def on_ready():
     print(f"Logged in as: {bot.user}")
     # bot.activity = "Created by Yuki."
     await bot.change_presence(activity=Game(name="Created by Yuki."))
-    try:
-        with open("guildsettings.json", "r", encoding="utf8") as f:
-            guildsettings = json.load(f)
-        with open("txtMsg.json", "r") as f:
-            txtMsg = json.load(f)
-        with open("vcTxt.json", "r") as f:
-            vcTxt = json.load(f)
-        with open("vcRole.json", "r") as f:
-            vcRole = json.load(f)
-
-
-    except Exception as e:
-        print(traceback.format_exc())
+    # try:
+    #     with open("guildsettings.json", "r", encoding="utf8") as f:
+    #         guildsettings = json.load(f)
+    #     with open("txtMsg.json", "r") as f:
+    #         txtMsg = json.load(f)
+    #     with open("vcTxt.json", "r") as f:
+    #         vcTxt = json.load(f)
+    #     with open("vcRole.json", "r") as f:
+    #         vcRole = json.load(f)
+    #
+    #
+    # except Exception as e:
+    #     print(traceback.format_exc())
+    guildsettings = libyuki.get_guilddb_as_dict("guildsettings")
+    txtMsg = libyuki.get_guilddb_as_dict("txtMsg")
+    vcTxt = libyuki.get_guilddb_as_dict("vcTxt")
+    vcRole = libyuki.get_guilddb_as_dict("vcRole")
+    print(guildsettings)
     print("Loaded bot state.")
 
 
@@ -1169,13 +1174,16 @@ def save_to_json():
     global txtMsg
     global guildsettings
     print("Saving bot state...")
-    with open("vcTxt.json", "w") as f:
-        # tmpJson:dict = json.load(f)
-        json.dump(vcTxt, f)
-    with open("vcRole.json", "w") as f:
-        json.dump(vcRole, f)
-    with open("txtMsg.json", "w") as f:
-        json.dump(txtMsg, f)
+    # with open("vcTxt.json", "w") as f:
+    #     # tmpJson:dict = json.load(f)
+    #     json.dump(vcTxt, f)
+    # with open("vcRole.json", "w") as f:
+    #     json.dump(vcRole, f)
+    # with open("txtMsg.json", "w") as f:
+    #     json.dump(txtMsg, f)
+    libyuki.push_guilddb(id="vcTxt", payload=vcTxt)
+    libyuki.push_guilddb(id="vcRole", payload=vcRole)
+    libyuki.push_guilddb(id="txtMsg", payload=txtMsg)
     print("Saved bot state.")
 
 
@@ -1198,8 +1206,9 @@ def save_guild_settings():
     global txtMsg
     global guildsettings
     print("Saving guildsettings...")
-    with open("guildsettings.json", "w", encoding="utf8") as f:
-        json.dump(guildsettings, f, ensure_ascii=False)
+    # with open("guildsettings.json", "w", encoding="utf8") as f:
+    #     json.dump(guildsettings, f, ensure_ascii=False)
+    libyuki.push_guilddb(id="guildsettings", payload=guildsettings)
     print("Saved guildsettings.")
 
 
