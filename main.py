@@ -10,6 +10,8 @@ import json
 
 import deepl
 
+import libyuki
+
 # from discord.ui import *
 
 load_dotenv()
