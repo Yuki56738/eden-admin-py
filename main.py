@@ -807,8 +807,8 @@ Created by Yuki.
                     # await txt1.send(embed=embedToSend)
                     await txt1.send(embed=Embed(description=msgToSend))
             await txt1.send(member.mention)
-            await txt1.send(view=MyViewChangeRoomName)
-            await txt1.send(view=MyViewChangeRoomLimit)
+            await txt1.send(view=MyViewChangeRoomName())
+            await txt1.send(view=MyViewChangeRoomLimit())
         except:
             traceback.format_exc()
 
