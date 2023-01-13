@@ -1177,18 +1177,18 @@ def save_to_json():
     print("Saved bot state.")
 
 
-@bot.slash_command(description="Translate to Japanese.")
-async def ja(ctx: ApplicationContext, *, text):
-    translator = deepl.Translator(DEEPL_KEY)
-    result = translator.translate_text(text, target_lang='JA')
-    await ctx.respond(text)
-    await ctx.send(result)
-@bot.slash_command(description="Translate to Japanese.")
-async def en(ctx: ApplicationContext, *, text):
-    translator = deepl.Translator(DEEPL_KEY)
-    result = translator.translate_text(text, target_lang='EN')
-    await ctx.respond(text)
-    await ctx.send(result)
+# @bot.slash_command(description="Translate to Japanese.")
+# async def japanese(ctx: ApplicationContext, *, text):
+#     translator = deepl.Translator(DEEPL_KEY)
+#     result = translator.translate_text(text, target_lang='JA')
+#     await ctx.respond(text)
+#     await ctx.send(result)
+# @bot.slash_command(description="Translate to Japanese.")
+# async def english(ctx: ApplicationContext, *, text):
+#     translator = deepl.Translator(DEEPL_KEY)
+#     result = translator.translate_text(text, target_lang='EN')
+#     await ctx.respond(text)
+#     await ctx.send(result)
 
 def save_guild_settings():
     global vcRole
