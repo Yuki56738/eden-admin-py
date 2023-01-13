@@ -943,15 +943,19 @@ async def menu(ctx: ApplicationContext):
     global txtMsg
     global guildsettings
     # isCreatedRoom = True
+    isGeneral = False
     try:
         txt1 = vcTxt[str(ctx.author.voice.channel.id)]
         txt1 = bot.get_channel(txt1)
     except:
         # print(traceback.format_exc())
         traceback.print_exc()
-        return
-    await ctx.respond(view=MyViewChangeRoomName(), ephemeral=True)
-    await ctx.send_followup(view=MyViewChangeRoomLimit(), ephemeral=True)
+        isGeneral = True
+    if isGeneral:
+        pass
+    else:
+        await ctx.respond(view=MyViewChangeRoomName(), ephemeral=True)
+        await ctx.send_followup(view=MyViewChangeRoomLimit(), ephemeral=True)
     # await ctx.send(view=MyViewRoomNolook())
     # await txt1.send(view=MyViewChangeRoomName())
     # await txt1.send(view=MyViewChangeRoomLimit())
