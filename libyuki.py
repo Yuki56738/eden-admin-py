@@ -1,23 +1,11 @@
 import json
 import traceback
-# from google.cloud import data
-# from google.cloud.datastore_v1 import *
-# from google.cloud.datastore_admin_v1 import *
-# from google.cloud.firestore import *
 
 from google.cloud import firestore
 from google.cloud.firestore import *
 
 
-# from google.cloud.firestore_v1 import *
-# db = Client
-# guilddb = DocumentSnapshot
 
-
-# def prepare_db():
-# global db
-# global guilddb
-# project_id = "firstproj-36?7213"
 def get_db():
     db: Client = firestore.Client()
     return db
