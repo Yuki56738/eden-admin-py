@@ -295,6 +295,7 @@ async def on_ready():
     global guildsettings
     global vcOwnerRole
     print(f"Logged in as: {bot.user}")
+    # bot.get_guild(994483180927201400).fetch_members()
     # bot.activity = "Created by Yuki."
     await bot.change_presence(activity=Game(name="Created by Yuki."))
     # try:
