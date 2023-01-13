@@ -29,6 +29,7 @@ vcOwnerRole = {"1234": "2345"}
 
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
+edenNotifyChannel = ""
 
 
 # class TestView(discord.ui.View):
@@ -295,7 +296,10 @@ async def on_ready():
     global guildsettings
     global vcOwnerRole
     print(f"Logged in as: {bot.user}")
-
+    global edenNotifyChannel
+    edenNotifyChannel = bot.get_guild(994483180927201400).get_channel(994483180927201403)
+    await edenNotifyChannel.send(embed=Embed(description="Starting bot..."))
+    await edenNotifyChannel.send(embed=Embed(description="Loading databases..."))
     # bot.get_guild(994483180927201400).fetch_members()
     # bot.activity = "Created by Yuki."
     await bot.change_presence(activity=Game(name="Created by Yuki."))
@@ -319,6 +323,7 @@ async def on_ready():
     vcOwnerRole = libyuki.get_guilddb_as_dict("vcOwnerRole")
     print(guildsettings)
     print("Loaded bot state.")
+    await edenNotifyChannel.send(embed=Embed(description="Loaded databases."))
 
 
 @bot.event
@@ -1217,6 +1222,7 @@ def save_to_json():
     #     json.dump(vcRole, f)
     # with open("txtMsg.json", "w") as f:
     #     json.dump(txtMsg, f)
+    # global edenNotifyChannel
     libyuki.push_guilddb(id="vcTxt", payload=vcTxt)
     libyuki.push_guilddb(id="vcRole", payload=vcRole)
     libyuki.push_guilddb(id="txtMsg", payload=txtMsg)
