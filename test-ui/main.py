@@ -2,6 +2,8 @@ import discord
 from discord.ext import pages
 from dotenv import load_dotenv
 import os
+from discord import *
+from discord.ui import *
 
 load_dotenv()
 
@@ -10,22 +12,18 @@ TOKEN = os.environ.get("DISCORD_TOKEN")
 bot = discord.Bot()
 
 
-class MyModal(discord.ui.Modal):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+class MyView(discord.ui.View):
+    @discord.ui.user_select(
+        placeholder="ユーザーを選択してください",
+        min_values=1,
+        max_values=1,
 
-        self.add_item(discord.ui.InputText(label="Long Input", style=discord.InputTextStyle.long))
-
-    async def callback(self, interaction: discord.Interaction):
-        embed = discord.Embed(title="Modal Results")
-        embed.add_field(name="Long Input", value=self.children[0].value)
-        await interaction.response.send_message(embeds=[embed])
-
-
-class MyViewChangeRoomName(discord.ui.View):
-    @discord.ui.button(label="部屋の名前を変える.")
-    async def button_callback(self, button, interaction):
-        await interaction.response.send_modal(MyModal(title="部屋の名前を入力..."))
+    )
+    async def select_callback(self, select: Select, interaction: Interaction):
+        await interaction.response.send_message(f"頑張っています...")
+        # print(select.to_dict())
+        print(select.values[0])
+        member1: Member = select.values[0]
 
 
 @bot.event

@@ -5,7 +5,6 @@ from google.cloud import firestore
 from google.cloud.firestore import *
 
 
-
 def get_db():
     db: Client = firestore.Client()
     return db
@@ -31,3 +30,16 @@ def push_guilddb(id: str, payload: dict):
 def get_guilddb_as_dict(id: str):
     guilddb = get_guilddb()
     return guilddb.document(document_id=id).get().to_dict()
+
+
+
+
+
+
+# guilddb = get_guilddb()
+# guildsettingsdb:DocumentReference = guilddb.document(document_id="guildsettings").get()
+#
+# var1 = guildsettingsdb.to_dict()
+#
+# var2 = var1["994483180927201400"]["move_channel"]
+# print(var2)
