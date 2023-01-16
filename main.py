@@ -826,7 +826,7 @@ Created by Yuki.
         # await txt1.send(embed=Embed(description=msgToSend2))
         save_to_json()
 
-    if not before.channel is None:
+    if not before.channel is None and after.channel is not None:
         txt1_id = vcTxt[str(before.channel.id)]
         txt1 = bot.get_channel(txt1_id)
         role1 = vcRole[str(before.channel.id)]
