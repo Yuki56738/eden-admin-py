@@ -65,7 +65,7 @@ class MyViewMoveMember(discord.ui.View):
         # print(toMoveChannel)
         # await inte("移動しています...")
         # await interaction.followup("移動しています...")
-        toMoveChannel1 =  bot.get_channel(int(var2))
+        toMoveChannel1 = bot.get_channel(int(var2))
         await interaction.channel.send("移動しています...")
         # toMoveChannel1 = bot.get_channel(int(toMoveChannel))
         await member1.move_to(toMoveChannel1)
@@ -869,6 +869,19 @@ Created by Yuki.
 @bot.slash_command(name="move", description="ユーザーを移動させる")
 async def move(ctx: ApplicationContext):
     await ctx.respond(view=MyViewMoveMember())
+
+
+@bot.slash_command(description="問題を報告する")
+async def ticket(ctx: ApplicationContext):
+    await ctx.respond("頑張っています...")
+    cat1 = ctx.guild.get_channel(guildsettings[ctx.guild.id]["ticket_category"])
+    permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
+    permow2 = PermissionOverwrite().from_pair(Permissions.all(), Permissions.none())
+    memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
+    await ctx.guild.create_text_channel(name=f"{ctx.user.display_name}のticket", category=cat1, overwrites={
+        ctx.guild.default_role: permow2,
+        ctx.user: permow1
+    })
 
 
 # @bot.slash_command(description="メニューを表示")

@@ -32,14 +32,29 @@ def get_guilddb_as_dict(id: str):
     return guilddb.document(document_id=id).get().to_dict()
 
 
+def get_ref_guilddb(id: str):
+    guilddb = get_guilddb()
+    return guilddb.document(document_id=id)
 
+def list_guilddb(id: str):
+    guilddb_ref = get_ref_guilddb(id)
+    return guilddb_ref
+# list_guilddb()
 
-
-
-# guilddb = get_guilddb()
-# guildsettingsdb:DocumentReference = guilddb.document(document_id="guildsettings").get()
+# var1 = list_guilddb("guildsettings").get()
 #
-# var1 = guildsettingsdb.to_dict()
+
+
+# print(var1.to_dict())
+
+# guilddb_ref = get_ref_guilddb("guildsettinfs")
 #
-# var2 = var1["994483180927201400"]["move_channel"]
-# print(var2)
+# guilddbs = guilddb_ref.stream()
+
+# guilddb_ref = get_guilddb()
+#
+# guilddb = guilddb_ref.stream()
+#
+# for x in guilddb:
+#     print(f"{x.id} => {x.to_dict()}")
+#     if x.id == ""
