@@ -454,6 +454,8 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
         # print(traceback.format_exc())
         traceback.format_exc()
 
+
+
     # if not after.channel is None and after.channel.id == 1019948085876629516:
     if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel"]:
         print("hit.")
@@ -558,8 +560,7 @@ Created by Yuki.
         # await txt1.send(embed=Embed(description=msgToSend2))
         save_to_json()
         return
-    if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)][
-        "create_vc_channel_qm_general"]:
+    if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel_qm_general"]:
         print("qm_general hit.")
         # await member.guild.system_channel.send("hit.")
         # memberRole = member.guild.get_role(997644021067415642)
@@ -825,6 +826,27 @@ Created by Yuki.
         # await txt1.send(embed=Embed(description=msgToSend2))
         save_to_json()
 
+    if not before.channel is None:
+        txt1_id = vcTxt[str(before.channel.id)]
+        txt1 = bot.get_channel(txt1_id)
+        role1 = vcRole[str(before.channel.id)]
+        role1 = member.guild.get_role(role1)
+        if len(before.channel.members) == 0:
+            await txt1.delete()
+            await role1.delete()
+            await before.channel.delete()
+            vcRole.pop(str(before.channel.id))
+            vcTxt.pop(str(before.channel.id))
+            save_to_json()
+            try:
+                await member.guild.get_role(vcOwnerRole[str(before.channel.id)]).delete()
+                vcOwnerRole.pop(str(before.channel.id))
+            except:
+                pass
+            await member.remove_roles(role1)
+
+    if before.channel.id is None and after.channel.id is None:
+        return
     if before.channel != after.channel:
         try:
             role1 = vcRole[str(after.channel.id)]
@@ -852,24 +874,6 @@ Created by Yuki.
             traceback.format_exc()
 
     # if not before.channel is None and len(before.channel.members) == 0:
-        if not before.channel is None:
-            txt1_id = vcTxt[str(before.channel.id)]
-            txt1 = bot.get_channel(txt1_id)
-            role1 = vcRole[str(before.channel.id)]
-            role1 = member.guild.get_role(role1)
-            if len(before.channel.members) == 0:
-                await txt1.delete()
-                await role1.delete()
-                await before.channel.delete()
-                vcRole.pop(str(before.channel.id))
-                vcTxt.pop(str(before.channel.id))
-                save_to_json()
-                try:
-                    await member.guild.get_role(vcOwnerRole[str(before.channel.id)]).delete()
-                    vcOwnerRole.pop(str(before.channel.id))
-                except:
-                    pass
-                await member.remove_roles(role1)
 
             save_to_json()
 
