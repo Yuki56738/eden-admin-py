@@ -850,7 +850,8 @@ Created by Yuki.
         except:
             traceback.format_exc()
 
-    if not before.channel is None and len(before.channel.members) == 0:
+    # if not before.channel is None and len(before.channel.members) == 0:
+    if not before.channel is None:
         txt1_id = vcTxt[str(before.channel.id)]
         txt1 = bot.get_channel(txt1_id)
         await txt1.delete()
