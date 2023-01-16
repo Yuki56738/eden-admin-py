@@ -874,10 +874,11 @@ async def move(ctx: ApplicationContext):
 @bot.slash_command(description="問題を報告する")
 async def ticket(ctx: ApplicationContext):
     await ctx.respond("頑張っています...")
-    cat1 = ctx.guild.get_channel(guildsettings[ctx.guild.id]["ticket_category"])
+    # cat1 = ctx.guild.get_channel(guildsettings[ctx.guild.id]["ticket_category"])
+    cat1 = ctx.guild.get_channel(libyuki.get_guilddb_as_dict("guildsettings")["994483180927201400"]["ticket_category"])
     permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
     permow2 = PermissionOverwrite().from_pair(Permissions.all(), Permissions.none())
-    memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
+    # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
     await ctx.guild.create_text_channel(name=f"{ctx.user.display_name}のticket", category=cat1, overwrites={
         ctx.guild.default_role: permow2,
         ctx.user: permow1
