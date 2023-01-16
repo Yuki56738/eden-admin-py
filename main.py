@@ -457,7 +457,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
 
 
     # if not after.channel is None and after.channel.id == 1019948085876629516:
-    if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel"]:
+    if after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel"]:
         print("hit.")
         # await member.guild.system_channel.send("hit.")
         # memberRole = member.guild.get_role(997644021067415642)
@@ -649,7 +649,7 @@ Created by Yuki.
         # await txt1.send(embed=Embed(description=msgToSend2))
         save_to_json()
 
-    if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel_qm_1"]:
+    if after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel_qm_1"]:
         print("qm_1 hit.")
         # await member.guild.system_channel.send("hit.")
         # memberRole = member.guild.get_role(997644021067415642)
@@ -738,7 +738,7 @@ Created by Yuki.
         # await txt1.send(embed=Embed(description=msgToSend2))
         save_to_json()
 
-    if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel_qm_2"]:
+    if after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel_qm_2"]:
         print("qm_2 hit.")
         # await member.guild.system_channel.send("hit.")
         # memberRole = member.guild.get_role(997644021067415642)
@@ -846,8 +846,8 @@ Created by Yuki.
                 pass
             await member.remove_roles(role1)
 
-    if before.channel.id is None and after.channel.id is None:
-        return
+    # if before.channel.id is None and after.channel.id is None:
+    #     return
     if before.channel != after.channel:
         try:
             role1 = vcRole[str(after.channel.id)]
@@ -877,7 +877,8 @@ Created by Yuki.
     # if not before.channel is None and len(before.channel.members) == 0:
 
             save_to_json()
-
+    if after.channel is None:
+        return
 
 @bot.slash_command(name="move", description="ユーザーを移動させる")
 async def move(ctx: ApplicationContext):
