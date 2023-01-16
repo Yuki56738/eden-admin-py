@@ -360,6 +360,7 @@ async def on_ready():
     await edenNotifyChannel.send(embed=Embed(description="Loaded databases."))
 
 
+
 @bot.event
 async def on_raw_reaction_add(reaction: RawReactionActionEvent):
     global vcRole
@@ -898,13 +899,20 @@ async def move(ctx: ApplicationContext):
 
 class MyViewTicket(discord.ui.View):
     @discord.ui.button(label="問題を作成", style=discord.ButtonStyle.green)
-    async def button_callback(self, button, interaction):
+    async def button_callback(self, button, interaction: Interaction):
+        # await interaction.response.send("頑張っています...")
+        await interaction.response.send_message("頑張っています...")
         # await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
         permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
         permow2 = PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())
         # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
-        cat1 = libyuki.get_guilddb_as_dict("guildsettings")[interaction.guild.id]["ticket_category"]
-        txt1: TextChannel = await ctx.guild.create_text_channel(name=f"{interaction.user.display_name}のticket", category=cat1,
+        db = firestore.Client()
+        guilddb = db.collection("guilddb")
+        guilddb1 = guilddb.document(document_id="guildsettings")
+        guilddb1_dict =  guilddb1.get().to_dict()
+        cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_category"]
+        cat1 = bot.get_channel(cat1)
+        txt1: TextChannel = await interaction.guild.create_text_channel(name=f"{interaction.user.display_name}のticket", category=cat1,
                                                                 overwrites={
                                                                     interaction.guild.default_role: permow2,
                                                                     interaction.user: permow1
@@ -912,8 +920,15 @@ class MyViewTicket(discord.ui.View):
         db = firestore.Client()
         db1 = db.collection("guilddb").document(document_id="ticketTxtUser")
         db1_dict = db1.get().to_dict()
+        if db1_dict is None:
+            db1_dict1 = {
+                str(txt1.id): str(interaction.user.id)
+            }
+            db1.create(db1_dict1)
+
         db1_dict[str(txt1.id)] = str(interaction.user.id)
-        db1.update(db1_dict)
+        print(db1.update(db1_dict))
+        # db1.update(db1_dict)
         await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
 
 @bot.slash_command(description="問題を報告する")
