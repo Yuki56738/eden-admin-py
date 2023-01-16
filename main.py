@@ -847,24 +847,31 @@ Created by Yuki.
             await txt1.send(member.mention)
             await txt1.send(view=MyViewChangeRoomName())
             await txt1.send(view=MyViewChangeRoomLimit())
+            save_to_json()
         except:
             traceback.format_exc()
 
     # if not before.channel is None and len(before.channel.members) == 0:
-    if not before.channel is None:
-        txt1_id = vcTxt[str(before.channel.id)]
-        txt1 = bot.get_channel(txt1_id)
-        await txt1.delete()
-        role1 = vcRole[str(before.channel.id)]
-        role1 = member.guild.get_role(role1)
-        await role1.delete()
-        await before.channel.delete()
-        vcRole.pop(str(before.channel.id))
-        vcTxt.pop(str(before.channel.id))
-        await member.guild.get_role(vcOwnerRole[str(before.channel.id)]).delete()
-        vcOwnerRole.pop(str(before.channel.id))
+        if not before.channel is None:
+            txt1_id = vcTxt[str(before.channel.id)]
+            txt1 = bot.get_channel(txt1_id)
+            role1 = vcRole[str(before.channel.id)]
+            role1 = member.guild.get_role(role1)
+            if len(before.channel.members) == 0:
+                await txt1.delete()
+                await role1.delete()
+                await before.channel.delete()
+                vcRole.pop(str(before.channel.id))
+                vcTxt.pop(str(before.channel.id))
+                save_to_json()
+                try:
+                    await member.guild.get_role(vcOwnerRole[str(before.channel.id)]).delete()
+                    vcOwnerRole.pop(str(before.channel.id))
+                except:
+                    pass
+                await member.remove_roles(role1)
 
-        save_to_json()
+            save_to_json()
 
 
 @bot.slash_command(name="move", description="ユーザーを移動させる")
