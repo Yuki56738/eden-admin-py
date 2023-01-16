@@ -560,7 +560,8 @@ Created by Yuki.
         # await txt1.send(embed=Embed(description=msgToSend2))
         save_to_json()
         return
-    if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel_qm_general"]:
+    # if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel_qm_general"]:
+    if after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel_qm_general"]:
         print("qm_general hit.")
         # await member.guild.system_channel.send("hit.")
         # memberRole = member.guild.get_role(997644021067415642)
