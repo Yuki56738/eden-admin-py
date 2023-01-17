@@ -69,9 +69,11 @@ class Ticket(Cog):
             thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(x.id))
             thisguildDoc = thisguildCol_ref.document(document_id="ticket_channel")
             # print(thisguildDoc.get().to_dict()["id"])
-            ticket_channel_id = int(thisguildDoc.get().to_dict()["id"])
+            ticket_channel_id = thisguildDoc.get().to_dict()["id"]
             if not thisguildDoc.get().exists:
                 thisguildDoc.create(ticket_channel_id)
+            else:
+                pass
             # else:
             self.bot: Bot
             ticket_channel = self.bot.get_channel(ticket_channel_id)
