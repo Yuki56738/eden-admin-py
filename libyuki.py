@@ -39,6 +39,15 @@ def get_ref_guilddb(id: str):
 def list_guilddb(id: str):
     guilddb_ref = get_ref_guilddb(id)
     return guilddb_ref
+def get_ticketdb_as_dict(id:str):
+    db = firestore.Client()
+    guilddbCol = db.collection("guilddb")
+    guildsettingsDoc_ref = guilddbCol.document("guildsettings")
+    thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(id))
+    tglddoc = thisguildCol_ref.document(document_id="ticket_channel")
+    var3 = tglddoc.get().to_dict()
+    return var3
+
 # list_guilddb()
 
 # var1 = list_guilddb("guildsettings").get()
