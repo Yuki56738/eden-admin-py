@@ -68,15 +68,24 @@ class Ticket(Cog):
             guildsettingsDoc_ref = guilddbCol.document("guildsettings")
             thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(x.id))
             thisguildDoc = thisguildCol_ref.document(document_id="ticket_channel")
+            # gldc_ref = thisguildDoc.get('id')
+            # gldc = gldc_ref.get("id")
             # print(thisguildDoc.get().to_dict()["id"])
-            ticket_channel_id = thisguildDoc.get().to_dict()["id"]
+            # ticket_channel_id = thisguildDoc.get().to_dict()["id"]
+            # var1 = thisguildDoc.get().to_di
+            # print("var1:", var1)
+            # return
             if not thisguildDoc.get().exists:
-                thisguildDoc.create(ticket_channel_id)
-            else:
-                pass
-            # else:
+                # thisguildDoc.create(var1["id"])
+                # var1 = thisguildDoc.get().to_dict()
+                x: Guild
+                # var3 = ctx.guild
+                thisguildDoc.create({"id": var2})
+            # print("thisguilddoc.get:", thisguildDoc.get())
             self.bot: Bot
-            ticket_channel = self.bot.get_channel(ticket_channel_id)
+            var2 = thisguildDoc.get().to_dict()
+            print("var2:", var2)
+            ticket_channel = self.bot.get_channel()
             await ticket_channel.send(view=self.MyViewTicket())
 
     @commands.slash_command(description="ticketのDBを初期化")
@@ -88,7 +97,7 @@ class Ticket(Cog):
         db = firestore.Client()
         guilddbCol = db.collection("guilddb")
         guildsettingsDoc_ref = guilddbCol.document("guildsettings")
-        thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(ctx.guild.id))
+        thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(ctx.guild.name))
 
         thisguildDoc = thisguildCol_ref.document(document_id="ticket_channel")
         print(thisguildDoc.get().to_dict())
@@ -97,7 +106,5 @@ class Ticket(Cog):
             "name": str(ctx.guild.get_channel(int(ticket_channel_id)).name)
         })
         await ctx.send("完了.")
-
-
 def setup(bot):
     bot.add_cog(Ticket(bot))

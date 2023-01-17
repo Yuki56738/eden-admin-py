@@ -43,7 +43,7 @@ class Move(Cog):
             # await inte("移動しています...")
             # await interaction.followup("移動しています...")
             # toMoveChannel1 = Move.move.bot.get_channel(int(var2))
-            toMoveChannel1 = interaction.guild.get_channel(var2)
+            toMoveChannel1 = interaction.guild.get_channel(int(var2))
             await interaction.channel.send("移動しています...")
             # toMoveChannel1 = bot.get_channel(int(toMoveChannel))
             await member1.move_to(toMoveChannel1)
