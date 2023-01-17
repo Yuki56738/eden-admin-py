@@ -70,6 +70,9 @@ class Ticket(Cog):
             thisguildDoc = thisguildCol_ref.document(document_id="ticket_channel")
             # print(thisguildDoc.get().to_dict()["id"])
             ticket_channel_id = int(thisguildDoc.get().to_dict()["id"])
+            if not thisguildDoc.get().exists:
+                thisguildDoc.create(ticket_channel_id)
+            # else:
             self.bot: Bot
             ticket_channel = self.bot.get_channel(ticket_channel_id)
             await ticket_channel.send(view=self.MyViewTicket())
