@@ -1,5 +1,7 @@
 from discord import *
 from google.cloud import firestore
+
+
 # from firestore import *
 
 class Init_db(Cog):
@@ -49,5 +51,7 @@ class Init_db(Cog):
     #     guilddbCol = db.collection("guilddb")
     #     guildsettingsCol = db.collection("guildsettings")
     #     await ctx.respond(list(guildsettingsCol.list_documents()))
+
+
 def setup(bot: Bot):
     bot.add_cog(Init_db(bot))
