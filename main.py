@@ -352,17 +352,20 @@ async def on_message(message: Message):
         # print(traceback.format_exc())
         pass
     if isExist == True:
-        try:
-            msg1_id = txtMsg[str(message.channel.id)]
-            msg1 = await message.channel.fetch_message(msg1_id)
-            await msg1.delete()
-        except Exception as e:
-            # print(traceback.format_exc())
-            traceback.print_exc()
-        tosendtxt = guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
-        msg2 = await message.channel.send(embed=Embed(description=tosendtxt))
-        txtMsg[str(message.channel.id)] = msg2.id
-        save_to_json()
+        # bot.get_channel()
+        if message.author.id == bot.user.id:
+
+            try:
+                msg1_id = txtMsg[str(message.channel.id)]
+                msg1 = await message.channel.fetch_message(msg1_id)
+                await msg1.delete()
+            except Exception as e:
+                # print(traceback.format_exc())
+                traceback.print_exc()
+            tosendtxt = guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
+            msg2 = await message.channel.send(embed=Embed(description=tosendtxt))
+            txtMsg[str(message.channel.id)] = msg2.id
+            save_to_json()
 
     if message.mentions:
         try:
