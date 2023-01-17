@@ -8,6 +8,7 @@ from discord import *
 class Ticket(Cog):
     def __init__(self, bot):
         self.bot = bot
+        # asyncio.coroutine(self.bot.wait_until_ready)
 
         # bot.wait_until_ready()
         # print(bot1.guilds)
