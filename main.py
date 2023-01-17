@@ -884,62 +884,36 @@ class MyViewTicket(discord.ui.View):
         await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
 
 
-@bot.slash_command(description="問題を報告する")
-async def ticket(ctx: ApplicationContext):
-    if not ctx.user.guild_permissions.administrator:
-        await ctx.respond("現在このコマンドは管理者のみ使用できます。")
-        return
-    await ctx.respond("頑張っています...")
-
-    # cat1 = ctx.guild.get_channel(guildsettings[ctx.guild.id]["ticket_category"])
-    # ticket_channel = ctx.guild.get_channel(libyuki.get_guilddb_as_dict("guildsettings")["994483180927201400"]["ticket_channel"])
-    # await ctx.respond(view=MyViewTicket())
-    # await ticket_channel.send(view=MyViewTicket())
-    return
-
-    permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
-    permow2 = PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())
-    # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
-    cat1 = libyuki.get_guilddb_as_dict("guildsettings")[ctx.guild.id]["ticket_category"]
-    txt1: TextChannel = await ctx.guild.create_text_channel(name=f"{ctx.user.display_name}のticket", category=cat1,
-                                                            overwrites={
-                                                                ctx.guild.default_role: permow2,
-                                                                ctx.user: permow1
-                                                            })
-    db = firestore.Client()
-    db1 = db.collection("guilddb").document(document_id="ticketTxtUser")
-    db1_dict = db1.get().to_dict()
-    db1_dict[str(ctx.user.id)] = str(txt1.id)
-    db1.update(db1_dict)
-    await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {ctx.user.mention}")
-
-
-# @bot.slash_command(description="メニューを表示")
-# async def menu(ctx: ApplicationContext):
-#     global vcRole
-#     global vcTxt
-#     global txtMsg
-#     global guildsettings
-#     # flag = False
-#     try:
-#         txt1 = vcTxt[str(ctx.author.voice.channel.id)]
-#         txt1 = bot.get_channel(txt1)
-#         flag = True
-#     except:
-#         # print(traceback.format_exc())
-#         # traceback.print_exc()
-#         print(traceback.format_exc())
+# @bot.slash_command(description="問題を報告する")
+# async def ticket(ctx: ApplicationContext):
+#     if not ctx.user.guild_permissions.administrator:
+#         await ctx.respond("現在このコマンドは管理者のみ使用できます。")
 #         return
+#     await ctx.respond("頑張っています...")
 #
+#     # cat1 = ctx.guild.get_channel(guildsettings[ctx.guild.id]["ticket_category"])
+#     # ticket_channel = ctx.guild.get_channel(libyuki.get_guilddb_as_dict("guildsettings")["994483180927201400"]["ticket_channel"])
+#     # await ctx.respond(view=MyViewTicket())
+#     # await ticket_channel.send(view=MyViewTicket())
+#     return
 #
-#     res = await ctx.respond(view=MyViewChangeRoomName(), delete_after=3 * 60)
-#
-#     res2 = await ctx.send(view=MyViewChangeRoomLimit(), delete_after=3 * 60)
-#     # await res.delete_original_message()
-# await res2.delete_original_message()
-# await ctx.send(view=MyViewRoomNolook())
-# await txt1.send(view=MyViewChangeRoomName())
-# await txt1.send(view=MyViewChangeRoomLimit())
+#     permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
+#     permow2 = PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())
+#     # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
+#     cat1 = libyuki.get_guilddb_as_dict("guildsettings")[ctx.guild.id]["ticket_category"]
+#     txt1: TextChannel = await ctx.guild.create_text_channel(name=f"{ctx.user.display_name}のticket", category=cat1,
+#                                                             overwrites={
+#                                                                 ctx.guild.default_role: permow2,
+#                                                                 ctx.user: permow1
+#                                                             })
+#     db = firestore.Client()
+#     db1 = db.collection("guilddb").document(document_id="ticketTxtUser")
+#     db1_dict = db1.get().to_dict()
+#     db1_dict[str(ctx.user.id)] = str(txt1.id)
+#     db1.update(db1_dict)
+#     await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {ctx.user.mention}")
+
+
 
 
 @bot.slash_command(description="メニューを表示")
@@ -1182,45 +1156,6 @@ async def ping(ctx: ApplicationContext):
     await ctx.respond(embed=Embed(description=f"レイテンシーは、{lat * 60}ms."))
 
 
-# @bot.slash_command(guild_ids=[977138017095520256])
-# async def hello(ctx: ApplicationContext):
-#     await ctx.respond("Hello!")
-
-"""
-@bot.slash_command(description="設定を表示する")
-async def set_see(ctx: ApplicationContext):
-    global vcRole
-    global vcTxt
-    global txtMsg
-    global guildsettings
-    if not ctx.author.guild_permissions.administrator:
-        return
-    # with open("tmp.json", "w", encoding="utf8")as f:
-    #     json.dump(guildsettings[str(ctx.guild.id)], f, ensure_ascii=False)
-    # with open("")
-    # data = json.loads(str(guildsettings[str(ctx.guild.id)]).replace("'", '"'))
-    await ctx.respond(
-        embed=Embed(description=json.dumps(guildsettings[str(ctx.guild.id)], indent=2, ensure_ascii=False)))
-
-
-@bot.slash_command(description="設定を保存して適応する")
-async def set_save(ctx: ApplicationContext, json1: Option(str, name="json", required=True, description="設定のjson")):
-    global vcRole
-    global vcTxt
-    global txtMsg
-    global guildsettings
-    if not ctx.author.guild_permissions.administrator:
-        return
-    try:
-        guildsettings[str(ctx.guild.id)] = json.loads(json1)
-        print(json1)
-        save_guild_settings()
-    except Exception as e:
-        await ctx.respond(embed=Embed(description=f"エラー。設定は保存されていません！: {e}"))
-        return
-    await ctx.respond(embed=Embed(description="設定を保存しました。"))
-"""
-
 
 def save_to_json():
     global vcRole
@@ -1244,18 +1179,6 @@ def save_to_json():
     print("Saved bot state.")
 
 
-# @bot.slash_command(description="Translate to Japanese.")
-# async def japanese(ctx: ApplicationContext, *, text):
-#     translator = deepl.Translator(DEEPL_KEY)
-#     result = translator.translate_text(text, target_lang='JA')
-#     await ctx.respond(text)
-#     await ctx.send(result)
-# @bot.slash_command(description="Translate to Japanese.")
-# async def english(ctx: ApplicationContext, *, text):
-#     translator = deepl.Translator(DEEPL_KEY)
-#     result = translator.translate_text(text, target_lang='EN')
-#     await ctx.respond(text)
-#     await ctx.send(result)
 
 def save_guild_settings():
     global vcRole
