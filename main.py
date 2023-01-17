@@ -16,12 +16,12 @@ import libyuki
 
 from google.cloud import firestore
 
-from greetings import *
+# from greetings import *
 
 # from discord.ui import *
 # import init_db
 
-load_dotenv(".envDev")
+load_dotenv()
 TOKEN = os.environ.get("DISCORD_TOKEN")
 DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -41,7 +41,7 @@ bot_author = bot.get_user(bot_author_id)
 edenNotifyChannel = ""
 bot.load_extension("cogs.init_db")
 bot.load_extension("cogs.ticket")
-
+# bot.add_cog()
 
 # class TestView(discord.ui.View):
 #     @discord.ui.button(label="Button 1", style=ButtonStyle.red)
@@ -344,6 +344,7 @@ async def on_ready():
     # bot.get_guild(994483180927201400).fetch_members()
     # bot.activity = "Created by Yuki."
     await bot.change_presence(activity=Game(name="Created by Yuki."))
+
     # try:
     #     with open("guildsettings.json", "r", encoding="utf8") as f:
     #         guildsettings = json.load(f)
@@ -370,22 +371,7 @@ async def on_ready():
     guilddoc = guildcol.document(document_id="guildsettings")
     guilgsettingsDict = guilddoc.get().to_dict()
     txtMsg = guildcol.document(document_id="txtMsg")
-    for x in bot.guilds:
-        print(x.id, x.name)
-        ticket_channel = guilgsettingsDict[str(x.id)]["ticket_channel"]
-        ticket_channel = bot.get_channel(int(ticket_channel))
-        txt2 = txtMsg.get().to_dict()[str(ticket_channel.id)]
-        txt2 = bot.get_message(txt2)
-        try:
-            await txt2.delete()
-        except:
-            pass
 
-        # txtMsgDict = txtMsgDoc.to_dict()
-        txt1 = await ticket_channel.send(view=MyViewTicket())
-        txtMsg.update({
-            str(ticket_channel.id): txt1.id
-        })
 
 
 @bot.slash_command()
@@ -432,7 +418,7 @@ async def on_message(message: Message):
         isExist = True
     except Exception as e:
         # print(traceback.format_exc())
-        traceback.print_exc()
+        pass
     if isExist == True:
         try:
             msg1_id = txtMsg[str(message.channel.id)]
