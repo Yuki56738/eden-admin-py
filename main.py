@@ -16,15 +16,20 @@ import libyuki
 
 from google.cloud import firestore
 
-# from discord.ui import *
+# from greetings import *
 
-load_dotenv(".envDev")
+# from discord.ui import *
+# import init_db
+
+load_dotenv()
 TOKEN = os.environ.get("DISCORD_TOKEN")
 DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
 intents = discord.Intents.all()
 bot = discord.Bot(intents=intents)
 
+# bot.add_cog(Greetings(bot))
+# bot.add_cog(init_db.Init_db(bot))
 vcRole = {}
 vcTxt = {}
 txtMsg = {}
@@ -34,7 +39,9 @@ vcOwnerRole = {"1234": "2345"}
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
 edenNotifyChannel = ""
-
+bot.load_extension("cogs.init_db")
+bot.load_extension("cogs.ticket")
+# bot.add_cog()
 
 # class TestView(discord.ui.View):
 #     @discord.ui.button(label="Button 1", style=ButtonStyle.red)
@@ -337,6 +344,7 @@ async def on_ready():
     # bot.get_guild(994483180927201400).fetch_members()
     # bot.activity = "Created by Yuki."
     await bot.change_presence(activity=Game(name="Created by Yuki."))
+
     # try:
     #     with open("guildsettings.json", "r", encoding="utf8") as f:
     #         guildsettings = json.load(f)
@@ -363,22 +371,15 @@ async def on_ready():
     guilddoc = guildcol.document(document_id="guildsettings")
     guilgsettingsDict = guilddoc.get().to_dict()
     txtMsg = guildcol.document(document_id="txtMsg")
-    for x in bot.guilds:
-        print(x.id, x.name)
-        ticket_channel = guilgsettingsDict[str(x.id)]["ticket_channel"]
-        ticket_channel = bot.get_channel(int(ticket_channel))
-        txt2 = txtMsg.get().to_dict()[str(ticket_channel.id)]
-        txt2 = bot.get_message(txt2)
-        try:
-            await txt2.delete()
-        except:
-            pass
 
-        # txtMsgDict = txtMsgDoc.to_dict()
-        txt1 = await ticket_channel.send(view=MyViewTicket())
-        txtMsg.update({
-            str(ticket_channel.id): txt1.id
-        })
+
+
+@bot.slash_command()
+async def reload(ctx: ApplicationContext):
+    # bot.remove_cog("Init_db")
+    bot.reload_extension("cogs.init_db")
+    bot.reload_extension("cogs.ticket")
+    await ctx.respond("Reload complete.")
 
 
 @bot.event
@@ -417,7 +418,7 @@ async def on_message(message: Message):
         isExist = True
     except Exception as e:
         # print(traceback.format_exc())
-        traceback.print_exc()
+        pass
     if isExist == True:
         try:
             msg1_id = txtMsg[str(message.channel.id)]
@@ -462,7 +463,6 @@ async def on_message(message: Message):
             traceback.print_exc()
 
 
-
 @bot.event
 async def on_voice_state_update(member: Member, before: VoiceState, after: VoiceState):
     global vcRole
@@ -475,8 +475,6 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
     except:
         # print(traceback.format_exc())
         traceback.format_exc()
-
-
 
     # if not after.channel is None and after.channel.id == 1019948085876629516:
     try:
@@ -503,7 +501,8 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
             perm1.update(mute_members=False)
             perm1.update(move_members=False, deafen_members=False, attach_files=True, embed_links=True)
             ##
-            roomOwnerPerm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
+            roomOwnerPerm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(),
+                                                             Permissions.none())
             roomOwnerPerm1.update(read_message_history=True)
             roomOwnerPerm1.update(read_messages=True)
             roomOwnerPerm1.update(send_messages=True)
@@ -542,16 +541,16 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
             vcOwnerRole[str(vc1.id)] = roomOwnerRole1.id
 
             msgToSend = """
-Created     by Yuki.
-/name [名    前] で部屋の名前を変える
-例｜/name     私のおうち
-/limit [    人数] で部屋の人数制限を変える
-例｜/limit     4（半角
-/close で    この部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
-/nolook     でこの部屋を見えなくする。
-/look で、    この部屋を見えるようにする。
+Created by Yuki.
+/name [名前] で部屋の名前を変える
+例｜/name  私のおうち
+/limit [人数] で部屋の人数制限を変える
+例｜/limit 4（半角
+/close でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
+/nolook でこの部屋を見えなくする。
+/look で、この部屋を見えるようにする。
             
-/menu で、    メニューを表示。"""
+/menu で、メニューを表示。"""
             # embedToSend = Embed(description=msgToSend)
             msgDescript = await txt1.send(embed=Embed(description=msgToSend))
 
@@ -615,12 +614,13 @@ Created     by Yuki.
             # cat1 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
             catVc = after.channel.category
             cat2 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
-            vc1 = await member.guild.create_voice_channel(f"（雑・作）{member.display_name}の部屋", overwrites={role1: perm1,
-                                                                                                            memberRole: perm2,
-                                                                                                            member.guild.default_role: PermissionOverwrite().from_pair(
-                                                                                                                Permissions.none(),
-                                                                                                                Permissions.all())
-                                                                                                            },
+            vc1 = await member.guild.create_voice_channel(f"（雑・作）{member.display_name}の部屋",
+                                                          overwrites={role1: perm1,
+                                                                      memberRole: perm2,
+                                                                      member.guild.default_role: PermissionOverwrite().from_pair(
+                                                                          Permissions.none(),
+                                                                          Permissions.all())
+                                                                      },
                                                           category=catVc, user_limit=2)
             vcRole[str(vc1.id)] = role1.id
             # await role1.edit(position=8)
@@ -634,16 +634,16 @@ Created     by Yuki.
                                                           category=cat2)
             vcTxt[str(vc1.id)] = txt1.id
             msgToSend = """
-    Crea    ted by Yuki.
-    /nam    e [名前] で部屋の名前を変える
-    例｜/n    ame 私のおうち
-    /lim    it [人数] で部屋の人数制限を変える
-    例｜/l    imit 4（半角
-    /clo    se でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
-    /nol    ook でこの部屋を見えなくする。
-    /loo    k で、この部屋を見えるようにする。
-            
-    /men    u で、メニューを表示。"""
+            Created by Yuki.
+            /name [名前] で部屋の名前を変える
+            例｜/name  私のおうち
+            /limit [人数] で部屋の人数制限を変える
+            例｜/limit 4（半角
+            /close でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
+            /nolook でこの部屋を見えなくする。
+            /look で、この部屋を見えるようにする。
+
+            /menu で、メニューを表示。"""
             # embedToSend = Embed(description=msgToSend)
             msgDescript = await txt1.send(embed=Embed(description=msgToSend))
 
@@ -725,16 +725,16 @@ Created     by Yuki.
                                                           category=cat2)
             vcTxt[str(vc1.id)] = txt1.id
             msgToSend = """
-       C    reated by Yuki.
-       /    name [名前] で部屋の名前を変える
-       例    ｜/name 私のおうち
-       /    limit [人数] で部屋の人数制限を変える
-       例    ｜/limit 4（半角
-       /    close でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
-       /    nolook でこの部屋を見えなくする。
-       /    look で、この部屋を見えるようにする。
-            
-       /    menu で、メニューを表示。"""
+Created by Yuki.
+/name [名前] で部屋の名前を変える
+例｜/name 私のおうち
+/limit [人数] で部屋の人数制限を変える
+例｜/limit 4（半角
+/close でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
+/nolook でこの部屋を見えなくする。
+/look で、この部屋を見えるようにする。
+ 
+/menu で、メニューを表示。"""
             # embedToSend = Embed(description=msgToSend)
             msgDescript = await txt1.send(embed=Embed(description=msgToSend))
 
@@ -816,16 +816,16 @@ Created     by Yuki.
                                                           category=cat2)
             vcTxt[str(vc1.id)] = txt1.id
             msgToSend = """
-       C    reated by Yuki.
-       /    name [名前] で部屋の名前を変える
-       例    ｜/name 私のおうち
-       /    limit [人数] で部屋の人数制限を変える
-       例    ｜/limit 4（半角
-       /    close でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
-       /    nolook でこの部屋を見えなくする。
-       /    look で、この部屋を見えるようにする。
-            
-       /    menu で、メニューを表示。"""
+            Created by Yuki.
+            /name [名前] で部屋の名前を変える
+            例｜/name  私のおうち
+            /limit [人数] で部屋の人数制限を変える
+            例｜/limit 4（半角
+            /close でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
+            /nolook でこの部屋を見えなくする。
+            /look で、この部屋を見えるようにする。
+
+            /menu で、メニューを表示。"""
             # embedToSend = Embed(description=msgToSend)
             msgDescript = await txt1.send(embed=Embed(description=msgToSend))
 
@@ -858,7 +858,6 @@ Created     by Yuki.
             save_to_json()
     except:
         pass
-
 
     if not before.channel is None:
         txt1_id = vcTxt[str(before.channel.id)]
@@ -907,15 +906,17 @@ Created     by Yuki.
         except:
             traceback.format_exc()
 
-    # if not before.channel is None and len(before.channel.members) == 0:
+            # if not before.channel is None and len(before.channel.members) == 0:
 
             save_to_json()
     if after.channel is None:
         return
 
+
 @bot.slash_command(name="move", description="ユーザーを移動させる")
 async def move(ctx: ApplicationContext):
     await ctx.respond(view=MyViewMoveMember())
+
 
 class MyViewTicket(discord.ui.View):
     @discord.ui.button(label="問題を作成", style=discord.ButtonStyle.green)
@@ -936,11 +937,12 @@ class MyViewTicket(discord.ui.View):
         # cat1 = bot.get_channel(cat1)
         # cat1 = interaction.channel
 
-        txt1: TextChannel = await interaction.guild.create_text_channel(name=f"{interaction.user.display_name}のticket", category=cat1,
-                                                                overwrites={
-                                                                    interaction.guild.default_role: permow2,
-                                                                    interaction.user: permow1
-                                                                })
+        txt1: TextChannel = await interaction.guild.create_text_channel(name=f"{interaction.user.display_name}のticket",
+                                                                        category=cat1,
+                                                                        overwrites={
+                                                                            interaction.guild.default_role: permow2,
+                                                                            interaction.user: permow1
+                                                                        })
         db = firestore.Client()
         db1 = db.collection("guilddb").document(document_id="ticketTxtUser")
         db1_dict = db1.get().to_dict()
@@ -954,6 +956,7 @@ class MyViewTicket(discord.ui.View):
         print(db1.update(db1_dict))
         # db1.update(db1_dict)
         await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
+
 
 @bot.slash_command(description="問題を報告する")
 async def ticket(ctx: ApplicationContext):
@@ -972,10 +975,11 @@ async def ticket(ctx: ApplicationContext):
     permow2 = PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())
     # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
     cat1 = libyuki.get_guilddb_as_dict("guildsettings")[ctx.guild.id]["ticket_category"]
-    txt1:TextChannel = await ctx.guild.create_text_channel(name=f"{ctx.user.display_name}のticket", category=cat1, overwrites={
-        ctx.guild.default_role: permow2,
-        ctx.user: permow1
-    })
+    txt1: TextChannel = await ctx.guild.create_text_channel(name=f"{ctx.user.display_name}のticket", category=cat1,
+                                                            overwrites={
+                                                                ctx.guild.default_role: permow2,
+                                                                ctx.user: permow1
+                                                            })
     db = firestore.Client()
     db1 = db.collection("guilddb").document(document_id="ticketTxtUser")
     db1_dict = db1.get().to_dict()
