@@ -1,31 +1,3 @@
-# from discord import *
-# from google.cloud import firestore
-# from firestore import *
-#
-#
-# class Ticket(Cog):
-#     def __init__(self, bot):
-#         self.bot = bot
-#     @Cog.listener()
-#     async def on_ready(self):
-#         print("ready ticket.")
-#
-#         # guildsettingsDoc.collection(collection_id=str())
-#     @commands.slash_command(description="ticketのDBを初期化")
-#     async def init_ticket(self, ctx: ApplicationContext):
-#         if not ctx.user.guild_permissions.administrator:
-#             await ctx.respond("管理者のみ使用できます.")
-#             return
-#         db = firestore.Client()
-#         guilddbCol = db.collection("guilddb")
-#         guildsettingsDoc = guilddbCol.document(document_id="guildsettings")
-#         thisGuildCol: Reference = guildsettingsDoc.collection(collection_id=str(ctx.guild_id))
-#         # thisGuildCol:
-#         # thisGuildCol1 = thisGuildCol
-#         # print(type(thisGuildCol))
-#         thisGuildCol
-# def setup(bot):
-#     bot.add_cog(Ticket(bot))
 
 from google.cloud import firestore
 from google.cloud.firestore import *
@@ -82,6 +54,7 @@ class Ticket(Cog):
             print(db1.update(db1_dict))
             # db1.update(db1_dict)
             await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
+
 
     @Cog.listener()
     async def on_ready(self):
