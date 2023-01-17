@@ -4,6 +4,7 @@ from google.cloud.firestore import *
 import discord
 from discord import *
 
+import libyuki
 
 class MyViewTicket(discord.ui.View):
     @discord.ui.button(label="問題を作成", style=discord.ButtonStyle.green)
