@@ -16,7 +16,9 @@ import libyuki
 
 from google.cloud import firestore
 
+from greetings import *
 # from discord.ui import *
+# import init_db
 
 load_dotenv(".envDev")
 TOKEN = os.environ.get("DISCORD_TOKEN")
@@ -25,6 +27,8 @@ DEEPL_KEY = os.environ.get("DEEPL_KEY")
 intents = discord.Intents.all()
 bot = discord.Bot(intents=intents)
 
+# bot.add_cog(Greetings(bot))
+# bot.add_cog(init_db.Init_db(bot))
 vcRole = {}
 vcTxt = {}
 txtMsg = {}
@@ -380,7 +384,9 @@ async def on_ready():
             str(ticket_channel.id): txt1.id
         })
 
-
+@bot.slash_command()
+async def reload(ctx: ApplicationContext):
+    bot.remove_cog("Init_db")
 @bot.event
 async def on_raw_reaction_add(reaction: RawReactionActionEvent):
     global vcRole
