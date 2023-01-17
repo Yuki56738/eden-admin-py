@@ -39,44 +39,15 @@ vcOwnerRole = {"1234": "2345"}
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
 edenNotifyChannel = ""
-bot.load_extension("cogs.init_db")
+# bot.load_extension("cogs.init_db")
 bot.load_extension("cogs.ticket")
+bot.load_extension("cogs.move")
 # bot.add_cog()
 
 # class TestView(discord.ui.View):
 #     @discord.ui.button(label="Button 1", style=ButtonStyle.red)
 #     async def first_button(self, button: discord.ui.Button, interaction: Interaction):
 #         await interaction.response(content="ボタンが押されました。", view=self)
-class MyViewMoveMember(discord.ui.View):
-    @discord.ui.user_select(
-        placeholder="ユーザーを選択してください",
-        min_values=1,
-        max_values=1,
-
-    )
-    async def select_callback(self, select: Select, interaction: Interaction):
-        # global guildsettings
-        await interaction.response.send_message(f"頑張っています...")
-        # print(select.to_dict())
-        print(select.values[0])
-        member1: Member = select.values[0]
-        memnber1 = bot.get_user(member1)
-        guilddb = libyuki.get_guilddb()
-        guildsettingsdb: DocumentReference = guilddb.document(document_id="guildsettings").get()
-
-        var1 = guildsettingsdb.to_dict()
-
-        var2 = var1["994483180927201400"]["move_channel"]
-        print(var2)
-        # member1.move_to()
-        # print(toMoveChannel)
-        # await inte("移動しています...")
-        # await interaction.followup("移動しています...")
-        toMoveChannel1 = bot.get_channel(int(var2))
-        await interaction.channel.send("移動しています...")
-        # toMoveChannel1 = bot.get_channel(int(toMoveChannel))
-        await member1.move_to(toMoveChannel1)
-
 
 class MyModalChangeRoomName(discord.ui.Modal):
     def __init__(self, *args, **kwargs) -> None:
@@ -284,49 +255,7 @@ class MyViewChangeRoomLimit(discord.ui.View):
         await interaction.response.send_message(embed=Embed(description="完了."))
 
 
-# class MyViewRoomNolook(discord.ui.View):
-#     @discord.ui.button(label="この部屋を見えなくする", style=discord.ButtonStyle.grey)
-#     async def button_callback(self, button, interaction: discord.Interaction):
-#         # await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
-#         global vcRole
-#         global vcTxt
-#         global txtMsg
-#         global guildsettings
-#         try:
-#             vcTxt[str(interaction.user.voice.channel.id)]
-#         except:
-#             print(traceback.format_exc())
-#             return
-#         vc1 = interaction.user.voice.channel
-#         role1 = interaction.guild.get_role(vcRole[str(interaction.user.voice.channel.id)])
-#         perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
-#         perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
-#         # perm2.update(connect=True)
-#         # perm2.update(speak=True)
-#         # perm2.update(use_slash_commands=True)
-#         perm2.update(connect=True)
-#         perm2.update(speak=True)
-#         # perm1.update(value=689379286592)
-#         perm1.update(read_message_history=True)
-#         perm1.update(read_messages=True)
-#         perm1.update(send_messages=True)
-#         perm1.update(use_slash_commands=True)
-#         perm1.update(connect=True, speak=True)
-#         perms1 = Permissions.advanced().general().voice()
-#         perm1.update(mute_members=False)
-#         perm1.update(move_members=False, deafen_members=False)
-#         perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
-#         # memberRole = message.author.guild.get_role(997644021067415642)
-#         memberRole = interaction.guild.get_role(guildsettings[str(interaction.guild.id)]["member_role"])
-#         memberPerm = PermissionOverwrite().from_pair(Permissions.advanced().none(), Permissions.all())
-#         await vc1.edit(overwrites={
-#             role1: perm1,
-#             memberRole: memberPerm,
-#             interaction.guild.default_role: PermissionOverwrite().from_pair(
-#                 Permissions.none(),
-#                 Permissions.all())}
-#         )
-#         await interaction.response.send_message("完了.")
+# @bot.check_once("cogs.move")
 
 
 @bot.event
@@ -913,9 +842,6 @@ Created by Yuki.
         return
 
 
-@bot.slash_command(name="move", description="ユーザーを移動させる")
-async def move(ctx: ApplicationContext):
-    await ctx.respond(view=MyViewMoveMember())
 
 
 class MyViewTicket(discord.ui.View):
@@ -1031,8 +957,8 @@ async def menu(ctx: ApplicationContext):
         # print(traceback.format_exc())
         traceback.print_exc()
         isGeneral = True
-    if isGeneral:
-        await ctx.respond(view=MyViewMoveMember(), delete_after=3 * 60)
+    # if isGeneral:
+    #     await ctx.respond(view=MyViewMoveMember(), delete_after=3 * 60)
 
     else:
         await ctx.respond(view=MyViewChangeRoomName(), ephemeral=True)
