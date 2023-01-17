@@ -381,7 +381,6 @@ async def on_ready():
         })
 
 
-
 @bot.event
 async def on_raw_reaction_add(reaction: RawReactionActionEvent):
     global vcRole
