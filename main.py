@@ -40,6 +40,7 @@ bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
 edenNotifyChannel = ""
 bot.load_extension("cogs.init_db")
+bot.load_extension("cogs.ticket")
 
 
 # class TestView(discord.ui.View):
@@ -391,6 +392,7 @@ async def on_ready():
 async def reload(ctx: ApplicationContext):
     # bot.remove_cog("Init_db")
     bot.reload_extension("cogs.init_db")
+    bot.reload_extension("cogs.ticket")
     await ctx.respond("Reload complete.")
 
 
@@ -646,16 +648,16 @@ Created by Yuki.
                                                           category=cat2)
             vcTxt[str(vc1.id)] = txt1.id
             msgToSend = """
-    Crea    ted by Yuki.
-    /nam    e [名前] で部屋の名前を変える
-    例｜/n    ame 私のおうち
-    /lim    it [人数] で部屋の人数制限を変える
-    例｜/l    imit 4（半角
-    /clo    se でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
-    /nol    ook でこの部屋を見えなくする。
-    /loo    k で、この部屋を見えるようにする。
-            
-    /men    u で、メニューを表示。"""
+            Created by Yuki.
+            /name [名前] で部屋の名前を変える
+            例｜/name  私のおうち
+            /limit [人数] で部屋の人数制限を変える
+            例｜/limit 4（半角
+            /close でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
+            /nolook でこの部屋を見えなくする。
+            /look で、この部屋を見えるようにする。
+
+            /menu で、メニューを表示。"""
             # embedToSend = Embed(description=msgToSend)
             msgDescript = await txt1.send(embed=Embed(description=msgToSend))
 
@@ -828,16 +830,16 @@ Created by Yuki.
                                                           category=cat2)
             vcTxt[str(vc1.id)] = txt1.id
             msgToSend = """
-       C    reated by Yuki.
-       /    name [名前] で部屋の名前を変える
-       例    ｜/name 私のおうち
-       /    limit [人数] で部屋の人数制限を変える
-       例    ｜/limit 4（半角
-       /    close でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
-       /    nolook でこの部屋を見えなくする。
-       /    look で、この部屋を見えるようにする。
-            
-       /    menu で、メニューを表示。"""
+            Created by Yuki.
+            /name [名前] で部屋の名前を変える
+            例｜/name  私のおうち
+            /limit [人数] で部屋の人数制限を変える
+            例｜/limit 4（半角
+            /close でこの部屋に入れる人を限定する。「返信」にてメンションされた人は入れるようになる。
+            /nolook でこの部屋を見えなくする。
+            /look で、この部屋を見えるようにする。
+
+            /menu で、メニューを表示。"""
             # embedToSend = Embed(description=msgToSend)
             msgDescript = await txt1.send(embed=Embed(description=msgToSend))
 
