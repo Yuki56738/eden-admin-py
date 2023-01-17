@@ -56,8 +56,8 @@ class Ticket(Cog):
             await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
 
 
-    @Cog.listener()
-    async def on_ready(self):
+    @commands.slash_command()
+    async def ticket(self, ctx: ApplicationContext):
         print("ready ticket.")
 
         for x in self.bot.guilds:

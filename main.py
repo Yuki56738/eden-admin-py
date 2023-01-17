@@ -884,34 +884,34 @@ class MyViewTicket(discord.ui.View):
         await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
 
 
-@bot.slash_command(description="問題を報告する")
-async def ticket(ctx: ApplicationContext):
-    if not ctx.user.guild_permissions.administrator:
-        await ctx.respond("現在このコマンドは管理者のみ使用できます。")
-        return
-    await ctx.respond("頑張っています...")
-
-    # cat1 = ctx.guild.get_channel(guildsettings[ctx.guild.id]["ticket_category"])
-    # ticket_channel = ctx.guild.get_channel(libyuki.get_guilddb_as_dict("guildsettings")["994483180927201400"]["ticket_channel"])
-    # await ctx.respond(view=MyViewTicket())
-    # await ticket_channel.send(view=MyViewTicket())
-    return
-
-    permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
-    permow2 = PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())
-    # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
-    cat1 = libyuki.get_guilddb_as_dict("guildsettings")[ctx.guild.id]["ticket_category"]
-    txt1: TextChannel = await ctx.guild.create_text_channel(name=f"{ctx.user.display_name}のticket", category=cat1,
-                                                            overwrites={
-                                                                ctx.guild.default_role: permow2,
-                                                                ctx.user: permow1
-                                                            })
-    db = firestore.Client()
-    db1 = db.collection("guilddb").document(document_id="ticketTxtUser")
-    db1_dict = db1.get().to_dict()
-    db1_dict[str(ctx.user.id)] = str(txt1.id)
-    db1.update(db1_dict)
-    await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {ctx.user.mention}")
+# @bot.slash_command(description="問題を報告する")
+# async def ticket(ctx: ApplicationContext):
+#     if not ctx.user.guild_permissions.administrator:
+#         await ctx.respond("現在このコマンドは管理者のみ使用できます。")
+#         return
+#     await ctx.respond("頑張っています...")
+#
+#     # cat1 = ctx.guild.get_channel(guildsettings[ctx.guild.id]["ticket_category"])
+#     # ticket_channel = ctx.guild.get_channel(libyuki.get_guilddb_as_dict("guildsettings")["994483180927201400"]["ticket_channel"])
+#     # await ctx.respond(view=MyViewTicket())
+#     # await ticket_channel.send(view=MyViewTicket())
+#     return
+#
+#     permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
+#     permow2 = PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())
+#     # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
+#     cat1 = libyuki.get_guilddb_as_dict("guildsettings")[ctx.guild.id]["ticket_category"]
+#     txt1: TextChannel = await ctx.guild.create_text_channel(name=f"{ctx.user.display_name}のticket", category=cat1,
+#                                                             overwrites={
+#                                                                 ctx.guild.default_role: permow2,
+#                                                                 ctx.user: permow1
+#                                                             })
+#     db = firestore.Client()
+#     db1 = db.collection("guilddb").document(document_id="ticketTxtUser")
+#     db1_dict = db1.get().to_dict()
+#     db1_dict[str(ctx.user.id)] = str(txt1.id)
+#     db1.update(db1_dict)
+#     await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {ctx.user.mention}")
 
 
 
