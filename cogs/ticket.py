@@ -14,16 +14,21 @@ class MyViewTicket(discord.ui.View):
         # await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
         permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
         permow2 = PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())
-        # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
-        db = firestore.Client()
-        guilddb = db.collection("guilddb")
-        guilddb1 = guilddb.document(document_id="guildsettings")
-        guilddb1_dict = guilddb1.get().to_dict()
-        cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_category"]
-        cat1 = interaction.guild.get_channel(cat1)
+        # # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
+        # db = firestore.Client()
+        # guilddb = db.collection("guilddb")
+        # guilddb1 = guilddb.document(document_id="guildsettings")
+        # guilddb1_dict = guilddb1.get().to_dict()
+        # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_category"]
+        # cat1 = interaction.guild.get_channel(cat1)
         # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_category"]
         # cat1 = bot.get_channel(cat1)
         # cat1 = interaction.channel
+
+        ticketdb1 = libyuki.get_ticketdb_as_dict(str(interaction.guild.id))
+        for x in ticketdb1:
+            print("x:", x)
+
 
         txt1: TextChannel = await interaction.guild.create_text_channel(
             name=f"{interaction.user.display_name}のticket",
@@ -66,16 +71,19 @@ class Ticket(Cog):
 
         for x in self.bot.guilds:
             print(x.id, x.name)
-            db = firestore.Client()
-            guilddbCol = db.collection("guilddb")
-            guildsettingsDoc_ref = guilddbCol.document("guildsettings")
-            thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(ctx.guild.name))
-            tglddoc = thisguildCol_ref.document(document_id="ticket_channel")
-            var3 = tglddoc.get().to_dict()
-            print(var3)
-            var4 = var3["id"]
-            ticket_channel = ctx.guild.get_channel(int(var4))
-            await ticket_channel.send(view=MyViewTicket())
+            # db = firestore.Client()
+            # guilddbCol = db.collection("guilddb")
+            # guildsettingsDoc_ref = guilddbCol.document("guildsettings")
+            # thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(ctx.guild.name))
+            # tglddoc = thisguildCol_ref.document(document_id="ticket_channel")
+            # var3 = tglddoc.get().to_dict()
+            # print(var3)
+            # var4 = var3["id"]
+            # ticket_channel = ctx.guild.get_channel(int(var4))
+
+            var1 = libyuki.get_ticketdb_as_dict(str(ctx.guild.id))
+            print("var1", var1)
+            # await ticket_channel.send(view=MyViewTicket())
 
             # thisguildDoc = thisguildCol_ref.document(document_id="ticket_channel")
             # print(thisguildDoc.get().to_dict())

@@ -60,4 +60,4 @@ def push_ticketdb(id:str, payload:dict):
     return glclog.set(document_data=payload)
 
 
-print(get_ticketdb_as_dict("🍎エデンの片隅"))
+# print(get_ticketdb_as_dict("🍎エデンの片隅"))
