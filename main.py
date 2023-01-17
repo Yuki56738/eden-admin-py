@@ -42,6 +42,8 @@ edenNotifyChannel = ""
 # bot.load_extension("cogs.init_db")
 bot.load_extension("cogs.ticket")
 bot.load_extension("cogs.move")
+
+
 # bot.add_cog()
 
 # class TestView(discord.ui.View):
@@ -300,7 +302,6 @@ async def on_ready():
     guilddoc = guildcol.document(document_id="guildsettings")
     guilgsettingsDict = guilddoc.get().to_dict()
     txtMsg = guildcol.document(document_id="txtMsg")
-
 
 
 @bot.slash_command()
@@ -842,8 +843,6 @@ Created by Yuki.
         return
 
 
-
-
 class MyViewTicket(discord.ui.View):
     @discord.ui.button(label="問題を作成", style=discord.ButtonStyle.green)
     async def button_callback(self, button, interaction: Interaction):
@@ -912,8 +911,6 @@ class MyViewTicket(discord.ui.View):
 #     db1_dict[str(ctx.user.id)] = str(txt1.id)
 #     db1.update(db1_dict)
 #     await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {ctx.user.mention}")
-
-
 
 
 @bot.slash_command(description="メニューを表示")
@@ -1156,7 +1153,6 @@ async def ping(ctx: ApplicationContext):
     await ctx.respond(embed=Embed(description=f"レイテンシーは、{lat * 60}ms."))
 
 
-
 def save_to_json():
     global vcRole
     global vcTxt
@@ -1177,7 +1173,6 @@ def save_to_json():
     libyuki.push_guilddb(id="txtMsg", payload=txtMsg)
     libyuki.push_guilddb(id="vcOwnerRole", payload=vcOwnerRole)
     print("Saved bot state.")
-
 
 
 def save_guild_settings():
