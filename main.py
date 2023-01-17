@@ -18,7 +18,7 @@ from google.cloud import firestore
 
 # from discord.ui import *
 
-load_dotenv()
+load_dotenv(".envDev")
 TOKEN = os.environ.get("DISCORD_TOKEN")
 DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -331,9 +331,9 @@ async def on_ready():
     global vcOwnerRole
     print(f"Logged in as: {bot.user}")
     global edenNotifyChannel
-    edenNotifyChannel = bot.get_guild(994483180927201400).get_channel(994483180927201403)
-    await edenNotifyChannel.send(embed=Embed(description="Starting bot..."))
-    await edenNotifyChannel.send(embed=Embed(description="Loading databases..."))
+    # edenNotifyChannel = bot.get_guild(994483180927201400).get_channel(994483180927201403)
+    # await edenNotifyChannel.send(embed=Embed(description="Starting bot..."))
+    # await edenNotifyChannel.send(embed=Embed(description="Loading databases..."))
     # bot.get_guild(994483180927201400).fetch_members()
     # bot.activity = "Created by Yuki."
     await bot.change_presence(activity=Game(name="Created by Yuki."))
@@ -357,7 +357,28 @@ async def on_ready():
     vcOwnerRole = libyuki.get_guilddb_as_dict("vcOwnerRole")
     print(guildsettings)
     print("Loaded bot state.")
-    await edenNotifyChannel.send(embed=Embed(description="Loaded databases."))
+    # await edenNotifyChannel.send(embed=Embed(description="Loaded databases."))
+    db = firestore.Client()
+    guildcol = db.collection("guilddb")
+    guilddoc = guildcol.document(document_id="guildsettings")
+    guilgsettingsDict = guilddoc.get().to_dict()
+    txtMsg = guildcol.document(document_id="txtMsg")
+    for x in bot.guilds:
+        print(x.id, x.name)
+        ticket_channel = guilgsettingsDict[str(x.id)]["ticket_channel"]
+        ticket_channel = bot.get_channel(int(ticket_channel))
+        txt2 = txtMsg.get().to_dict()[str(ticket_channel.id)]
+        txt2 = bot.get_message(txt2)
+        try:
+            await txt2.delete()
+        except:
+            pass
+
+        # txtMsgDict = txtMsgDoc.to_dict()
+        txt1 = await ticket_channel.send(view=MyViewTicket())
+        txtMsg.update({
+            str(ticket_channel.id): txt1.id
+        })
 
 
 
@@ -909,9 +930,13 @@ class MyViewTicket(discord.ui.View):
         db = firestore.Client()
         guilddb = db.collection("guilddb")
         guilddb1 = guilddb.document(document_id="guildsettings")
-        guilddb1_dict =  guilddb1.get().to_dict()
+        guilddb1_dict = guilddb1.get().to_dict()
         cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_category"]
         cat1 = bot.get_channel(cat1)
+        # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_category"]
+        # cat1 = bot.get_channel(cat1)
+        # cat1 = interaction.channel
+
         txt1: TextChannel = await interaction.guild.create_text_channel(name=f"{interaction.user.display_name}のticket", category=cat1,
                                                                 overwrites={
                                                                     interaction.guild.default_role: permow2,
@@ -937,9 +962,11 @@ async def ticket(ctx: ApplicationContext):
         await ctx.respond("現在このコマンドは管理者のみ使用できます。")
         return
     await ctx.respond("頑張っています...")
+
     # cat1 = ctx.guild.get_channel(guildsettings[ctx.guild.id]["ticket_category"])
-    ticket_channel = ctx.guild.get_channel(libyuki.get_guilddb_as_dict("guildsettings")["994483180927201400"]["ticket_channel"])
-    await ticket_channel.send(view=MyViewTicket())
+    # ticket_channel = ctx.guild.get_channel(libyuki.get_guilddb_as_dict("guildsettings")["994483180927201400"]["ticket_channel"])
+    # await ctx.respond(view=MyViewTicket())
+    # await ticket_channel.send(view=MyViewTicket())
     return
 
     permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
