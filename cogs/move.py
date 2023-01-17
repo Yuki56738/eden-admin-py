@@ -11,8 +11,6 @@ from discord.ui.view import *
 import discord.ui.view
 
 
-
-
 class Move(Cog):
     def __init__(self, bot):
         self.bot = bot
