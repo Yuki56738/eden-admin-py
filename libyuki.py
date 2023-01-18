@@ -57,7 +57,7 @@ def push_ticketdb(id:str, payload:dict):
     thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(id))
     # tglddoc = thisguildCol_ref.document(document_id="ticket_channel")
     glclog = thisguildCol_ref.document(document_id=id)
-    return glclog.set(document_data=payload)
+    return glclog.update(document_data=payload)
 
 
 # print(get_ticketdb_as_dict("🍎エデンの片隅"))

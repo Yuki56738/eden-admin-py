@@ -28,11 +28,12 @@ class MyViewTicket(discord.ui.View):
         ticketdb1 = libyuki.get_ticketdb_as_dict(str(interaction.guild.id))
         for x in ticketdb1:
             print("x:", x)
-
+        # cat1 = ticketdb1[]
+        # cat1 = interaction.guild.get_channel(int(cat1))
 
         txt1: TextChannel = await interaction.guild.create_text_channel(
             name=f"{interaction.user.display_name}のticket",
-            category=cat1,
+            # category=cat1,
             overwrites={
                 interaction.guild.default_role: permow2,
                 interaction.user: permow1
@@ -83,6 +84,12 @@ class Ticket(Cog):
 
             var1 = libyuki.get_ticketdb_as_dict(str(ctx.guild.id))
             print("var1", var1)
+            ticket_channel_id = var1["id"]
+            ticket_channel = ctx.guild.get_channel(int(ticket_channel_id))
+            # print(ticket_channel_id)
+            await ticket_channel.send(view=MyViewTicket())
+
+
             # await ticket_channel.send(view=MyViewTicket())
 
             # thisguildDoc = thisguildCol_ref.document(document_id="ticket_channel")
@@ -112,22 +119,28 @@ class Ticket(Cog):
             # await ticket_channel.send(view=self.MyViewTicket())
 
     @commands.slash_command(description="ticketのDBを初期化")
-    async def init_ticket(self, ctx: ApplicationContext, ticket_channel_id: str):
+    async def init_ticket(self, ctx: ApplicationContext, ticket_channel_id: str, category_id: str):
         if not ctx.user.guild_permissions.administrator:
             await ctx.respond("管理者のみ使用できます.")
             return
         await ctx.respond("頑張っています...")
         # print(x.id, x.name)
-        db = firestore.Client()
-        guilddbCol = db.collection("guilddb")
-        guildsettingsDoc_ref = guilddbCol.document("guildsettings")
-        thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(ctx.guild.id))
-        thisguildDoc = thisguildCol_ref.document(document_id="ticket_channel")
-        # print(thisguildDoc.get().to_dict())
-        thisguildDoc.create({
-            "id": str(ctx.guild.get_channel(int(ticket_channel_id)).id),
-            "name": str(ctx.guild.get_channel(int(ticket_channel_id)).name)
-        })
+        # db = firestore.Client()
+        # guilddbCol = db.collection("guilddb")
+        # guildsettingsDoc_ref = guilddbCol.document("guildsettings")
+        # thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(ctx.guild.id))
+        # thisguildDoc = thisguildCol_ref.document(document_id="ticket_channel")
+        # # print(thisguildDoc.get().to_dict())
+        # thisguildDoc.create({
+        #     "id": str(ctx.guild.get_channel(int(ticket_channel_id)).id),
+        #     "name": str(ctx.guild.get_channel(int(ticket_channel_id)).name)
+        # })
+        self.bot: Bot
+        ticket_channel = self.bot.get_channel(int(ticket_channel_id))
+        libyuki.push_ticketdb(str(ctx.guild.id), payload={
+            "id": ticket_channel_id,
+            "category": category_id,
+            "name": str(ticket_channel.name)})
         await ctx.send("完了.")
 def setup(bot):
     bot.add_cog(Ticket(bot))
