@@ -39,22 +39,25 @@ def get_ref_guilddb(id: str):
 def list_guilddb(id: str):
     guilddb_ref = get_ref_guilddb(id)
     return guilddb_ref
-# list_guilddb()
+def get_ticketdb_as_dict(id:str):
+    db = firestore.Client()
+    guilddbCol = db.collection("guilddb")
+    guildsettingsDoc_ref = guilddbCol.document("guildsettings")
+    thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(id))
+    # tglddoc = thisguildCol_ref.document(document_id="ticket_channel")
+    # var3 = tglddoc.get().to_dict()
+    var1 = thisguildCol_ref.document(document_id=id)
+    # var1 = thisguildCol_ref.get()
+    return var1.get().to_dict()
 
-# var1 = list_guilddb("guildsettings").get()
-#
+def push_ticketdb(id:str, payload:dict):
+    db = firestore.Client()
+    guilddbCol = db.collection("guilddb")
+    guildsettingsDoc_ref = guilddbCol.document("guildsettings")
+    thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(id))
+    # tglddoc = thisguildCol_ref.document(document_id="ticket_channel")
+    glclog = thisguildCol_ref.document(document_id=id)
+    return glclog.update(document_data=payload)
 
 
-# print(var1.to_dict())
-
-# guilddb_ref = get_ref_guilddb("guildsettinfs")
-#
-# guilddbs = guilddb_ref.stream()
-
-# guilddb_ref = get_guilddb()
-#
-# guilddb = guilddb_ref.stream()
-#
-# for x in guilddb:
-#     print(f"{x.id} => {x.to_dict()}")
-#     if x.id == ""
+# print(get_ticketdb_as_dict("🍎エデンの片隅"))
