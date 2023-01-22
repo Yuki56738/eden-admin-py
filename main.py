@@ -564,7 +564,7 @@ Created by Yuki.
                                                                       member.guild.default_role: PermissionOverwrite().from_pair(
                                                                           Permissions.none(),
                                                                           Permissions.all())},
-                                                          )
+                                                          category=catVc)
             vcTxt[str(vc1.id)] = txt1.id
             msgToSend = """
             Created by Yuki.
@@ -655,7 +655,7 @@ Created by Yuki.
                                                                       member.guild.default_role: PermissionOverwrite().from_pair(
                                                                           Permissions.none(),
                                                                           Permissions.all())},
-                                                          category=cat2)
+                                                          category=catVc)
             vcTxt[str(vc1.id)] = txt1.id
             msgToSend = """
 Created by Yuki.
@@ -746,7 +746,7 @@ Created by Yuki.
                                                                       member.guild.default_role: PermissionOverwrite().from_pair(
                                                                           Permissions.none(),
                                                                           Permissions.all())},
-                                                          category=cat2)
+                                                          category=catVc)
             vcTxt[str(vc1.id)] = txt1.id
             msgToSend = """
             Created by Yuki.
