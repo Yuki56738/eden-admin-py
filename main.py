@@ -546,7 +546,7 @@ Created by Yuki.
             role1 = await member.guild.create_role(name=f"（雑・作）{member.display_name}の部屋", permissions=perms1)
             # cat1 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
             catVc = after.channel.category
-            cat2 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
+            # cat2 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
             vc1 = await member.guild.create_voice_channel(f"（雑・作）{member.display_name}の部屋",
                                                           overwrites={role1: perm1,
                                                                       memberRole: perm2,
@@ -564,7 +564,7 @@ Created by Yuki.
                                                                       member.guild.default_role: PermissionOverwrite().from_pair(
                                                                           Permissions.none(),
                                                                           Permissions.all())},
-                                                          category=cat2)
+                                                          )
             vcTxt[str(vc1.id)] = txt1.id
             msgToSend = """
             Created by Yuki.
