@@ -50,14 +50,40 @@ def get_ticketdb_as_dict(id:str):
     # var1 = thisguildCol_ref.get()
     return var1.get().to_dict()
 
+def get_guildsettings2_as_dict(id: str):
+    db = Client()
+    guilddbcol = db.collection('guilddb')
+    guildsettingsDoc = guilddbcol.document('guildsettings')
+    guildsettingsCol1:CollectionReference = guildsettingsDoc.collection(id)
+    return guildsettingsCol1.document(id).get().to_dict()
+def push_to_guildsettings2_from_dict(id: str, payload: dict):
+    db = Client()
+    guilddbcol = db.collection('guilddb')
+    guildsettingsDoc = guilddbcol.document('guildsettings')
+    guildsettingsCol1: CollectionReference = guildsettingsDoc.collection(id)
+    try:
+        guildsettingsCol1.document(id).update(payload)
+    except:
+        guildsettingsCol1.document(id).create(payload)
+    # return guildsettingsCol1.document(id).get().to_dict()
 def push_ticketdb(id:str, payload:dict):
-    db = firestore.Client()
-    guilddbCol = db.collection("guilddb")
-    guildsettingsDoc_ref = guilddbCol.document("guildsettings")
-    thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(id))
-    # tglddoc = thisguildCol_ref.document(document_id="ticket_channel")
-    glclog = thisguildCol_ref.document(document_id=id)
-    return glclog.update(document_data=payload)
+    return push_to_guildsettings2_from_dict(id=id, payload=payload)
+    # db = firestore.Client()
+    # guilddbCol = db.collection("guilddb")
+    # guildsettingsDoc_ref = guilddbCol.document("guildsettings")
+    # thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(id))
+    # # tglddoc = thisguildCol_ref.document(document_id="ticket_channel")
+    # glclog = thisguildCol_ref.document(document_id=id)
+    # return glclog.update(payload)
 
 
-# print(get_ticketdb_as_dict("🍎エデンの片隅"))
+# print(get_guildsettings2_as_dict('994483180927201400'))
+
+# print(push_to_guildsettings2_from_dict(id='1234', payload={
+#     'id': '1234',
+#     'name': 'naeiogfahio'
+# }))
+#
+# print(get_guildsettings2_as_dict('1234'))
+
+# print()
