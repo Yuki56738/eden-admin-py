@@ -39,17 +39,17 @@ class MyViewTicket(discord.ui.View):
                 interaction.guild.default_role: permow2,
                 interaction.user: permow1
             })
-        db = firestore.Client()
-        db1 = db.collection("guilddb").document(document_id="ticketTxtUser")
-        db1_dict = db1.get().to_dict()
-        if db1_dict is None:
-            db1_dict1 = {
-                str(txt1.id): str(interaction.user.id)
-            }
-            db1.create(db1_dict1)
+        # db = firestore.Client()
+        # db1 = db.collection("guilddb").document(document_id="ticketTxtUser")
+        # db1_dict = db1.get().to_dict()
+        # if db1_dict is None:
+        #     db1_dict1 = {
+        #         str(txt1.id): str(interaction.user.id)
+        #     }
+        #     db1.create(db1_dict1)
 
-        db1_dict[str(txt1.id)] = str(interaction.user.id)
-        print(db1.update(db1_dict))
+        # db1_dict[str(txt1.id)] = str(interaction.user.id)
+        # print(db1.update(db1_dict))
         # db1.update(db1_dict)
         await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
 
