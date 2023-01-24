@@ -21,7 +21,7 @@ from google.cloud import firestore
 # from discord.ui import *
 # import init_db
 
-load_dotenv('.envDev')
+load_dotenv()
 TOKEN = os.environ.get("DISCORD_TOKEN")
 DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -323,17 +323,21 @@ async def on_ready():
 
 @bot.event
 async def on_raw_reaction_add(reaction: RawReactionActionEvent):
-    global vcRole
-    global vcTxt
-    global txtMsg
-    global guildsettings
+    # global vcRole
+    # global vcTxt
+    # global txtMsg
+    # global guildsettings
     print("reaction")
-    reaction_channel_id = guildsettings[str(reaction.guild_id)]["reaction_channel"]
-    txt2_id = guildsettings[str(reaction.guild_id)]["reaction_notify_channel"]
-    txt2 = bot.get_channel(txt2_id)
-    msg1 = await reaction.member.guild.get_channel(reaction_channel_id).fetch_message(reaction.message_id)
-    if reaction.channel_id == reaction_channel_id:
-        await txt2.send(f"{reaction.member.mention} から {msg1.author.mention} へ反応がありました！")
+    # reaction_channel_id = guildsettings[str(reaction.guild_id)]["reaction_channel"]
+    db = firestore.Client()
+    guilddbRef = db.collection(str(reaction.guild_id)).document('settings')
+    listen_channel_id = guilddbRef.get().to_dict()['listen_channel']
+    notify_channel_id = guilddbRef.get().to_dict()['notify_channel']
+    notify_channel = bot.get_channel(int(notify_channel_id))
+    listen_channel = bot.get_channel(int(listen_channel_id))
+    msg1 = await listen_channel.fetch_message(reaction.message_id)
+    if reaction.channel_id == listen_channel.id:
+        await notify_channel.send(f"{reaction.member.mention} から {msg1.author.mention} へ反応がありました！")
 
 
 # @bot.event
