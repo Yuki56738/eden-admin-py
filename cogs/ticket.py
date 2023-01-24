@@ -51,7 +51,7 @@ class MyViewTicket(discord.ui.View):
                 print(x)
                 member1 = interaction.guild.get_member(int(x))
                 if member1 is None:
-                    return
+                    return await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
                 await txt1.edit(overwrites={
                     member1: permow1
                 })
