@@ -22,9 +22,9 @@ class CreateVC(Cog):
         # vcTxtRef = db.collection(str(member.guild.id)).document('vcTxt')
         create_vc_channel_id = guilddbRef.get().to_dict()['create_vc_channel']
         print('create_vc_channel_id:', create_vc_channel_id)
-        create_vc_channel = member.guild.get_channel(create_vc_channel_id)
+        # create_vc_channel = member.guild.get_channel(create_vc_channel_id)
         # try:
-        if str(after.channel.id) == str(create_vc_channel_id):
+        if int(after.channel.id) == int(create_vc_channel_id):
             print("hit.")
             # await member.guild.system_channel.send("hit.")
             # memberRole = member.guild.get_role(997644021067415642)
@@ -83,7 +83,7 @@ class CreateVC(Cog):
             # await role1.edit(position=8)
             #
             if not vcRoleRef.get().exists:
-                vcRoleRef.create({
+                vcRoleRef.set({
                     str(vc1.id): role1.id
                 })
             else:
