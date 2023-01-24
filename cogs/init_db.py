@@ -21,19 +21,42 @@ class init_db(Cog):
 
             db = firestore.Client()
             guilddbRef = db.collection(str(message.guild.id)).document('settings')
+            # print(guilddbRef.update({
+            #     'create_vc_channel': '1019948085876629516',
+            #     'create_qm_general': '1061927542644293682',
+            #     'create_qm_1': '1061931450825449492',
+            #     'create_qm_2': '1061951354957991976',
+            #     'member_role': '997644021067415642',
+            #     'profile_channel': '995656569301774456'
+            # }))
             print(guilddbRef.update({
-                'create_vc_channel': '1019948085876629516',
-                'create_qm_general': '1061927542644293682',
-                'create_qm_1': '1061931450825449492',
-                'create_qm_2': '1061951354957991976',
-                'member_role': '997644021067415642',
-                'profile_channel': '995656569301774456'
+                'create_vc_channel': '1064989376905486444',
+                'create_qm_general': '1064989376645443648',
+                'create_qm_1': '1064989376645443649',
+                'create_qm_2': '1064989376645443650',
+                'member_role': '1064989375613644863',
+                'profile_channel': '1064989377727569931'
             }))
+        if message.content.startswith('.init2'):
+            if message.author.guild_permissions.administrator:
+                db = firestore.Client()
+                vcRoleRef = db.collection(str(message.guild.id)).document('vcRole')
+                var1 = vcRoleRef.create({})
+                print(var1)
+        # if message.content.startswith('.cleanup_db'):
+        #     if message.author.guild_permissions.administrator:
+        #         db = firestore.Client()
+        #         vcRoleRef = db.collection(str(message.guild.id)).document('vcRole')
+                # vcRoleRef.get().to_dict().pop()
         if message.content.startswith('.debug'):
             if message.author.guild_permissions.administrator:
                 db = firestore.Client()
                 guilddbRef = db.collection(str(message.guild.id)).document('settings')
+                await message.channel.send(guilddbRef.path)
                 await message.channel.send(guilddbRef.get().to_dict())
+                vcRoleRef = db.collection(str(message.guild.id)).document('vcRole')
+                await message.channel.send(vcRoleRef.path)
+                await message.channel.send(vcRoleRef.get().to_dict())
         # db = firestore.Client()
         # guilddb = db.document('guilddb')
         # guilddbColRef: DocumentReference = guilddb.collection(str(ctx.guild.id))

@@ -21,7 +21,7 @@ from google.cloud import firestore
 # from discord.ui import *
 # import init_db
 
-load_dotenv()
+load_dotenv('.envDev')
 TOKEN = os.environ.get("DISCORD_TOKEN")
 DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -314,12 +314,11 @@ async def on_ready():
 
 # @bot.slash_command()
 # async def reload(ctx: ApplicationContext):
-    # bot.reload_extension("cogs.init_db")
-    # bot.reload_extension("cogs.ticket")
-    # bot.reload_extension("cogs.move")
-    # bot.reload_extension('cogs.init_db')
-    # await ctx.respond("Reload complete.")
-    
+# bot.reload_extension("cogs.init_db")
+# bot.reload_extension("cogs.ticket")
+# bot.reload_extension("cogs.move")
+# bot.reload_extension('cogs.init_db')
+# await ctx.respond("Reload complete.")
 
 
 @bot.event
@@ -414,7 +413,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
     #     guild1 = guildsettings[str(member.guild.id)]
     # except:
     #     print(traceback.format_exc())
-        # traceback.format_exc()
+    # traceback.format_exc()
 
     # if not after.channel is None and after.channel.id == 1019948085876629516:
     # try:
@@ -427,7 +426,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
     # guildsettings = guilddb.document(str(member.guild.id))
     # print(guildsettings.get().to_dict())
     # var1 = guildsettings.create({
-        # 'create_vc_channel': ctx.user.voice.channel.id
+    # 'create_vc_channel': ctx.user.voice.channel.id
     # })
     # print(var1)
     # print('guildsettings:',guildsettings.get().to_dict())
@@ -450,7 +449,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
     guilddbRef = db.collection(str(member.guild.id)).document('settings')
     vcRoleRef = db.collection(str(member.guild.id)).document('vcRole')
     vcTxtRef = db.collection(str(member.guild.id)).document('vcTxt')
-    print('guilddbRef.get().to_dict():',guilddbRef.get().to_dict())
+    print('guilddbRef.get().to_dict():', guilddbRef.get().to_dict())
     # print(guilddbRef.get())
     # guilddbRef.get(str(member.guild.id))
     print('create_vc_channel:', guilddbRef.get().to_dict()['create_vc_channel'])
@@ -562,12 +561,12 @@ Created by Yuki.
             #     # print(traceback.format_exc())
             #     traceback.print_exc()
             # msgToSend2 += member.mention
-            prof_channel_id = 995656569301774456
-            prof_channel = member.guild.get_channel(prof_channel_id)
+            prof_channel_id = guilddbRef.get().to_dict()['profile_channel']
+            prof_channel = member.guild.get_channel(int(prof_channel_id))
             profiless = await prof_channel.history(limit=1000).flatten()
             for x in profiless:
                 if x.author.id == member.id:
-                        await vc1.send(x.content)
+                    await vc1.send(x.content)
             # print(profiless)
             await vc1.send(member.mention)
             # await txt1.send(embed=Embed(description=msgToSend2))
@@ -680,7 +679,7 @@ Created by Yuki.
                 #     # print(traceback.format_exc())
                 #     traceback.print_exc()
                 # msgToSend2 += member.mention
-                prof_channel_id = 995656569301774456
+                prof_channel_id = guilddbRef.get().to_dict()['profile_channel']
                 prof_channel = member.guild.get_channel(prof_channel_id)
                 profiless = await prof_channel.history(limit=1000).flatten()
                 for x in profiless:
@@ -798,8 +797,8 @@ Created by Yuki.
             #     # print(traceback.format_exc())
             #     traceback.print_exc()
             # msgToSend2 += member.mention
-            prof_channel_id = 995656569301774456
-            prof_channel = member.guild.get_channel(prof_channel_id)
+            prof_channel_id = guilddbRef.get().to_dict()['profile_channel']
+            prof_channel = member.guild.get_channel(int(prof_channel_id))
             profiless = await prof_channel.history(limit=1000).flatten()
             for x in profiless:
                 if x.author.id == member.id:
@@ -916,7 +915,7 @@ Created by Yuki.
                 #     # print(traceback.format_exc())
                 #     traceback.print_exc()
                 # msgToSend2 += member.mention
-                prof_channel_id = 995656569301774456
+                prof_channel_id = guilddbRef.get().to_dict()['profile_channel']
                 prof_channel = member.guild.get_channel(prof_channel_id)
                 profiless = await prof_channel.history(limit=1000).flatten()
                 for x in profiless:
@@ -1269,8 +1268,8 @@ Created by Yuki.
             #     # print(traceback.format_exc())
             #     traceback.print_exc()
             # msgToSend2 += member.mention
-            prof_channel_id = 995656569301774456
-            prof_channel = member.guild.get_channel(prof_channel_id)
+            prof_channel_id = guilddbRef.get().to_dict()['profile_channel']
+            prof_channel = member.guild.get_channel(int(prof_channel_id))
             profiless = await prof_channel.history(limit=1000).flatten()
             for x in profiless:
                 if x.author.id == member.id:
@@ -1401,12 +1400,30 @@ Created by Yuki.
     except:
         pass
     if after.channel is not None:
+        # try:
         role1_id = vcRoleRef.get().to_dict()[str(after.channel.id)]
+        role1_id = vcRoleRef.get().to_dict()[str(after.channel.id)]
+        # except:
+        # vcRoleRef.create({
+        # str(after.channel.id):
+        # })
+        # vcRoleRef.create(vcRoleRef.get().to_dict().update(str(after.channel.id)))
         print('role1_id:', role1_id)
         role1 = after.channel.guild.get_role(role1_id)
         await member.add_roles(role1)
-    if before.channel != after.channel:
-        print('vcRole:',vcRoleRef.get().to_dict())
+        # return
+    if before.channel is not None and len(before.channel.members) == 1:
+        print('vcRole:', vcRoleRef.get().to_dict())
+        # vcRoleDic = vcRoleRef.get()
+        vcRoleDic = vcRoleRef.get()
+
+        var = vcRoleDic.to_dict()[str(before.channel.id)]
+        print(var)
+        role1 = member.guild.get_role(int(var))
+
+        await member.remove_roles(role1)
+    if before.channel != after.channel and len(before.channel.members)==0:
+        print('vcRole:', vcRoleRef.get().to_dict())
         # vcRoleDic = vcRoleRef.get()
         vcRoleDic = vcRoleRef.get()
 
@@ -1415,14 +1432,20 @@ Created by Yuki.
         role1 = member.guild.get_role(int(var))
 
         await role1.delete()
+        var1 = vcRoleRef.get().to_dict()
+        var1.pop(str(before.channel.id))
+        print(var1)
+        var2 = vcRoleRef.set(var1)
+        print(var2)
+        # vcRoleRef.delete()
         if var is not None:
             await before.channel.delete()
 
+    # if after.channel is None:
+    #     return
+
     if after.channel is None:
         return
-
-
-
 
 
 @bot.slash_command(description="メニューを表示")
@@ -1672,20 +1695,20 @@ async def ping(ctx: ApplicationContext):
 #     global guildsettings
 #     global vcOwnerRole
 #     print("Saving bot state...")
-    # with open("vcTxt.json", "w") as f:
-    #     # tmpJson:dict = json.load(f)
-    #     json.dump(vcTxt, f)
-    # with open("vcRole.json", "w") as f:
-    #     json.dump(vcRole, f)
-    # with open("txtMsg.json", "w") as f:
-    #     json.dump(txtMsg, f)
-    # global edenNotifyChannel
-    # libyuki.push_guilddb(id="vcTxt", payload=vcTxt)
-    # libyuki.push_guilddb(id="vcRole", payload=vcRole)
-    # libyuki.push_guilddb(id="txtMsg", payload=txtMsg)
-    # libyuki.push_guilddb(id="vcOwnerRole", payload=vcOwnerRole)
-    # libyuki.push_guilddb()
-    # print("Saved bot state.")
+# with open("vcTxt.json", "w") as f:
+#     # tmpJson:dict = json.load(f)
+#     json.dump(vcTxt, f)
+# with open("vcRole.json", "w") as f:
+#     json.dump(vcRole, f)
+# with open("txtMsg.json", "w") as f:
+#     json.dump(txtMsg, f)
+# global edenNotifyChannel
+# libyuki.push_guilddb(id="vcTxt", payload=vcTxt)
+# libyuki.push_guilddb(id="vcRole", payload=vcRole)
+# libyuki.push_guilddb(id="txtMsg", payload=txtMsg)
+# libyuki.push_guilddb(id="vcOwnerRole", payload=vcOwnerRole)
+# libyuki.push_guilddb()
+# print("Saved bot state.")
 
 
 # def save_guild_settings():
@@ -1694,10 +1717,10 @@ async def ping(ctx: ApplicationContext):
 #     global txtMsg
 #     global guildsettings
 #     print("Saving guildsettings...")
-    # with open("guildsettings.json", "w", encoding="utf8") as f:
-    #     json.dump(guildsettings, f, ensure_ascii=False)
-    # libyuki.push_guilddb(id="guildsettings", payload=guildsettings)
-    # print("Saved guildsettings.")
+# with open("guildsettings.json", "w", encoding="utf8") as f:
+#     json.dump(guildsettings, f, ensure_ascii=False)
+# libyuki.push_guilddb(id="guildsettings", payload=guildsettings)
+# print("Saved guildsettings.")
 
 
 bot.run(TOKEN)
