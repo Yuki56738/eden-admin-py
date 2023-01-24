@@ -19,7 +19,7 @@ idna==3.4
 multidict==6.0.4
 proto-plus==1.22.2
 protobuf==4.21.12
-py-cord==2.3.2
+py-cord @ git+https://github.com/Pycord-Development/pycord@0679edd96bad4695e2bdcef5651633781024b920
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.21
