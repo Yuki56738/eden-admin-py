@@ -7,9 +7,9 @@ import discord
 from discord import *
 from discord.ui import *
 from discord.ext import *
-import json
+# import json
 
-import deepl
+# import deepl
 from google.cloud.firestore_v1 import DocumentReference
 
 import libyuki
