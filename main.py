@@ -42,7 +42,12 @@ edenNotifyChannel = ""
 # bot.load_extension("cogs.init_db")
 bot.load_extension("cogs.ticket")
 bot.load_extension("cogs.move")
+# bot.load_extension('cogs.init_db')
+bot.load_extension('cogs.init_db')
 
+db = firestore.Client()
+guilddb = db.collection('guilddb')
+# guildsettings = guilddb.document(str(member.guild.id))
 # db = Client()
 
 
@@ -261,6 +266,7 @@ class MyViewChangeRoomLimit(discord.ui.View):
 
 # @bot.check_once("cogs.move")
 
+# def init():
 
 @bot.event
 async def on_ready():
@@ -312,6 +318,7 @@ async def reload(ctx: ApplicationContext):
     # bot.reload_extension("cogs.init_db")
     bot.reload_extension("cogs.ticket")
     bot.reload_extension("cogs.move")
+    bot.reload_extension('cogs.init_db')
     await ctx.respond("Reload complete.")
     
 
@@ -416,18 +423,25 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
     # print()
     # if not
     # print('guildsettings[create_vc_channel]:', guildsettings[member.guild.id])
-    guildsettings = libyuki.get_guilddb_as_dict()[str(member.guild.id)]
-    print('guildsettings:',guildsettings)
+    db = firestore.Client()
+    guilddb = db.collection('guilddb')
+    guildsettings = guilddb.document(str(member.guild.id))
+    # print(guildsettings.get().to_dict())
+    # var1 = guildsettings.create({
+        # 'create_vc_channel': ctx.user.voice.channel.id
+    # })
+    # print(var1)
+    print('guildsettings:',guildsettings.get().to_dict())
     # libyuki.push_guilddb({
     #     str(member.guild.id): {
     #         'create_channel_id': '1019948085876629516'
     #     }
     # })
-    if str(after.channel.id) == guildsettings[str(member.guild.id)]["create_vc_channel"]:
+    if str(after.channel.id) == guildsettings.get().to_dict()[str(member.guild.id)]["create_vc_channel"]:
             print("hit.")
             # await member.guild.system_channel.send("hit.")
             # memberRole = member.guild.get_role(997644021067415642)
-            memberRole = member.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
+            memberRole = member.guild.get_role(guildsettings.get().to_dict()[str(member.guild.id)]["member_role"])
             # perm1 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.none())
             perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
             perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
