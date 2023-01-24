@@ -4,6 +4,8 @@ from google.cloud.firestore import *
 import discord
 from discord import *
 
+# from deploy.cogs.ticket import MyViewTicket
+
 
 class Ticket(Cog):
     def __init__(self, bot):
@@ -29,15 +31,15 @@ class Ticket(Cog):
             guilddb = db.collection("guilddb")
             guilddb1 = guilddb.document(document_id="guildsettings")
             guilddb1_dict = guilddb1.get().to_dict()
-            cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_category"]
-            cat1 = interaction.guild.get_channel(cat1)
-            # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_category"]
+            # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_channel"]
+            # cat1 = interaction.guild.get_channel(cat1)
+            # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_channel"]
             # cat1 = bot.get_channel(cat1)
             # cat1 = interaction.channel
 
             txt1: TextChannel = await interaction.guild.create_text_channel(
                 name=f"{interaction.user.display_name}のticket",
-                category=cat1,
+                # category=cat1,
                 overwrites={
                     interaction.guild.default_role: permow2,
                     interaction.user: permow1
@@ -57,7 +59,6 @@ class Ticket(Cog):
             # db1.update(db1_dict)
             await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
 
-
     @commands.slash_command()
     async def ticket(self, ctx: ApplicationContext):
         print("ready ticket.")
@@ -72,13 +73,20 @@ class Ticket(Cog):
         # thisguildDoc = thisguildCol_ref.document(document_id="ticket_channel")
         # # print(thisguildDoc.get().to_dict()["id"])
         # ticket_channel_id = int(thisguildDoc.get().to_dict()["id"])
+        # db = firestore.Client()
+        # guilddb = db.collection("guilddb")
+        # guilddb1 = guilddb.document(document_id="guildsettings")
+        # guilddb1_dict = guilddb1.get().to_dict()
+        # ticket_channel_id = guilddb1_dict[str(ctx.guild.id)]['ticket_channel']
         db = firestore.Client()
         guilddb = db.collection("guilddb")
         guilddb1 = guilddb.document(document_id="guildsettings")
         guilddb1_dict = guilddb1.get().to_dict()
         ticket_channel_id = guilddb1_dict[str(ctx.guild.id)]['ticket_channel']
+        print('ticket_channel_id:', ticket_channel_id)
         self.bot: Bot
-        ticket_channel = self.bot.get_channel(ticket_channel_id)
+        ticket_channel: TextChannel = ctx.guild.get_channel(int(ticket_channel_id))
+        print(ticket_channel)
         await ticket_channel.send(view=self.MyViewTicket())
 
     @commands.slash_command(description="ticketのDBを初期化")
@@ -97,13 +105,24 @@ class Ticket(Cog):
         guilddb = db.collection("guilddb")
         guilddb1 = guilddb.document(document_id="guildsettings")
         guilddb1_dict = guilddb1.get().to_dict()
-        guilddb1_dict[str(ctx.guild.id)]['ticket_channel'] = ticket_channel_id
+        # payload = {}
+
+        guilddb1_dict.update({
+            str(ctx.guild.id): {'ticket_channel': 0}
+        })
+        guilddb1_dict[str(ctx.guild.id)]['ticket_channel'] = str(ticket_channel_id)
+        # payload[str(ctx.guild.id)]['ticket_channel'] = str(ticket_channel_id)
         # print(thisguildDoc.get().to_dict())
         # thisguildDoc.set({
         #     "id": str(ctx.guild.get_channel(int(ticket_channel_id)).id),
         #     "name": str(ctx.guild.get_channel(int(ticket_channel_id)).name)
         # })
-        guilddb1.set(document_data=guilddb1_dict)
+        if not guilddb1.get().exists:
+            guilddb1.create(document_data=guilddb1_dict)
+        else:
+            guilddb1.update(guilddb1_dict)
+
+        # guilddb1.update()
         await ctx.send("完了.")
 
 
