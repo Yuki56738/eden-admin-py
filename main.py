@@ -307,7 +307,7 @@ async def on_ready():
 @bot.slash_command()
 async def reload(ctx: ApplicationContext):
     # bot.remove_cog("Init_db")
-    bot.reload_extension("cogs.init_db")
+    # bot.reload_extension("cogs.init_db")
     bot.reload_extension("cogs.ticket")
     bot.reload_extension("cogs.move")
     await ctx.respond("Reload complete.")
