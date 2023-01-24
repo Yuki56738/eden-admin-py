@@ -561,8 +561,11 @@ Created by Yuki.
             # msgToSend2 += member.mention
             prof_channel_id = 995656569301774456
             prof_channel = member.guild.get_channel(prof_channel_id)
-            await prof_channel.history(limit=1000).flatten()
-            print()
+            profiless = await prof_channel.history(limit=1000).flatten()
+            for x in profiless:
+                if x.author.id == member.id:
+                        await vc1.send(x.content)
+            # print(profiless)
             await vc1.send(member.mention)
             # await txt1.send(embed=Embed(description=msgToSend2))
             # save_to_json()
