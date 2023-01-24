@@ -3,7 +3,7 @@ from google.cloud import firestore
 from google.cloud.firestore import *
 import discord
 from discord import *
-import libyuki
+# import libyuki
 
 
 # from deploy.cogs.ticket import MyViewTicket
