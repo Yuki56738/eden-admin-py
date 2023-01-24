@@ -15,6 +15,7 @@ class CreateVC(Cog):
     @Cog.listener()
     # async def on_voice_state_update(member: Member, before: VoiceState, after: VoiceState):
     async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState):
+        await self.bot.wait_until_ready()
         db = firestore.Client()
         guilddbRef = db.collection(str(member.guild.id)).document('settings')
         vcRoleRef = db.collection(str(member.guild.id)).document('vcRole')
@@ -68,19 +69,21 @@ class CreateVC(Cog):
             # await member.add_roles(roomOwnerRole1)
             # cat1 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
             catVc = after.channel.category
-
-            vc1 = await member.guild.create_voice_channel(name=f"{member.display_name}の部屋",
-                                                          overwrites={role1: perm1, memberRole: perm2,
-                                                                      # roomOwnerRole1: roomOwnerPerm1,
-                                                                      member.guild.default_role: PermissionOverwrite().from_pair(
-                                                                          Permissions.none(),
-                                                                          Permissions.all())},
-                                                          category=catVc, user_limit=2)
+            self.bot: Bot
+            thisguild = self.bot.get_guild(member.guild.id)
+            await member.add_roles(role1)
+            vc1 = await thisguild.create_voice_channel(name=f"{member.display_name}の部屋",
+                                                       overwrites={role1: perm1, memberRole: perm2,
+                                                                   # roomOwnerRole1: roomOwnerPerm1,
+                                                                   member.guild.default_role: PermissionOverwrite().from_pair(
+                                                                       Permissions.none(),
+                                                                       Permissions.all())},
+                                                       category=catVc, user_limit=2)
             # vcRole[str(vc1.id)] = role1.id
             # await role1.edit(position=8)
             #
             if not vcRoleRef.get().exists:
-                vcRoleRef.set({
+                vcRoleRef.create({
                     str(vc1.id): role1.id
                 })
             else:
