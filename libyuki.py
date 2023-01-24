@@ -15,21 +15,39 @@ def get_guilddb():
     return guilddb
 
 
-def push_guilddb(id: str, payload: dict):
-    db = get_db()
-    guilddb = get_guilddb()
+def push_guilddb(payload: dict):
+    db = Client()
 
-    if not guilddb.document(document_id=id).get().exists:
-        guilddb.document(document_id=id).create(document_data=payload)
-    else:
-        guilddb.document(document_id=id).update(payload)
+    guilddb = db.collection('guilddb')
 
-    return guilddb.stream()
+    guildsettings = guilddb.document('guildsettings')
+
+    # guildsettingsDoc1= guildsettings.get().to_dict()
+    # guildsettingsDoc1.update(payload)
+    guildsettings.update(payload)
+    # return guildsettingsDoc1
+    # db = get_db()
+    # guilddb = get_guilddb()
+    #
+    # if not guilddb.document(document_id=id).get().exists:
+    #     guilddb.document(document_id=id).create(document_data=payload)
+    # else:
+    #     guilddb.document(document_id=id).update(payload)
+    #
+    # return guilddb.stream()
 
 
-def get_guilddb_as_dict(id: str):
-    guilddb = get_guilddb()
-    return guilddb.document(document_id=id).get().to_dict()
+def get_guilddb_as_dict():
+    db = Client()
+
+    guilddb = db.collection('guilddb')
+
+    guildsettings = guilddb.document('guildsettings')
+
+    guildsettingsDoc1 = guildsettings.get().to_dict()
+    return guildsettingsDoc1
+    # guilddb = get_guilddb()
+    # return guilddb.document(document_id=id).get().to_dict()
 
 
 def get_ref_guilddb(id: str):
@@ -58,13 +76,24 @@ def get_guildsettings2_as_dict(id: str):
     return guildsettingsCol1.document(id).get().to_dict()
 def push_to_guildsettings2_from_dict(id: str, payload: dict):
     db = Client()
-    guilddbcol = db.collection('guilddb')
-    guildsettingsDoc = guilddbcol.document('guildsettings')
-    guildsettingsCol1: CollectionReference = guildsettingsDoc.collection(id)
-    try:
-        guildsettingsCol1.document(id).update(payload)
-    except:
-        guildsettingsCol1.document(id).create(payload)
+
+    guilddb = db.collection('guilddb')
+
+    guildsettings = guilddb.document('guildsettings')
+
+    guildsettingsDoc1 = guildsettings.get().to_dict()
+    guildsettingsDoc1.update(payload)
+    guildsettings.set(guildsettingsDoc1)
+    # return guildsettingsDoc1
+
+    # db = Client()
+    # guilddbcol = db.collection('guilddb')
+    # guildsettingsDoc = guilddbcol.document('guildsettings')
+    # guildsettingsCol1: CollectionReference = guildsettingsDoc.collection(id)
+    # try:
+    #     guildsettingsCol1.document(id).update(payload)
+    # except:
+    #     guildsettingsCol1.document(id).create(payload)
     # return guildsettingsCol1.document(id).get().to_dict()
 def push_ticketdb(id:str, payload:dict):
     return push_to_guildsettings2_from_dict(id=id, payload=payload)

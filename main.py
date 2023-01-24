@@ -7,10 +7,10 @@ import discord
 from discord import *
 from discord.ui import *
 from discord.ext import *
-# import json
+import json
 
 # import deepl
-from google.cloud.firestore_v1 import DocumentReference
+# from google.cloud.firestore_v1 import DocumentReference
 
 import libyuki
 
@@ -30,11 +30,11 @@ bot = discord.Bot(intents=intents)
 
 # bot.add_cog(Greetings(bot))
 # bot.add_cog(init_db.Init_db(bot))
-vcRole = {}
-vcTxt = {}
-txtMsg = {}
-guildsettings = {}
-vcOwnerRole = {"1234": "2345"}
+# vcRole = {}
+# vcTxt = {}
+# txtMsg = {}
+# guildsettings = {}
+# vcOwnerRole = {"1234": "2345"}
 
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
@@ -42,6 +42,8 @@ edenNotifyChannel = ""
 # bot.load_extension("cogs.init_db")
 bot.load_extension("cogs.ticket")
 bot.load_extension("cogs.move")
+
+# db = Client()
 
 
 # bot.add_cog()
@@ -262,13 +264,13 @@ class MyViewChangeRoomLimit(discord.ui.View):
 
 @bot.event
 async def on_ready():
-    global vcRole
-    global vcTxt
-    global txtMsg
-    global guildsettings
-    global vcOwnerRole
+    # global vcRole
+    # global vcTxt
+    # global txtMsg
+    # global guildsettings
+    # global vcOwnerRole
     print(f"Logged in as: {bot.user}")
-    global edenNotifyChannel
+    # global edenNotifyChannel
     # edenNotifyChannel = bot.get_guild(994483180927201400).get_channel(994483180927201403)
     # await edenNotifyChannel.send(embed=Embed(description="Starting bot..."))
     # await edenNotifyChannel.send(embed=Embed(description="Loading databases..."))
@@ -289,20 +291,20 @@ async def on_ready():
     #
     # except Exception as e:
     #     print(traceback.format_exc())
-    guildsettings = libyuki.get_guilddb_as_dict("guildsettings")
-    txtMsg = libyuki.get_guilddb_as_dict("txtMsg")
-    vcTxt = libyuki.get_guilddb_as_dict("vcTxt")
-    vcRole = libyuki.get_guilddb_as_dict("vcRole")
-    vcOwnerRole = libyuki.get_guilddb_as_dict("vcOwnerRole")
-    print(guildsettings)
+    # guildsettings = libyuki.get_guilddb_as_dict('guildsettings')
+    # txtMsg = libyuki.get_guilddb_as_dict("txtMsg")
+    # vcTxt = libyuki.get_guilddb_as_dict("vcTxt")
+    # vcRole = libyuki.get_guilddb_as_dict("vcRole")
+    # vcOwnerRole = libyuki.get_guilddb_as_dict("vcOwnerRole")
+    # print(guildsettings)
     print("Loaded bot state.")
     # await edenNotifyChannel.send(embed=Embed(description="Loaded databases."))
-    db = firestore.Client()
-    guildcol = db.collection("guilddb")
-    guilddoc = guildcol.document(document_id="guildsettings")
-    guilgsettingsDict = guilddoc.get().to_dict()
+    # db = firestore.Client()
+    # guildcol = db.collection("guilddb")
+    # guilddoc = guildcol.document(document_id="guildsettings")
+    # guilgsettingsDict = guilddoc.get().to_dict()
     # txtMsg = guildcol.document(document_id="txtMsg")
-    txtMsg = libyuki.get_guilddb_as_dict("txtMsg")
+    # txtMsg = libyuki.get_guilddb_as_dict("txtMsg")
 
 
 @bot.slash_command()
@@ -329,88 +331,99 @@ async def on_raw_reaction_add(reaction: RawReactionActionEvent):
         await txt2.send(f"{reaction.member.mention} から {msg1.author.mention} へ反応がありました！")
 
 
-@bot.event
-async def on_message(message: Message):
-    global vcRole
-    global vcTxt
-    global txtMsg
-    global guildsettings
-    if message.author.bot:
-        return
-    # if message.content.startswith("y.help"):
-    #     msgToSend = Embed(title="Yukiの管理BOT", description="y.show または my.show -> 自分の自己紹介を表示する。")
-    #     await message.channel.send(embed=msgToSend, delete_after=3 * 60)
-    if message.content.startswith(".debug"):
-        print(f"vcRole: {vcRole}")
-        print(f"vcTxt: {vcTxt}")
-    guildsettings = libyuki.get_guilddb_as_dict("guildsettings")
-    isExist = False
-    try:
-        guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
-        isExist = True
-    except Exception as e:
-        # print(traceback.format_exc())
-        traceback.print_exc()
-    if isExist == True:
-        try:
-            msg1_id = txtMsg[str(message.channel.id)]
-            msg1 = await message.channel.fetch_message(msg1_id)
-            await msg1.delete()
-        except Exception as e:
-            # print(traceback.format_exc())
-            traceback.print_exc()
-        tosendtxt = guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
-        msg2 = await message.channel.send(embed=Embed(description=tosendtxt))
-        txtMsg[str(message.channel.id)] = msg2.id
-        save_to_json()
-
-    if message.mentions:
-        try:
-            vc1 = message.author.voice.channel
-            txt1_id = vcTxt[str(str(vc1.id))]
-            txt1 = bot.get_channel(txt1_id)
-            perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
-            perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
-            # perm2.update(connect=True)
-            # perm2.update(speak=True)
-            # perm2.update(use_slash_commands=True)
-            perm2.update(connect=True)
-            perm2.update(speak=True)
-            # perm1.update(value=689379286592)
-            perm1.update(read_message_history=True)
-            perm1.update(read_messages=True)
-            perm1.update(send_messages=True)
-            perm1.update(use_slash_commands=True)
-            perm1.update(connect=True, speak=True)
-            perms1 = Permissions.advanced().general().voice()
-            perm1.update(mute_members=False)
-            perm1.update(move_members=False, deafen_members=False)
-            role1 = message.guild.get_role(vcRole[str(vc1.id)])
-            if message.channel.id == guildsettings[str(message.guild.id)]["mention_channel"]:
-                for x in message.mentions:
-                    await x.add_roles(role1)
-                    await vc1.edit(overwrites={x: perm1})
-        except:
-            # print(traceback.format_exc())
-            traceback.print_exc()
+# @bot.event
+# async def on_message(message: Message):
+#     global vcRole
+#     global vcTxt
+#     global txtMsg
+#     global guildsettings
+#     if message.author.bot:
+#         return
+#     # if message.content.startswith("y.help"):
+#     #     msgToSend = Embed(title="Yukiの管理BOT", description="y.show または my.show -> 自分の自己紹介を表示する。")
+#     #     await message.channel.send(embed=msgToSend, delete_after=3 * 60)
+#     if message.content.startswith(".debug"):
+#         print(f"vcRole: {vcRole}")
+#         print(f"vcTxt: {vcTxt}")
+#     guildsettings = libyuki.get_guilddb_as_dict("guildsettings")
+#     isExist = False
+#     try:
+#         guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
+#         isExist = True
+#     except Exception as e:
+#         # print(traceback.format_exc())
+#         traceback.print_exc()
+#     if isExist == True:
+#         try:
+#             msg1_id = txtMsg[str(message.channel.id)]
+#             msg1 = await message.channel.fetch_message(msg1_id)
+#             await msg1.delete()
+#         except Exception as e:
+#             # print(traceback.format_exc())
+#             traceback.print_exc()
+#         tosendtxt = guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
+#         msg2 = await message.channel.send(embed=Embed(description=tosendtxt))
+#         txtMsg[str(message.channel.id)] = msg2.id
+#         save_to_json()
+#
+#     if message.mentions:
+#         try:
+#             vc1 = message.author.voice.channel
+#             txt1_id = vcTxt[str(str(vc1.id))]
+#             txt1 = bot.get_channel(txt1_id)
+#             perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
+#             perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
+#             # perm2.update(connect=True)
+#             # perm2.update(speak=True)
+#             # perm2.update(use_slash_commands=True)
+#             perm2.update(connect=True)
+#             perm2.update(speak=True)
+#             # perm1.update(value=689379286592)
+#             perm1.update(read_message_history=True)
+#             perm1.update(read_messages=True)
+#             perm1.update(send_messages=True)
+#             perm1.update(use_slash_commands=True)
+#             perm1.update(connect=True, speak=True)
+#             perms1 = Permissions.advanced().general().voice()
+#             perm1.update(mute_members=False)
+#             perm1.update(move_members=False, deafen_members=False)
+#             role1 = message.guild.get_role(vcRole[str(vc1.id)])
+#             if message.channel.id == guildsettings[str(message.guild.id)]["mention_channel"]:
+#                 for x in message.mentions:
+#                     await x.add_roles(role1)
+#                     await vc1.edit(overwrites={x: perm1})
+#         except:
+#             # print(traceback.format_exc())
+#             traceback.print_exc()
 
 
 @bot.event
 async def on_voice_state_update(member: Member, before: VoiceState, after: VoiceState):
-    global vcRole
-    global vcTxt
-    global txtMsg
-    global guildsettings
-    global vcOwnerRole
-    try:
-        guild1 = guildsettings[str(member.guild.id)]
-    except:
-        # print(traceback.format_exc())
-        traceback.format_exc()
+    # global vcRole
+    # global vcTxt
+    # global txtMsg
+    # global guildsettings
+    # global vcOwnerRole
+    # try:
+    #     guild1 = guildsettings[str(member.guild.id)]
+    # except:
+    #     print(traceback.format_exc())
+        # traceback.format_exc()
 
     # if not after.channel is None and after.channel.id == 1019948085876629516:
-    try:
-        if after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel"]:
+    # try:
+    # guildsettings = libyuki.get_guilddb_as_dict()
+    # print()
+    # if not
+    # print('guildsettings[create_vc_channel]:', guildsettings[member.guild.id])
+    guildsettings = libyuki.get_guilddb_as_dict()[str(member.guild.id)]
+    print('guildsettings:',guildsettings)
+    # libyuki.push_guilddb({
+    #     str(member.guild.id): {
+    #         'create_channel_id': '1019948085876629516'
+    #     }
+    # })
+    if str(after.channel.id) == guildsettings[str(member.guild.id)]["create_vc_channel"]:
             print("hit.")
             # await member.guild.system_channel.send("hit.")
             # memberRole = member.guild.get_role(997644021067415642)
@@ -514,8 +527,8 @@ Created by Yuki.
             # await txt1.send(embed=Embed(description=msgToSend2))
             save_to_json()
             return
-    except:
-        pass
+    # except:
+    #     pass
     # if not after.channel is None and after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel_qm_general"]:
     try:
         if after.channel.id == guildsettings[str(member.guild.id)]["create_vc_channel_qm_general"]:
@@ -1103,10 +1116,11 @@ def save_to_json():
     # with open("txtMsg.json", "w") as f:
     #     json.dump(txtMsg, f)
     # global edenNotifyChannel
-    libyuki.push_guilddb(id="vcTxt", payload=vcTxt)
-    libyuki.push_guilddb(id="vcRole", payload=vcRole)
-    libyuki.push_guilddb(id="txtMsg", payload=txtMsg)
-    libyuki.push_guilddb(id="vcOwnerRole", payload=vcOwnerRole)
+    # libyuki.push_guilddb(id="vcTxt", payload=vcTxt)
+    # libyuki.push_guilddb(id="vcRole", payload=vcRole)
+    # libyuki.push_guilddb(id="txtMsg", payload=txtMsg)
+    # libyuki.push_guilddb(id="vcOwnerRole", payload=vcOwnerRole)
+    # libyuki.push_guilddb()
     print("Saved bot state.")
 
 

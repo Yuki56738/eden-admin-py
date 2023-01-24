@@ -3,6 +3,7 @@ from google.cloud import firestore
 from google.cloud.firestore import *
 import discord
 from discord import *
+import libyuki
 
 
 # from deploy.cogs.ticket import MyViewTicket
@@ -20,6 +21,12 @@ class MyViewTicket(discord.ui.View):
             guilddb = db.collection("guilddb")
             guilddb1 = guilddb.document(document_id="guildsettings")
             guilddb1_dict = guilddb1.get().to_dict()
+            # payload = {}
+
+            # guilddb1_dict.update({
+            #     str(ctx.guild.id): {'ticket_channel': 0}
+            # })
+            ticket_channel_id = int(guilddb1_dict[str(interaction.guild.id)]['ticket_channel'])
             # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_channel"]
             # cat1 = interaction.guild.get_channel(cat1)
             # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_channel"]
@@ -139,7 +146,7 @@ class Ticket(Cog):
 
 
     @commands.slash_command(description="ticketのDBを初期化")
-    async def init_ticket(self, ctx: ApplicationContext, ticket_channel_id: str, category_id: str):
+    async def init_ticket(self, ctx: ApplicationContext, ticket_channel_id: str):
         if not ctx.user.guild_permissions.administrator:
             await ctx.respond("管理者のみ使用できます.")
             return
@@ -170,7 +177,8 @@ class Ticket(Cog):
         if not guilddb1.get().exists:
             guilddb1.create(document_data=guilddb1_dict)
         else:
-            guilddb1.update(guilddb1_dict)
+            # guilddb1.update(guilddb1_dict)
+            guilddb1.set(guilddb1_dict)
 
         # guilddb1.update()
 
