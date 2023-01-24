@@ -21,7 +21,7 @@ from google.cloud import firestore
 # from discord.ui import *
 # import init_db
 
-load_dotenv()
+load_dotenv('.envDev')
 TOKEN = os.environ.get("DISCORD_TOKEN")
 DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -67,18 +67,23 @@ class MyModalChangeRoomName(discord.ui.Modal):
         # embed = discord.Embed(title="Modal Results")
         # embed.add_field(name="Long Input", value=self.children[0].value)
         # await interaction.response.send_message(embeds=[embed])
-        global vcRole
-        global vcTxt
-        global txtMsg
-        global guildsettings
-        try:
-            # txt1 = vcTxt[str(ctx.author.voice.channel.id)]
-            txt1 = vcTxt[str(interaction.user.voice.channel.id)]
-            txt1 = bot.get_channel(txt1)
-        except:
-            print(traceback.format_exc())
-            return
-        await txt1.edit(name=self.children[0].value)
+        # global vcRole
+        # global vcTxt
+        # global txtMsg
+        # global guildsettings
+        db = firestore.Client()
+        guilddbRef = db.collection(str(interaction.guild.id)).document('settings')
+        vcRoleRef = db.collection(str(interaction.guild.id)).document('vcRole')
+        # try:
+        #     # txt1 = vcTxt[str(ctx.author.voice.channel.id)]
+        #     # txt1 = vcTxt[str(interaction.user.voice.channel.id)]
+        #     # txt1_id = vcRoleRef.get().to_dict()[str(interaction.user.voice.channel.id)]
+        #     # txt1 = bot.get_channel(txt1_id)
+        # except:
+        #     print(traceback.format_exc())
+        #     return
+        await interaction.user.voice.channel.edit(name=self.children[0].value)
+        # await txt1.edit(name=self.children[0].value)
         # vc1 = ctx.author.voice.channel
         vc1 = interaction.user.voice.channel
         await vc1.edit(name=self.children[0].value)
@@ -94,19 +99,22 @@ class MyViewChangeRoomName(discord.ui.View):
 
     @discord.ui.button(label="この部屋に入れる人を限定する.", style=discord.ButtonStyle.red)
     async def button2_callback(self, button: Button, interaction: Interaction):
-        global vcRole
-        global vcTxt
-        global txtMsg
-        global guildsettings
+        # global vcRole
+        # global vcTxt
+        # global txtMsg
+        # global guildsettings
         # try:
         #     vcTxt[str(ctx.author.voice.channel.id)]
         # except:
         #     return
-        if not str(interaction.user.voice.channel.id) in vcTxt.keys():
+        db = firestore.Client()
+        guilddbRef = db.collection(str(interaction.guild.id)).document('settings')
+        vcRoleRef = db.collection(str(interaction.guild.id)).document('vcRole')
+        if not str(interaction.user.voice.channel.id) in vcRoleRef.get().to_dict().keys():
             print(traceback.format_exc())
             return
         vc1 = interaction.user.voice.channel
-        role1 = interaction.guild.get_role(vcRole[str(interaction.user.voice.channel.id)])
+        role1 = interaction.guild.get_role(vcRoleRef.get().to_dict()[str(interaction.user.voice.channel.id)])
         perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
         perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
         # perm2.update(connect=True)
@@ -171,15 +179,20 @@ class MyViewChangeRoomLimit(discord.ui.View):
     @discord.ui.button(label="この部屋を見えなくする", style=discord.ButtonStyle.grey)
     async def button2_callback(self, button, interaction: discord.Interaction):
         # await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
-        global vcRole
-        global vcTxt
-        global txtMsg
-        global guildsettings
-        try:
-            vcTxt[str(interaction.user.voice.channel.id)]
-        except:
-            print(traceback.format_exc())
-            return
+        # global vcRole
+        # global vcTxt
+        # global txtMsg
+        # global guildsettings
+        db = firestore.Client()
+        guilddbRef = db.collection(str(interaction.guild.id)).document('settings')
+        vcRoleRef = db.collection(str(interaction.guild.id)).document('vcRole')
+        # try:
+            # vcTxt[str(interaction.user.voice.channel.id)]
+        if vcRoleRef.get().to_dict().get(str(interaction.user.voice.channel.id)) is None:
+           return
+        # except:
+        #     print(traceback.format_exc())
+        #     return
         vc1 = interaction.user.voice.channel
         role1 = interaction.guild.get_role(vcRole[str(interaction.user.voice.channel.id)])
         perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
@@ -213,17 +226,17 @@ class MyViewChangeRoomLimit(discord.ui.View):
 
     @discord.ui.button(label="この部屋を見えるようにする.", style=ButtonStyle.grey, row=1)
     async def button3_callback(self, button, interaction: Interaction):
-        global vcRole
-        global vcTxt
-        global txtMsg
-        global guildsettings
-        try:
-            vcTxt[str(interaction.user.voice.channel.id)]
-        except:
-            print(traceback.format_exc())
-            return
+        # global vcRole
+        # global vcTxt
+        # global txtMsg
+        # global guildsettings
+        db = firestore.Client()
+        guilddbRef = db.collection(str(interaction.guild.id)).document('settings')
+        vcRoleRef = db.collection(str(interaction.guild.id)).document('vcRole')
+
         vc1 = interaction.user.voice.channel
-        role1 = interaction.guild.get_role(vcRole[str(interaction.user.voice.channel.id)])
+        role1_id = vcRoleRef.get().to_dict()[str(interaction.user.voice.channel.id)]
+        role1 = interaction.guild.get_role(int(role1_id))
         perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
         perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
         # perm2.update(connect=True)
@@ -242,7 +255,9 @@ class MyViewChangeRoomLimit(discord.ui.View):
         perm1.update(move_members=False, deafen_members=False)
         perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
         # perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
-        memberRole = interaction.guild.get_role(guildsettings[str(interaction.guild.id)]["member_role"])
+        # memberRole = interaction.guild.get_role(guildsettings[str(interaction.guild.id)]["member_role"])
+        memberRole_id = guilddbRef.get().to_dict()['member_role']
+        memberRole = interaction.guild.get_role(memberRole_id)
         memberPerm = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
         # perm2.update(connect=True)
         # perm2.update(speak=True)
