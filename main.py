@@ -580,14 +580,15 @@ Created by Yuki.
             #     # print(traceback.format_exc())
             #     traceback.print_exc()
             # msgToSend2 += member.mention
-            prof_channel_id = guilddbRef.get().to_dict()['profile_channel']
-            prof_channel = member.guild.get_channel(int(prof_channel_id))
-            profiless = await prof_channel.history(limit=1000).flatten()
-            for x in profiless:
-                if x.author.id == member.id:
-                    await vc1.send(x.content)
-            # print(profiless)
-            await vc1.send(member.mention)
+            ##
+            # prof_channel_id = guilddbRef.get().to_dict()['profile_channel']
+            # prof_channel = member.guild.get_channel(int(prof_channel_id))
+            # profiless = await prof_channel.history(limit=1000).flatten()
+            # for x in profiless:
+            #     if x.author.id == member.id:
+            #         await vc1.send(x.content)
+            # # print(profiless)
+            # await vc1.send(member.mention)
             # await txt1.send(embed=Embed(description=msgToSend2))
             # save_to_json()
             # return
@@ -816,14 +817,14 @@ Created by Yuki.
             #     # print(traceback.format_exc())
             #     traceback.print_exc()
             # msgToSend2 += member.mention
-            prof_channel_id = guilddbRef.get().to_dict()['profile_channel']
-            prof_channel = member.guild.get_channel(int(prof_channel_id))
-            profiless = await prof_channel.history(limit=1000).flatten()
-            for x in profiless:
-                if x.author.id == member.id:
-                    await vc1.send(x.content)
-            # print(profiless)
-            await vc1.send(member.mention)
+            # prof_channel_id = guilddbRef.get().to_dict()['profile_channel']
+            # prof_channel = member.guild.get_channel(int(prof_channel_id))
+            # profiless = await prof_channel.history(limit=1000).flatten()
+            # for x in profiless:
+            #     if x.author.id == member.id:
+            #         await vc1.send(x.content)
+            # # print(profiless)
+            # await vc1.send(member.mention)
             # await txt1.send(embed=Embed(description=msgToSend2))
             # save_to_json()
             # return
@@ -1287,14 +1288,14 @@ Created by Yuki.
             #     # print(traceback.format_exc())
             #     traceback.print_exc()
             # msgToSend2 += member.mention
-            prof_channel_id = guilddbRef.get().to_dict()['profile_channel']
-            prof_channel = member.guild.get_channel(int(prof_channel_id))
-            profiless = await prof_channel.history(limit=1000).flatten()
-            for x in profiless:
-                if x.author.id == member.id:
-                    await vc1.send(x.content)
-            # print(profiless)
-            await vc1.send(member.mention)
+            # prof_channel_id = guilddbRef.get().to_dict()['profile_channel']
+            # prof_channel = member.guild.get_channel(int(prof_channel_id))
+            # profiless = await prof_channel.history(limit=1000).flatten()
+            # for x in profiless:
+            #     if x.author.id == member.id:
+            #         await vc1.send(x.content)
+            # # print(profiless)
+            # await vc1.send(member.mention)
             # await txt1.send(embed=Embed(description=msgToSend2))
             # save_to_json()
             # return
@@ -1430,6 +1431,15 @@ Created by Yuki.
         print('role1_id:', role1_id)
         role1 = after.channel.guild.get_role(role1_id)
         await member.add_roles(role1)
+        prof_channel_id = guilddbRef.get().to_dict()['profile_channel']
+        prof_channel = member.guild.get_channel(int(prof_channel_id))
+        profiless = await prof_channel.history(limit=1000).flatten()
+        for x in profiless:
+            if x.author.id == member.id:
+                await after.channel.send(x.content)
+        await after.channel.send(view=MyViewChangeRoomName())
+        # print(profiless)
+        await after.channel.send(member.mention)
         # return
     if before.channel is not None and len(before.channel.members) == 1:
         print('vcRole:', vcRoleRef.get().to_dict())
