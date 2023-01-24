@@ -21,9 +21,27 @@ class init_db(Cog):
 
             db = firestore.Client()
             guilddbRef = db.collection(str(message.guild.id)).document('settings')
+            print(guilddbRef.get().to_dict())
+            # print(guilddbRef.set({
+            #     'create_vc_channel': '1064989376905486444'
+            # }))
+        if '.setcreatevc' in message.content:
+            if not message.author.guild_permissions.administrator:
+                return
+            db = firestore.Client()
+            guilddbRef = db.collection(str(message.guild.id)).document('settings')
             print(guilddbRef.set({
-                'create_vc_channel': '1019948085876629516'
+                'create_vc_channel': str(message.author.voice.channel.id),
+                'member_role': '1064989375613644863'
             }))
+        # if '.setmemberrole' in message.content:
+        #     if not message.author.guild_permissions.administrator:
+        #         return
+        #     db = firestore.Client()
+        #     guilddbRef = db.collection(str(message.guild.id)).document('settings')
+        #     print(guilddbRef.update({
+        #         'member_role': '1064989375613644863'
+        #     }))
         # db = firestore.Client()
         # guilddb = db.document('guilddb')
         # guilddbColRef: DocumentReference = guilddb.collection(str(ctx.guild.id))

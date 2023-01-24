@@ -21,7 +21,7 @@ from google.cloud import firestore
 # from discord.ui import *
 # import init_db
 
-load_dotenv()
+load_dotenv('.envDev')
 TOKEN = os.environ.get("DISCORD_TOKEN")
 DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -44,6 +44,7 @@ edenNotifyChannel = ""
 # bot.load_extension("cogs.move")
 # bot.load_extension('cogs.init_db')
 bot.load_extension('cogs.init_db')
+bot.load_extension('cogs.create_vc')
 
 
 # guildsettings = guilddb.document(str(member.guild.id))
@@ -282,6 +283,9 @@ async def on_ready():
     # bot.get_guild(994483180927201400).fetch_members()
     # bot.activity = "Created by Yuki."
     await bot.change_presence(activity=Game(name="Created by Yuki."))
+    for x in bot.guilds:
+        print(x.name)
+
 
     # try:
     #     with open("guildsettings.json", "r", encoding="utf8") as f:
