@@ -70,15 +70,15 @@ class CreateVC(Cog):
             # cat1 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
             catVc = after.channel.category
             self.bot: Bot
-            thisguild = self.bot.get_guild(member.guild.id)
+            # thisguild = self.bot.get_guild(member.guild.id)
             await member.add_roles(role1)
-            vc1 = await thisguild.create_voice_channel(name=f"{member.display_name}の部屋",
-                                                       overwrites={role1: perm1, memberRole: perm2,
-                                                                   # roomOwnerRole1: roomOwnerPerm1,
-                                                                   member.guild.default_role: PermissionOverwrite().from_pair(
-                                                                       Permissions.none(),
-                                                                       Permissions.all())},
-                                                       category=catVc, user_limit=2)
+            vc1 = await after.channel.guild.create_voice_channel(name=f"{member.display_name}の部屋",
+                                                                 overwrites={role1: perm1, memberRole: perm2,
+                                                                             # roomOwnerRole1: roomOwnerPerm1,
+                                                                             member.guild.default_role: PermissionOverwrite().from_pair(
+                                                                                 Permissions.none(),
+                                                                                 Permissions.all())},
+                                                                 category=catVc, user_limit=2)
             # vcRole[str(vc1.id)] = role1.id
             # await role1.edit(position=8)
             #
