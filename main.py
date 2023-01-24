@@ -301,12 +301,12 @@ async def on_ready():
     guildcol = db.collection("guilddb")
     guilddoc = guildcol.document(document_id="guildsettings")
     guilgsettingsDict = guilddoc.get().to_dict()
-    txtMsg = guildcol.document(document_id="txtMsg")
+    # txtMsg = guildcol.document(document_id="txtMsg")
+    txtMsg = libyuki.get_guilddb_as_dict("txtMsg")
 
 
 @bot.slash_command()
 async def reload(ctx: ApplicationContext):
-    # bot.remove_cog("Init_db")
     # bot.reload_extension("cogs.init_db")
     bot.reload_extension("cogs.ticket")
     bot.reload_extension("cogs.move")
@@ -343,29 +343,26 @@ async def on_message(message: Message):
     if message.content.startswith(".debug"):
         print(f"vcRole: {vcRole}")
         print(f"vcTxt: {vcTxt}")
-
+    guildsettings = libyuki.get_guilddb_as_dict("guildsettings")
     isExist = False
     try:
         guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
         isExist = True
     except Exception as e:
         # print(traceback.format_exc())
-        pass
+        traceback.print_exc()
     if isExist == True:
-        # bot.get_channel()
-        if message.author.id == bot.user.id:
-
-            try:
-                msg1_id = txtMsg[str(message.channel.id)]
-                msg1 = await message.channel.fetch_message(msg1_id)
-                await msg1.delete()
-            except Exception as e:
-                # print(traceback.format_exc())
-                traceback.print_exc()
-            tosendtxt = guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
-            msg2 = await message.channel.send(embed=Embed(description=tosendtxt))
-            txtMsg[str(message.channel.id)] = msg2.id
-            save_to_json()
+        try:
+            msg1_id = txtMsg[str(message.channel.id)]
+            msg1 = await message.channel.fetch_message(msg1_id)
+            await msg1.delete()
+        except Exception as e:
+            # print(traceback.format_exc())
+            traceback.print_exc()
+        tosendtxt = guildsettings[str(message.guild.id)]["note_channels"][str(message.channel.id)]
+        msg2 = await message.channel.send(embed=Embed(description=tosendtxt))
+        txtMsg[str(message.channel.id)] = msg2.id
+        save_to_json()
 
     if message.mentions:
         try:
@@ -548,7 +545,7 @@ Created by Yuki.
             role1 = await member.guild.create_role(name=f"（雑・作）{member.display_name}の部屋", permissions=perms1)
             # cat1 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
             catVc = after.channel.category
-            cat2 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
+            # cat2 = bot.get_channel(guildsettings[str(member.guild.id)]["vc_category"])
             vc1 = await member.guild.create_voice_channel(f"（雑・作）{member.display_name}の部屋",
                                                           overwrites={role1: perm1,
                                                                       memberRole: perm2,
@@ -566,7 +563,7 @@ Created by Yuki.
                                                                       member.guild.default_role: PermissionOverwrite().from_pair(
                                                                           Permissions.none(),
                                                                           Permissions.all())},
-                                                          category=cat2)
+                                                          category=catVc)
             vcTxt[str(vc1.id)] = txt1.id
             msgToSend = """
             Created by Yuki.
@@ -657,7 +654,7 @@ Created by Yuki.
                                                                       member.guild.default_role: PermissionOverwrite().from_pair(
                                                                           Permissions.none(),
                                                                           Permissions.all())},
-                                                          category=cat2)
+                                                          category=catVc)
             vcTxt[str(vc1.id)] = txt1.id
             msgToSend = """
 Created by Yuki.
@@ -748,7 +745,7 @@ Created by Yuki.
                                                                       member.guild.default_role: PermissionOverwrite().from_pair(
                                                                           Permissions.none(),
                                                                           Permissions.all())},
-                                                          category=cat2)
+                                                          category=catVc)
             vcTxt[str(vc1.id)] = txt1.id
             msgToSend = """
             Created by Yuki.
@@ -848,74 +845,7 @@ Created by Yuki.
         return
 
 
-# class MyViewTicket(discord.ui.View):
-#     @discord.ui.button(label="問題を作成", style=discord.ButtonStyle.green)
-#     async def button_callback(self, button, interaction: Interaction):
-#         # await interaction.response.send("頑張っています...")
-#         await interaction.response.send_message("頑張っています...")
-#         # await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
-#         permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
-#         permow2 = PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())
-#         # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
-#         db = firestore.Client()
-#         guilddb = db.collection("guilddb")
-#         guilddb1 = guilddb.document(document_id="guildsettings")
-#         guilddb1_dict = guilddb1.get().to_dict()
-#         cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_category"]
-#         cat1 = bot.get_channel(cat1)
-#         # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_category"]
-#         # cat1 = bot.get_channel(cat1)
-#         # cat1 = interaction.channel
-#
-#         txt1: TextChannel = await interaction.guild.create_text_channel(name=f"{interaction.user.display_name}のticket",
-#                                                                         category=cat1,
-#                                                                         overwrites={
-#                                                                             interaction.guild.default_role: permow2,
-#                                                                             interaction.user: permow1
-#                                                                         })
-#         db = firestore.Client()
-#         db1 = db.collection("guilddb").document(document_id="ticketTxtUser")
-#         db1_dict = db1.get().to_dict()
-#         if db1_dict is None:
-#             db1_dict1 = {
-#                 str(txt1.id): str(interaction.user.id)
-#             }
-#             db1.create(db1_dict1)
-#
-#         db1_dict[str(txt1.id)] = str(interaction.user.id)
-#         print(db1.update(db1_dict))
-#         # db1.update(db1_dict)
-#         await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
-#
 
-# @bot.slash_command(description="問題を報告する")
-# async def ticket(ctx: ApplicationContext):
-#     if not ctx.user.guild_permissions.administrator:
-#         await ctx.respond("現在このコマンドは管理者のみ使用できます。")
-#         return
-#     await ctx.respond("頑張っています...")
-#
-#     # cat1 = ctx.guild.get_channel(guildsettings[ctx.guild.id]["ticket_category"])
-#     # ticket_channel = ctx.guild.get_channel(libyuki.get_guilddb_as_dict("guildsettings")["994483180927201400"]["ticket_channel"])
-#     # await ctx.respond(view=MyViewTicket())
-#     # await ticket_channel.send(view=MyViewTicket())
-#     return
-#
-#     permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
-#     permow2 = PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())
-#     # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
-#     cat1 = libyuki.get_guilddb_as_dict("guildsettings")[ctx.guild.id]["ticket_category"]
-#     txt1: TextChannel = await ctx.guild.create_text_channel(name=f"{ctx.user.display_name}のticket", category=cat1,
-#                                                             overwrites={
-#                                                                 ctx.guild.default_role: permow2,
-#                                                                 ctx.user: permow1
-#                                                             })
-#     db = firestore.Client()
-#     db1 = db.collection("guilddb").document(document_id="ticketTxtUser")
-#     db1_dict = db1.get().to_dict()
-#     db1_dict[str(ctx.user.id)] = str(txt1.id)
-#     db1.update(db1_dict)
-#     await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {ctx.user.mention}")
 
 
 @bot.slash_command(description="メニューを表示")

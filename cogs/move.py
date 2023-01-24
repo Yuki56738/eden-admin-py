@@ -16,20 +16,27 @@ class Move(Cog):
         self.bot = bot
 
     class MyViewMoveMember(discord.ui.View):
-        @discord.ui.user_select(
-            placeholder="ユーザーを選択してください",
+        # @discord.ui.sel(
+        #     placeholder="ユーザーを選択してください",
+        #     min_values=1,
+        #     max_values=1
+        #
+         # )
+        @discord.ui.select(
+            select_type=discord.ComponentType.user_select,
+            placeholder="選択してください...",
             min_values=1,
-            max_values=1,
-
+            max_values=1
         )
         async def select_callback(self, select: Select, interaction: Interaction):
             # global guildsettings
             await interaction.response.send_message(f"頑張っています...")
 
             # print(select.to_dict())
-            print(select.values[0])
+            # print(select.values[0])
+            print("select.values[0]", select.values[0])
             member1: Member = select.values[0]
-            member1 = interaction.user
+            # member1 = interaction.guild.get_member(member1)
             # memnber1 = bot.get_user(member1)
             guilddb = libyuki.get_guilddb()
             guildsettingsdb: DocumentReference = guilddb.document(document_id="guildsettings").get()
@@ -37,13 +44,13 @@ class Move(Cog):
             var1 = guildsettingsdb.to_dict()
 
             var2 = var1["994483180927201400"]["move_channel"]
-            print(var2)
+            # print(var2)
             # member1.move_to()
             # print(toMoveChannel)
             # await inte("移動しています...")
             # await interaction.followup("移動しています...")
             # toMoveChannel1 = Move.move.bot.get_channel(int(var2))
-            toMoveChannel1 = interaction.guild.get_channel(var2)
+            toMoveChannel1 = interaction.guild.get_channel(int(var2))
             await interaction.channel.send("移動しています...")
             # toMoveChannel1 = bot.get_channel(int(toMoveChannel))
             await member1.move_to(toMoveChannel1)
