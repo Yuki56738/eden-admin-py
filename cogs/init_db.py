@@ -1,6 +1,8 @@
 from discord import *
 from google.cloud import firestore
 from google.cloud.firestore import *
+
+
 class init_db(Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -9,6 +11,7 @@ class init_db(Cog):
     @Cog.listener()
     async def on_ready(self):
         print("ready.")
+
     @Cog.listener()
     async def on_message(self, message: Message):
         if '.init1' in message.content:
@@ -64,7 +67,7 @@ class init_db(Cog):
                 db = firestore.Client()
                 guilddbRef = db.collection(str(message.guild.id)).document('settings')
                 guilddbRef.update({
-                    'note_channels':{
+                    'note_channels': {
                         '1021255885542137939': '''【 募集する人】
 〇エロイプや猥談を募集する場合は各目的へ該当するOK女子と男性ロールを使う事。
 〇深夜に募集を行う場合は必ず深夜メンション可能を使う事。
@@ -80,7 +83,20 @@ class init_db(Cog):
 【 診断結果(MBTI) 】
 【 サーバを知った場所 】
 【 ボイスチャットに参加できる時間帯 】
-【一言】'''
+【一言】''',
+                        '996367967925305464': '''頭に思い浮かぶ言葉を呟こう！猥談・規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止とします。なお、会話が盛り上がる場合は返信は良しとしますが、できれば チャット等で話しましょう。''',
+                        '1009439576537968670': ''''●当サーバーではリアルでの出会いは禁止されてます（身バレ等事件性がありますので。）
+●外部ツールの繋がり等の話題もできる限り避けましょう。
+●自己防衛やマナーなどに関しては百科事典のガイドラインをご確認ください。
+＊リアル等で会う発言をされた人や規約違反者は質問＆報告で通報する事。''',
+                        '1008990175583551628': '''●当サーバーではリアルでの出会いは禁止されてます（身バレ等事件性がありますので。）
+●外部ツールの繋がり等の話題もできる限り避けましょう。
+●自己防衛やマナーなどに関しては百科事典のガイドラインをご確認ください。
+＊リアル等で会う発言をされた人や規約違反者は質問＆報告で通報する事。''',
+                        '1008990207187628122': '''●当サーバーではリアルでの出会いは禁止されてます（身バレ等事件性がありますので。）
+●外部ツールの繋がり等の話題もできる限り避けましょう。
+●自己防衛やマナーなどに関しては百科事典のガイドラインをご確認ください。
+＊リアル等で会う発言をされた人や規約違反者は質問＆報告で通報する事。'''
                     }
 
                 })
@@ -88,7 +104,7 @@ class init_db(Cog):
         #     if message.author.guild_permissions.administrator:
         #         db = firestore.Client()
         #         vcRoleRef = db.collection(str(message.guild.id)).document('vcRole')
-                # vcRoleRef.get().to_dict().pop()
+        # vcRoleRef.get().to_dict().pop()
         if message.content.startswith('.debug'):
             if message.author.guild_permissions.administrator:
                 db = firestore.Client()
@@ -115,5 +131,7 @@ class init_db(Cog):
         # guildsettingsDoc1 = guildsettings.collection()
         # guildsettingsDoc1 = guildsettings.get()
         # guildsettingsDoc1
+
+
 def setup(bot):
     bot.add_cog(init_db(bot))
