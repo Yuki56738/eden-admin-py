@@ -43,6 +43,14 @@ class init_db(Cog):
                 vcRoleRef = db.collection(str(message.guild.id)).document('vcRole')
                 var1 = vcRoleRef.create({})
                 print(var1)
+        if message.content.startswith('.update1'):
+            if message.author.guild_permissions.administrator:
+                db = firestore.Client()
+                guilddbRef = db.collection(str(message.guild.id)).document('settings')
+                guilddbRef.update({
+                    'listen_channel': '1021255885542137939',
+                    'notify_channel': '1024881096518803466'
+                })
         # if message.content.startswith('.cleanup_db'):
         #     if message.author.guild_permissions.administrator:
         #         db = firestore.Client()
