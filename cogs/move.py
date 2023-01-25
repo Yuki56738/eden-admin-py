@@ -1,7 +1,7 @@
 import discord
 from discord import *
 from discord.ui import *
-import libyuki
+# import libyuki
 from google.cloud import firestore
 from google.cloud.firestore import *
 from discord.commands import *
@@ -14,6 +14,7 @@ import discord.ui.view
 class Move(Cog):
     def __init__(self, bot):
         self.bot = bot
+        # self.db = firestore.Client()
 
     class MyViewMoveMember(discord.ui.View):
         # @discord.ui.sel(
@@ -35,22 +36,28 @@ class Move(Cog):
             # print(select.to_dict())
             # print(select.values[0])
             print("select.values[0]", select.values[0])
-            member1: Member = select.values[0]
+            member1: Member= select.values[0]
+            # member1 = interaction.guild.get_member(member1_id)
+            # member1 = interaction.guild.get_member(member1_id)
             # member1 = interaction.guild.get_member(member1)
             # memnber1 = bot.get_user(member1)
-            guilddb = libyuki.get_guilddb()
-            guildsettingsdb: DocumentReference = guilddb.document(document_id="guildsettings").get()
-
-            var1 = guildsettingsdb.to_dict()
-
-            var2 = var1["994483180927201400"]["move_channel"]
+            # guilddb = libyuki.get_guilddb()
+            # guildsettingsdb: DocumentReference = guilddb.document(document_id="guildsettings").get()
+            #
+            # var1 = guildsettingsdb.to_dict()
+            db = firestore.Client()
+            guilddbRef = db.collection(str(interaction.guild.id)).document('settings')
+            print(guilddbRef.get().to_dict())
+            var1 = guilddbRef.get().to_dict()['move_channel']
+            print('var1:',var1)
+            # var2 = guilddbRef["994483180927201400"]["move_channel"]
             # print(var2)
             # member1.move_to()
             # print(toMoveChannel)
             # await inte("移動しています...")
             # await interaction.followup("移動しています...")
             # toMoveChannel1 = Move.move.bot.get_channel(int(var2))
-            toMoveChannel1 = interaction.guild.get_channel(int(var2))
+            toMoveChannel1 = interaction.guild.get_channel(int(var1))
             await interaction.channel.send("移動しています...")
             # toMoveChannel1 = bot.get_channel(int(toMoveChannel))
             await member1.move_to(toMoveChannel1)

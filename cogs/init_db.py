@@ -51,6 +51,14 @@ class init_db(Cog):
                     'listen_channel': '1021255885542137939',
                     'notify_channel': '1024881096518803466'
                 })
+        if message.content.startswith('.update2'):
+            if message.author.guild_permissions.administrator:
+                db = firestore.Client()
+                guilddbRef = db.collection(str(message.guild.id)).document('settings')
+                var2 = guilddbRef.update({
+                    'move_channel': '1064989377165545583'
+                })
+                print(var2)
         # if message.content.startswith('.cleanup_db'):
         #     if message.author.guild_permissions.administrator:
         #         db = firestore.Client()

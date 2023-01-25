@@ -21,7 +21,7 @@ from google.cloud import firestore
 # from discord.ui import *
 # import init_db
 
-load_dotenv()
+load_dotenv('.envDev')
 TOKEN = os.environ.get("DISCORD_TOKEN")
 DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -40,9 +40,9 @@ db = firestore.Client()
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
 edenNotifyChannel = ""
-# bot.load_extension("cogs.init_db")
+bot.load_extension("cogs.init_db")
 # bot.load_extension("cogs.ticket")
-# bot.load_extension("cogs.move")
+bot.load_extension("cogs.move")
 # bot.load_extension('cogs.init_db')
 # bot.load_extension('cogs.init_db')
 
@@ -286,7 +286,7 @@ async def on_ready():
     # vcRole = libyuki.get_guilddb_as_dict("vcRole")
     # vcOwnerRole = libyuki.get_guilddb_as_dict("vcOwnerRole")
     # print(guildsettings)
-    print("Loaded bot state.")
+    # print("Loaded bot state.")
     # await edenNotifyChannel.send(embed=Embed(description="Loaded databases."))
     # db = firestore.Client()
     # guildcol = db.collection("guilddb")
