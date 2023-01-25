@@ -21,12 +21,13 @@ from google.cloud import firestore
 # from discord.ui import *
 # import init_db
 
-load_dotenv()
+load_dotenv('.envDev')
 TOKEN = os.environ.get("DISCORD_TOKEN")
 DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
 intents = discord.Intents.all()
 bot = discord.Bot(intents=intents)
+db = firestore.Client()
 
 # bot.add_cog(Greetings(bot))
 # bot.add_cog(init_db.Init_db(bot))
@@ -71,7 +72,8 @@ class MyModalChangeRoomName(discord.ui.Modal):
         # global vcTxt
         # global txtMsg
         # global guildsettings
-        db = firestore.Client()
+        # db = firestore.Client()
+        global db
         guilddbRef = db.collection(str(interaction.guild.id)).document('settings')
         vcRoleRef = db.collection(str(interaction.guild.id)).document('vcRole')
         # try:
@@ -97,54 +99,9 @@ class MyViewChangeRoomName(discord.ui.View):
     async def button_callback(self, button, interaction):
         await interaction.response.send_modal(MyModalChangeRoomName(title="部屋の名前を入力..."))
 
-    # @discord.ui.button(label="この部屋に入れる人を限定する.", style=discord.ButtonStyle.red)
-    # async def button2_callback(self, button: Button, interaction: Interaction):
-    #     # global vcRole
-    #     # global vcTxt
-    #     # global txtMsg
-    #     # global guildsettings
-    #     # try:
-    #     #     vcTxt[str(ctx.author.voice.channel.id)]
-    #     # except:
-    #     #     return
-    #     db = firestore.Client()
-    #     guilddbRef = db.collection(str(interaction.guild.id)).document('settings')
-    #     vcRoleRef = db.collection(str(interaction.guild.id)).document('vcRole')
-    #     if not str(interaction.user.voice.channel.id) in vcRoleRef.get().to_dict().keys():
-    #         print(traceback.format_exc())
-    #         return
-    #     vc1 = interaction.user.voice.channel
-    #     role1 = interaction.guild.get_role(vcRoleRef.get().to_dict()[str(interaction.user.voice.channel.id)])
-    #     perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
-    #     perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
-    #     # perm2.update(connect=True)
-    #     # perm2.update(speak=True)
-    #     # perm2.update(use_slash_commands=True)
-    #     perm2.update(connect=True)
-    #     perm2.update(speak=True)
-    #     # perm1.update(value=689379286592)
-    #     perm1.update(read_message_history=True)
-    #     perm1.update(read_messages=True)
-    #     perm1.update(send_messages=True)
-    #     perm1.update(use_slash_commands=True)
-    #     perm1.update(connect=True, speak=True)
-    #     perms1 = Permissions.advanced().general().voice()
-    #     perm1.update(mute_members=False)
-    #     perm1.update(move_members=False, deafen_members=False)
-    #     perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
-    #     # memberRole = message.author.guild.get_role(997644021067415642)
-    #     memberRole = interaction.guild.get_role(guildsettings[str(interaction.guild.id)]["member_role"])
-    #     memberPerm = PermissionOverwrite().from_pair(Permissions.advanced().general(), Permissions.all())
-    #     memberPerm.update(view_channel=True)
-    #     await vc1.edit(overwrites={role1: perm1,
-    #                                memberRole: memberPerm,
-    #                                interaction.guild.default_role: PermissionOverwrite().from_pair(
-    #                                    Permissions.none(),
-    #                                    Permissions.all())
-    #                                }
-    #                    )
-    #
-    #     await interaction.response.send_message(embed=Embed(description="完了."))
+    @discord.ui.button(label="部屋の人数制限を変える", style=discord.ButtonStyle.green)
+    async def button2_callback(self, button, interaction):
+        await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
 
 
 class MyModalChangeRoomLimit(discord.ui.Modal):
@@ -157,16 +114,26 @@ class MyModalChangeRoomLimit(discord.ui.Modal):
         # embed = discord.Embed(title="Modal Results")
         # embed.add_field(name="Long Input", value=self.children[0].value)
         # await interaction.response.send_message(embeds=[embed])
-        global vcRole
-        global vcTxt
-        global txtMsg
-        global guildsettings
-        try:
-            txt1 = vcTxt[str(interaction.user.voice.channel.id)]
-            txt1 = bot.get_channel(txt1)
-        except:
-            print(traceback.format_exc())
+        # global vcRole
+        # global vcTxt
+        # global txtMsg
+        # global guildsettings
+        global db
+        vcRoleRef = db.collection(str(interaction.guild.id)).document('vcRole')
+        if not str(interaction.channel_id) in vcRoleRef.get().to_dict().keys():
             return
+        # guilddbRef = db.collection(str(interaction.channel.id)).document('settings')
+        # print(guilddbRef.get().to_dict())
+        # if interaction
+        # try:
+            # txt1 = vcTxt[str(interaction.user.voice.channel.id)]
+
+             # txt1 = bot.get_channel(txt1)
+
+        # except:
+        #     print(traceback.format_exc())
+        #     return
+
         await interaction.user.voice.channel.edit(user_limit=int(self.children[0].value))
         await interaction.response.send_message(embed=Embed(description="完了."))
 
@@ -464,10 +431,10 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
     # print(guildsettings.get().to_dict())
     # if str(after.channel.id) == guildsettings.get().to_dict()[str(member.guild.id)]["create_vc_channel"]:
     # if after.channel.id == int(guildsettings1Dict[str(member.guild.id)]['create_vc_category']):
-    db = firestore.Client()
+    global db
     guilddbRef = db.collection(str(member.guild.id)).document('settings')
     vcRoleRef = db.collection(str(member.guild.id)).document('vcRole')
-    vcTxtRef = db.collection(str(member.guild.id)).document('vcTxt')
+    # vcTxtRef = db.collection(str(member.guild.id)).document('vcTxt')
     print('guilddbRef.get().to_dict():', guilddbRef.get().to_dict())
     # print(guilddbRef.get())
     # guilddbRef.get(str(member.guild.id))
