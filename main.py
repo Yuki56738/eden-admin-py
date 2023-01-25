@@ -27,6 +27,7 @@ DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
 intents = discord.Intents.all()
 bot = discord.Bot(intents=intents)
+db = firestore.Client()
 
 # bot.add_cog(Greetings(bot))
 # bot.add_cog(init_db.Init_db(bot))
@@ -43,7 +44,7 @@ edenNotifyChannel = ""
 # bot.load_extension("cogs.ticket")
 # bot.load_extension("cogs.move")
 # bot.load_extension('cogs.init_db')
-bot.load_extension('cogs.init_db')
+# bot.load_extension('cogs.init_db')
 
 
 # guildsettings = guilddb.document(str(member.guild.id))
@@ -71,7 +72,8 @@ class MyModalChangeRoomName(discord.ui.Modal):
         # global vcTxt
         # global txtMsg
         # global guildsettings
-        db = firestore.Client()
+        # db = firestore.Client()
+        global db
         guilddbRef = db.collection(str(interaction.guild.id)).document('settings')
         vcRoleRef = db.collection(str(interaction.guild.id)).document('vcRole')
         # try:
@@ -97,54 +99,9 @@ class MyViewChangeRoomName(discord.ui.View):
     async def button_callback(self, button, interaction):
         await interaction.response.send_modal(MyModalChangeRoomName(title="部屋の名前を入力..."))
 
-    # @discord.ui.button(label="この部屋に入れる人を限定する.", style=discord.ButtonStyle.red)
-    # async def button2_callback(self, button: Button, interaction: Interaction):
-    #     # global vcRole
-    #     # global vcTxt
-    #     # global txtMsg
-    #     # global guildsettings
-    #     # try:
-    #     #     vcTxt[str(ctx.author.voice.channel.id)]
-    #     # except:
-    #     #     return
-    #     db = firestore.Client()
-    #     guilddbRef = db.collection(str(interaction.guild.id)).document('settings')
-    #     vcRoleRef = db.collection(str(interaction.guild.id)).document('vcRole')
-    #     if not str(interaction.user.voice.channel.id) in vcRoleRef.get().to_dict().keys():
-    #         print(traceback.format_exc())
-    #         return
-    #     vc1 = interaction.user.voice.channel
-    #     role1 = interaction.guild.get_role(vcRoleRef.get().to_dict()[str(interaction.user.voice.channel.id)])
-    #     perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
-    #     perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
-    #     # perm2.update(connect=True)
-    #     # perm2.update(speak=True)
-    #     # perm2.update(use_slash_commands=True)
-    #     perm2.update(connect=True)
-    #     perm2.update(speak=True)
-    #     # perm1.update(value=689379286592)
-    #     perm1.update(read_message_history=True)
-    #     perm1.update(read_messages=True)
-    #     perm1.update(send_messages=True)
-    #     perm1.update(use_slash_commands=True)
-    #     perm1.update(connect=True, speak=True)
-    #     perms1 = Permissions.advanced().general().voice()
-    #     perm1.update(mute_members=False)
-    #     perm1.update(move_members=False, deafen_members=False)
-    #     perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
-    #     # memberRole = message.author.guild.get_role(997644021067415642)
-    #     memberRole = interaction.guild.get_role(guildsettings[str(interaction.guild.id)]["member_role"])
-    #     memberPerm = PermissionOverwrite().from_pair(Permissions.advanced().general(), Permissions.all())
-    #     memberPerm.update(view_channel=True)
-    #     await vc1.edit(overwrites={role1: perm1,
-    #                                memberRole: memberPerm,
-    #                                interaction.guild.default_role: PermissionOverwrite().from_pair(
-    #                                    Permissions.none(),
-    #                                    Permissions.all())
-    #                                }
-    #                    )
-    #
-    #     await interaction.response.send_message(embed=Embed(description="完了."))
+    @discord.ui.button(label="部屋の人数制限を変える", style=discord.ButtonStyle.green)
+    async def button2_callback(self, button, interaction):
+        await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
 
 
 class MyModalChangeRoomLimit(discord.ui.Modal):
@@ -157,16 +114,26 @@ class MyModalChangeRoomLimit(discord.ui.Modal):
         # embed = discord.Embed(title="Modal Results")
         # embed.add_field(name="Long Input", value=self.children[0].value)
         # await interaction.response.send_message(embeds=[embed])
-        global vcRole
-        global vcTxt
-        global txtMsg
-        global guildsettings
-        try:
-            txt1 = vcTxt[str(interaction.user.voice.channel.id)]
-            txt1 = bot.get_channel(txt1)
-        except:
-            print(traceback.format_exc())
+        # global vcRole
+        # global vcTxt
+        # global txtMsg
+        # global guildsettings
+        global db
+        vcRoleRef = db.collection(str(interaction.guild.id)).document('vcRole')
+        if not str(interaction.channel_id) in vcRoleRef.get().to_dict().keys():
             return
+        # guilddbRef = db.collection(str(interaction.channel.id)).document('settings')
+        # print(guilddbRef.get().to_dict())
+        # if interaction
+        # try:
+            # txt1 = vcTxt[str(interaction.user.voice.channel.id)]
+
+             # txt1 = bot.get_channel(txt1)
+
+        # except:
+        #     print(traceback.format_exc())
+        #     return
+
         await interaction.user.voice.channel.edit(user_limit=int(self.children[0].value))
         await interaction.response.send_message(embed=Embed(description="完了."))
 
@@ -344,7 +311,8 @@ async def on_raw_reaction_add(reaction: RawReactionActionEvent):
     # global guildsettings
     print("reaction")
     # reaction_channel_id = guildsettings[str(reaction.guild_id)]["reaction_channel"]
-    db = firestore.Client()
+    # db = firestore.Client()
+    global db
     guilddbRef = db.collection(str(reaction.guild_id)).document('settings')
     listen_channel_id = guilddbRef.get().to_dict()['listen_channel']
     notify_channel_id = guilddbRef.get().to_dict()['notify_channel']
@@ -423,51 +391,10 @@ async def on_raw_reaction_add(reaction: RawReactionActionEvent):
 
 @bot.event
 async def on_voice_state_update(member: Member, before: VoiceState, after: VoiceState):
-    # global vcRole
-    # global vcTxt
-    # global txtMsg
-    # global guildsettings
-    # global vcOwnerRole
-    # try:
-    #     guild1 = guildsettings[str(member.guild.id)]
-    # except:
-    #     print(traceback.format_exc())
-    # traceback.format_exc()
-
-    # if not after.channel is None and after.channel.id == 1019948085876629516:
-    # try:
-    # guildsettings = libyuki.get_guilddb_as_dict()
-    # print()
-    # if not
-    # print('guildsettings[create_vc_channel]:', guildsettings[member.guild.id])
-    # db = firestore.Client()
-    # guilddb = db.collection('guilddb')
-    # guildsettings = guilddb.document(str(member.guild.id))
-    # print(guildsettings.get().to_dict())
-    # var1 = guildsettings.create({
-    # 'create_vc_channel': ctx.user.voice.channel.id
-    # })
-    # print(var1)
-    # print('guildsettings:',guildsettings.get().to_dict())
-    # libyuki.push_guilddb({
-    #     str(member.guild.id): {
-    #         'create_channel_id': '1019948085876629516'
-    #     }
-    # })
-
-    # guilddbRef.
-    # guildsettings1 = guilddb.document(str(member.guild.id))
-    # guildsettings1
-    # guildsettings1Dict = guildsettings1.get().to_dict()
-
-    # print(guildsettings1Dict[str(member.guild.id)]['create_vc_category'])
-    # print(guildsettings.get().to_dict())
-    # if str(after.channel.id) == guildsettings.get().to_dict()[str(member.guild.id)]["create_vc_channel"]:
-    # if after.channel.id == int(guildsettings1Dict[str(member.guild.id)]['create_vc_category']):
-    db = firestore.Client()
+    global db
     guilddbRef = db.collection(str(member.guild.id)).document('settings')
     vcRoleRef = db.collection(str(member.guild.id)).document('vcRole')
-    vcTxtRef = db.collection(str(member.guild.id)).document('vcTxt')
+    # vcTxtRef = db.collection(str(member.guild.id)).document('vcTxt')
     print('guilddbRef.get().to_dict():', guilddbRef.get().to_dict())
     # print(guilddbRef.get())
     # guilddbRef.get(str(member.guild.id))
@@ -717,17 +644,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
     except:
         pass
 
-        # return
-    # if before.channel is not None and len(before.channel.members) == 1:
-    #     print('vcRole:', vcRoleRef.get().to_dict())
-    #     # vcRoleDic = vcRoleRef.get()
-    #     vcRoleDic = vcRoleRef.get()
-    #
-    #     var = vcRoleDic.to_dict()[str(before.channel.id)]
-    #     print(var)
-    #     role1 = member.guild.get_role(int(var))
-    #
-    #     await member.remove_roles(role1)
+
     try:
         if str(after.channel.id) in vcRoleRef.get().to_dict().keys() and after.channel != before.channel:
             role1_id = vcRoleRef.get().to_dict()[str(after.channel.id)]
@@ -764,47 +681,17 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
         if var is not None:
             await before.channel.delete()
 
-    # if after.channel is None:
-    #     return
-
-    # if after.channel is None:
-    #     return
-
-
-@bot.slash_command(description="メニューを表示")
-async def menu(ctx: ApplicationContext):
-    global vcRole
-    global vcTxt
-    global txtMsg
-    global guildsettings
-    # isCreatedRoom = True
-    isGeneral = False
-    try:
-        txt1 = vcTxt[str(ctx.author.voice.channel.id)]
-        txt1 = bot.get_channel(txt1)
-    except:
-        # print(traceback.format_exc())
-        traceback.print_exc()
-        isGeneral = True
-    # if isGeneral:
-    #     await ctx.respond(view=MyViewMoveMember(), delete_after=3 * 60)
-
-    else:
-        await ctx.respond(view=MyViewChangeRoomName(), ephemeral=True)
-        await ctx.send_followup(view=MyViewChangeRoomLimit(), ephemeral=True)
-    # await ctx.send(view=MyViewRoomNolook())
-    # await txt1.send(view=MyViewChangeRoomName())
-    # await txt1.send(view=MyViewChangeRoomLimit())
-
 
 @bot.slash_command(description="自己紹介を表示")
 async def prof(ctx: ApplicationContext, name: Option(str, required=True, description="名前")):
-    global vcRole
-    global vcTxt
-    global txtMsg
-    global guildsettings
-    prof_channel_id = guildsettings[str(ctx.guild.id)]["prof_channel"]
-    prof_channel = bot.get_channel(prof_channel_id)
+    # global vcRole
+    # global vcTxt
+    # global txtMsg
+    # global guildsettings
+    global db
+    # prof_channel_id = guildsettings[str(ctx.guild.id)]["prof_channel"]
+    prof_channel_id = db.collection(str(ctx.guild.id)).document('settings').get().to_dict()['profile_channel']
+    prof_channel = bot.get_channel(int(prof_channel_id))
     prof_messages = await prof_channel.history(limit=1000).flatten()
     # await ctx.respond("自己紹介...", ephemeral=True, delete_after=3*60)
     # print(ctx.author.guild_permissions)
@@ -1011,39 +898,7 @@ async def ping(ctx: ApplicationContext):
     await ctx.respond(embed=Embed(description=f"レイテンシーは、{lat * 60}ms."))
 
 
-# def save_to_json():
-#     global vcRole
-#     global vcTxt
-#     global txtMsg
-#     global guildsettings
-#     global vcOwnerRole
-#     print("Saving bot state...")
-# with open("vcTxt.json", "w") as f:
-#     # tmpJson:dict = json.load(f)
-#     json.dump(vcTxt, f)
-# with open("vcRole.json", "w") as f:
-#     json.dump(vcRole, f)
-# with open("txtMsg.json", "w") as f:
-#     json.dump(txtMsg, f)
-# global edenNotifyChannel
-# libyuki.push_guilddb(id="vcTxt", payload=vcTxt)
-# libyuki.push_guilddb(id="vcRole", payload=vcRole)
-# libyuki.push_guilddb(id="txtMsg", payload=txtMsg)
-# libyuki.push_guilddb(id="vcOwnerRole", payload=vcOwnerRole)
-# libyuki.push_guilddb()
-# print("Saved bot state.")
 
-
-# def save_guild_settings():
-#     global vcRole
-#     global vcTxt
-#     global txtMsg
-#     global guildsettings
-#     print("Saving guildsettings...")
-# with open("guildsettings.json", "w", encoding="utf8") as f:
-#     json.dump(guildsettings, f, ensure_ascii=False)
-# libyuki.push_guilddb(id="guildsettings", payload=guildsettings)
-# print("Saved guildsettings.")
 
 
 bot.run(TOKEN)
