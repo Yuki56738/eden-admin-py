@@ -21,7 +21,7 @@ from google.cloud import firestore
 # from discord.ui import *
 # import init_db
 
-load_dotenv('.envDev')
+load_dotenv()
 TOKEN = os.environ.get("DISCORD_TOKEN")
 DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -44,7 +44,7 @@ edenNotifyChannel = ""
 # bot.load_extension("cogs.ticket")
 # bot.load_extension("cogs.move")
 # bot.load_extension('cogs.init_db')
-bot.load_extension('cogs.init_db')
+# bot.load_extension('cogs.init_db')
 
 
 # guildsettings = guilddb.document(str(member.guild.id))
@@ -311,7 +311,8 @@ async def on_raw_reaction_add(reaction: RawReactionActionEvent):
     # global guildsettings
     print("reaction")
     # reaction_channel_id = guildsettings[str(reaction.guild_id)]["reaction_channel"]
-    db = firestore.Client()
+    # db = firestore.Client()
+    global db
     guilddbRef = db.collection(str(reaction.guild_id)).document('settings')
     listen_channel_id = guilddbRef.get().to_dict()['listen_channel']
     notify_channel_id = guilddbRef.get().to_dict()['notify_channel']
@@ -390,47 +391,6 @@ async def on_raw_reaction_add(reaction: RawReactionActionEvent):
 
 @bot.event
 async def on_voice_state_update(member: Member, before: VoiceState, after: VoiceState):
-    # global vcRole
-    # global vcTxt
-    # global txtMsg
-    # global guildsettings
-    # global vcOwnerRole
-    # try:
-    #     guild1 = guildsettings[str(member.guild.id)]
-    # except:
-    #     print(traceback.format_exc())
-    # traceback.format_exc()
-
-    # if not after.channel is None and after.channel.id == 1019948085876629516:
-    # try:
-    # guildsettings = libyuki.get_guilddb_as_dict()
-    # print()
-    # if not
-    # print('guildsettings[create_vc_channel]:', guildsettings[member.guild.id])
-    # db = firestore.Client()
-    # guilddb = db.collection('guilddb')
-    # guildsettings = guilddb.document(str(member.guild.id))
-    # print(guildsettings.get().to_dict())
-    # var1 = guildsettings.create({
-    # 'create_vc_channel': ctx.user.voice.channel.id
-    # })
-    # print(var1)
-    # print('guildsettings:',guildsettings.get().to_dict())
-    # libyuki.push_guilddb({
-    #     str(member.guild.id): {
-    #         'create_channel_id': '1019948085876629516'
-    #     }
-    # })
-
-    # guilddbRef.
-    # guildsettings1 = guilddb.document(str(member.guild.id))
-    # guildsettings1
-    # guildsettings1Dict = guildsettings1.get().to_dict()
-
-    # print(guildsettings1Dict[str(member.guild.id)]['create_vc_category'])
-    # print(guildsettings.get().to_dict())
-    # if str(after.channel.id) == guildsettings.get().to_dict()[str(member.guild.id)]["create_vc_channel"]:
-    # if after.channel.id == int(guildsettings1Dict[str(member.guild.id)]['create_vc_category']):
     global db
     guilddbRef = db.collection(str(member.guild.id)).document('settings')
     vcRoleRef = db.collection(str(member.guild.id)).document('vcRole')
@@ -684,17 +644,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
     except:
         pass
 
-        # return
-    # if before.channel is not None and len(before.channel.members) == 1:
-    #     print('vcRole:', vcRoleRef.get().to_dict())
-    #     # vcRoleDic = vcRoleRef.get()
-    #     vcRoleDic = vcRoleRef.get()
-    #
-    #     var = vcRoleDic.to_dict()[str(before.channel.id)]
-    #     print(var)
-    #     role1 = member.guild.get_role(int(var))
-    #
-    #     await member.remove_roles(role1)
+
     try:
         if str(after.channel.id) in vcRoleRef.get().to_dict().keys() and after.channel != before.channel:
             role1_id = vcRoleRef.get().to_dict()[str(after.channel.id)]
@@ -731,47 +681,17 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
         if var is not None:
             await before.channel.delete()
 
-    # if after.channel is None:
-    #     return
-
-    # if after.channel is None:
-    #     return
-
-
-@bot.slash_command(description="メニューを表示")
-async def menu(ctx: ApplicationContext):
-    global vcRole
-    global vcTxt
-    global txtMsg
-    global guildsettings
-    # isCreatedRoom = True
-    isGeneral = False
-    try:
-        txt1 = vcTxt[str(ctx.author.voice.channel.id)]
-        txt1 = bot.get_channel(txt1)
-    except:
-        # print(traceback.format_exc())
-        traceback.print_exc()
-        isGeneral = True
-    # if isGeneral:
-    #     await ctx.respond(view=MyViewMoveMember(), delete_after=3 * 60)
-
-    else:
-        await ctx.respond(view=MyViewChangeRoomName(), ephemeral=True)
-        await ctx.send_followup(view=MyViewChangeRoomLimit(), ephemeral=True)
-    # await ctx.send(view=MyViewRoomNolook())
-    # await txt1.send(view=MyViewChangeRoomName())
-    # await txt1.send(view=MyViewChangeRoomLimit())
-
 
 @bot.slash_command(description="自己紹介を表示")
 async def prof(ctx: ApplicationContext, name: Option(str, required=True, description="名前")):
-    global vcRole
-    global vcTxt
-    global txtMsg
-    global guildsettings
-    prof_channel_id = guildsettings[str(ctx.guild.id)]["prof_channel"]
-    prof_channel = bot.get_channel(prof_channel_id)
+    # global vcRole
+    # global vcTxt
+    # global txtMsg
+    # global guildsettings
+    global db
+    # prof_channel_id = guildsettings[str(ctx.guild.id)]["prof_channel"]
+    prof_channel_id = db.collection(str(ctx.guild.id)).document('settings').get().to_dict()['profile_channel']
+    prof_channel = bot.get_channel(int(prof_channel_id))
     prof_messages = await prof_channel.history(limit=1000).flatten()
     # await ctx.respond("自己紹介...", ephemeral=True, delete_after=3*60)
     # print(ctx.author.guild_permissions)
@@ -978,39 +898,7 @@ async def ping(ctx: ApplicationContext):
     await ctx.respond(embed=Embed(description=f"レイテンシーは、{lat * 60}ms."))
 
 
-# def save_to_json():
-#     global vcRole
-#     global vcTxt
-#     global txtMsg
-#     global guildsettings
-#     global vcOwnerRole
-#     print("Saving bot state...")
-# with open("vcTxt.json", "w") as f:
-#     # tmpJson:dict = json.load(f)
-#     json.dump(vcTxt, f)
-# with open("vcRole.json", "w") as f:
-#     json.dump(vcRole, f)
-# with open("txtMsg.json", "w") as f:
-#     json.dump(txtMsg, f)
-# global edenNotifyChannel
-# libyuki.push_guilddb(id="vcTxt", payload=vcTxt)
-# libyuki.push_guilddb(id="vcRole", payload=vcRole)
-# libyuki.push_guilddb(id="txtMsg", payload=txtMsg)
-# libyuki.push_guilddb(id="vcOwnerRole", payload=vcOwnerRole)
-# libyuki.push_guilddb()
-# print("Saved bot state.")
 
-
-# def save_guild_settings():
-#     global vcRole
-#     global vcTxt
-#     global txtMsg
-#     global guildsettings
-#     print("Saving guildsettings...")
-# with open("guildsettings.json", "w", encoding="utf8") as f:
-#     json.dump(guildsettings, f, ensure_ascii=False)
-# libyuki.push_guilddb(id="guildsettings", payload=guildsettings)
-# print("Saved guildsettings.")
 
 
 bot.run(TOKEN)
