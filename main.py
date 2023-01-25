@@ -40,7 +40,7 @@ db = firestore.Client()
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
 edenNotifyChannel = ""
-bot.load_extension("cogs.init_db")
+# bot.load_extension("cogs.init_db")
 # bot.load_extension("cogs.ticket")
 bot.load_extension("cogs.move")
 bot.load_extension('cogs.note')
@@ -105,6 +105,59 @@ class MyViewChangeRoomName(discord.ui.View):
     @discord.ui.button(label="部屋の人数制限を変える", style=discord.ButtonStyle.green)
     async def button2_callback(self, button, interaction):
         await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
+
+    @discord.ui.button(label="この部屋を見えなくする", style=discord.ButtonStyle.grey)
+    async def button3_callback(self, button, interaction: discord.Interaction):
+        # await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
+        # global vcRole
+        # global vcTxt
+        # global txtMsg
+        # global guildsettings
+        # db = firestore.Client()
+        global db
+        guilddbRef = db.collection(str(interaction.guild.id)).document('settings')
+        vcRoleRef = db.collection(str(interaction.guild.id)).document('vcRole')
+        # try:
+        # vcTxt[str(interaction.user.voice.channel.id)]
+        if vcRoleRef.get().to_dict().get(str(interaction.user.voice.channel.id)) is None:
+            return
+        # except:
+        #     print(traceback.format_exc())
+        #     return
+        vc1 = interaction.user.voice.channel
+        # role1 = interaction.guild.get_role(vcRole[str(interaction.user.voice.channel.id)])
+        role1_id = vcRoleRef.get().to_dict()[str(vc1.id)]
+        role1 = interaction.guild.get_role(int(role1_id))
+        perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
+        perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
+        # perm2.update(connect=True)
+        # perm2.update(speak=True)
+        # perm2.update(use_slash_commands=True)
+        perm2.update(connect=True)
+        perm2.update(speak=True)
+        # perm1.update(value=689379286592)
+        perm1.update(read_message_history=True)
+        perm1.update(read_messages=True)
+        perm1.update(send_messages=True)
+        perm1.update(use_slash_commands=True)
+        perm1.update(connect=True, speak=True)
+        perms1 = Permissions.advanced().general().voice()
+        perm1.update(mute_members=False)
+        perm1.update(move_members=False, deafen_members=False)
+        perms1.update(mute_members=False, move_members=False, deafen_members=False, connect=True, speak=True)
+        # memberRole = message.author.guild.get_role(997644021067415642)
+        # memberRole = interaction.guild.get_role(guildsettings[str(interaction.guild.id)]["member_role"])
+        memberRole_id = guilddbRef.get().to_dict()['member_role']
+        memberRole = interaction.guild.get_role(int(memberRole_id))
+        memberPerm = PermissionOverwrite().from_pair(Permissions.advanced().none(), Permissions.all())
+        await vc1.edit(overwrites={
+            role1: perm1,
+            memberRole: memberPerm,
+            interaction.guild.default_role: PermissionOverwrite().from_pair(
+                Permissions.none(),
+                Permissions.all())}
+        )
+        await interaction.response.send_message("完了.")
 
 
 class MyModalChangeRoomLimit(discord.ui.Modal):
