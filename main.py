@@ -21,7 +21,7 @@ from google.cloud import firestore
 # from discord.ui import *
 # import init_db
 
-load_dotenv()
+load_dotenv('.envDev')
 TOKEN = os.environ.get("DISCORD_TOKEN")
 # DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -43,6 +43,7 @@ edenNotifyChannel = ""
 bot.load_extension("cogs.init_db")
 # bot.load_extension("cogs.ticket")
 bot.load_extension("cogs.move")
+bot.load_extension('cogs.note')
 # bot.load_extension('cogs.init_db')
 # bot.load_extension('cogs.init_db')
 

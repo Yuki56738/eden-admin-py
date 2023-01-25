@@ -7,3 +7,5 @@ class Greetings(Cog):
     @Cog.listener()
     async def on_ready(self):
         print("ready.")
+def setup(bot):
+    bot.add_cog(Greetings(bot))
