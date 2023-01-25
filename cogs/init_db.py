@@ -82,6 +82,7 @@ class init_db(Cog):
 【 ボイスチャットに参加できる時間帯 】
 【一言】'''
                     }
+
                 })
         # if message.content.startswith('.cleanup_db'):
         #     if message.author.guild_permissions.administrator:
