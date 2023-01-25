@@ -62,7 +62,7 @@ class Move(Cog):
             # toMoveChannel1 = bot.get_channel(int(toMoveChannel))
             await member1.move_to(toMoveChannel1)
 
-    @slash_command()
+    @slash_command(description="寝落ちした人を移動させる")
     async def move(self, ctx: ApplicationContext):
         await ctx.respond(view=Move.MyViewMoveMember())
         # @bot.slash_command(name="move", description="ユーザーを移動させる")
