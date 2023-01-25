@@ -74,8 +74,10 @@ class MyModalChangeRoomName(discord.ui.Modal):
         # global guildsettings
         # db = firestore.Client()
         global db
-        guilddbRef = db.collection(str(interaction.guild.id)).document('settings')
+        # guilddbRef = db.collection(str(interaction.guild.id)).document('settings')
         vcRoleRef = db.collection(str(interaction.guild.id)).document('vcRole')
+        if not str(interaction.channel_id) in vcRoleRef.get().to_dict().keys():
+            return
         # try:
         #     # txt1 = vcTxt[str(ctx.author.voice.channel.id)]
         #     # txt1 = vcTxt[str(interaction.user.voice.channel.id)]
