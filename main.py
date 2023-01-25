@@ -735,6 +735,12 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
             await member.add_roles(role1)
             # await member.add_roles()
             # await after.channel.send()
+            prof_channel_id = guilddbRef.get().to_dict()['profile_channel']
+            prof_channel = member.guild.get_channel(int(prof_channel_id))
+            profiless = await prof_channel.history(limit=1000).flatten()
+            for x in profiless:
+                if x.author.id == member.id:
+                    await after.channel.send(x.content)
             await after.channel.send(view=MyViewChangeRoomName())
             return
     except:
