@@ -153,6 +153,8 @@ class MyViewMenu(discord.ui.View):
         interaction.response: InteractionResponse
         await interaction.response.send_modal(MyModalSearchProf(title='対象の名前を入力...'))
 
+
+
 class MyModalSearchProf(discord.ui.Modal):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -217,8 +219,10 @@ class Menu(Cog):
         vcRoleRef = db.collection(str(ctx.guild.id)).document('vcRole')
         if not str(ctx.channel_id) in vcRoleRef.get().to_dict().keys():
             await ctx.respond(view=MyViewMenu2())
+            await ctx.followup.send(embed=Embed(description='Created by Yuki.'))
             return
         await ctx.respond(view=MyViewMenu())
+        await ctx.followup.send(embed=Embed(description='Created by Yuki.'))
 
 
 def setup(bot):
