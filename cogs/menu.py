@@ -148,7 +148,7 @@ class MyViewMenu(discord.ui.View):
         from cogs.move import MyViewMoveMember
         await interaction.response.send_message(view=MyViewMoveMember())
 
-    @discord.ui.button(label='プロフ検索')
+    @discord.ui.button(label='プロフ検索', style=discord.ButtonStyle.blurple)
     async def button6_callback(self, button, interaction: Interaction):
         interaction.response: InteractionResponse
         await interaction.response.send_modal(MyModalSearchProf(title='対象の名前を入力...'))
@@ -195,7 +195,7 @@ class MyViewMenu2(discord.ui.View):
         interaction.response: InteractionResponse
         from cogs.move import MyViewMoveMember
         await interaction.response.send_message(view=MyViewMoveMember())
-    @discord.ui.button(label='プロフ検索')
+    @discord.ui.button(label='プロフ検索', style=discord.ButtonStyle.blurple)
     async def button6_callback(self, button, interaction: Interaction):
         interaction.response: InteractionResponse
         await interaction.response.send_modal(MyModalSearchProf(title='対象の名前を入力...'))
