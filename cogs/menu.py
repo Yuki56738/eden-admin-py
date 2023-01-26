@@ -148,6 +148,57 @@ class MyViewMenu(discord.ui.View):
         from cogs.move import MyViewMoveMember
         await interaction.response.send_message(view=MyViewMoveMember())
 
+    @discord.ui.button(label='プロフ検索')
+    async def button6_callback(self, button, interaction: Interaction):
+        interaction.response: InteractionResponse
+        await interaction.response.send_modal(MyModalSearchProf(title='対象の名前を入力...'))
+
+class MyModalSearchProf(discord.ui.Modal):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        self.add_item(discord.ui.InputText(label="対象の名前を入力...", style=discord.InputTextStyle.singleline))
+
+    async def callback(self, interaction: discord.Interaction):
+        interaction.response: InteractionResponse
+        prof_channel_id = db.collection(str(interaction.guild.id)).document('settings').get().to_dict()['profile_channel']
+        prof_channel = interaction.guild.get_channel(int(prof_channel_id))
+        prof_messages = await prof_channel.history(limit=1000).flatten()
+        # await ctx.respond("自己紹介...", ephemeral=True, delete_after=3*60)
+        # print(ctx.author.guild_permissions)
+        tosendmsg = ""
+        for x in prof_messages:
+            # if x.author.id == xuser.id:
+            if x.author.id == interaction.user.id:
+                # await ctx.send_followup(x.content, delete_after=3 * 60, ephemeral=True)
+                tosendmsg = tosendmsg + x.content
+                print(f"{x.author.name}: {x.content}")
+
+            # for xuser in ctx.author.voice.channel.members:
+            #     if x.author.id == xuser.id and not ctx.author.id:
+            #         print(x.content)
+            #         # await ctx.send_followup(x.content, delete_after=3*60, ephemeral=True)
+            #         tosendmsg = tosendmsg + x.content
+            name = self.children[0].value
+            if name in x.author.display_name:
+                # await ctx.send_followup(x.content, delete_after=3 * 60, ephemeral=True)
+                tosendmsg = tosendmsg + "\n" + x.content
+                print(f"{x.author.name}: {x.content}")
+        if tosendmsg == "":
+            tosendmsg = "該当なし"
+        await interaction.response.send_message(embed=Embed(description=tosendmsg), delete_after=3 * 60, ephemeral=True)
+        interaction.followup: Webhook
+        await interaction.followup.send(embed=Embed(description=f'{interaction.user.mention} 結果を送信しました！\nご確認ください.'))
+class MyViewMenu2(discord.ui.View):
+    @discord.ui.button(label='寝落ちした人を移動する')
+    async def button5_callback(self, button, interaction: discord.Interaction):
+        interaction.response: InteractionResponse
+        from cogs.move import MyViewMoveMember
+        await interaction.response.send_message(view=MyViewMoveMember())
+    @discord.ui.button(label='プロフ検索')
+    async def button6_callback(self, button, interaction: Interaction):
+        interaction.response: InteractionResponse
+        await interaction.response.send_modal(MyModalSearchProf(title='対象の名前を入力...'))
 
 class Menu(Cog):
     def __init__(self, bot):
@@ -164,6 +215,7 @@ class Menu(Cog):
         global db
         vcRoleRef = db.collection(str(ctx.guild.id)).document('vcRole')
         if not str(ctx.channel_id) in vcRoleRef.get().to_dict().keys():
+            await ctx.respond(view=MyViewMenu2())
             return
         await ctx.respond(view=MyViewMenu())
 
