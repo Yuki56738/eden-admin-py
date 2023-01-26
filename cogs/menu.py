@@ -151,6 +151,10 @@ class Menu(Cog):
     @commands.slash_command(description='メニューを表示する.')
     async def menu(self, ctx: ApplicationContext):
         # from main import MyViewChangeRoomName
+        global db
+        vcRoleRef = db.collection(str(ctx.guild.id)).document('vcRole')
+        if not str(ctx.channel_id) in vcRoleRef.get().to_dict().keys():
+            return
         await ctx.respond(view=MyViewChangeRoomName())
 
 
