@@ -1,11 +1,13 @@
 from discord import *
 #
-# from main import MyViewChangeRoomName
+# from main import MyViewMenu
 from google.cloud import firestore
 
 db = firestore.Client()
 
 import discord
+
+
 class MyModalChangeRoomName(discord.ui.Modal):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -42,6 +44,8 @@ class MyModalChangeRoomName(discord.ui.Modal):
         await interaction.response.send_message("完了.")
         # await interaction.message.channel.send(embed=Embed(description="完了."))
         # await ctx.respond(embed=Embed(description="完了."))
+
+
 class MyModalChangeRoomLimit(discord.ui.Modal):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -64,9 +68,9 @@ class MyModalChangeRoomLimit(discord.ui.Modal):
         # print(guilddbRef.get().to_dict())
         # if interaction
         # try:
-            # txt1 = vcTxt[str(interaction.user.voice.channel.id)]
+        # txt1 = vcTxt[str(interaction.user.voice.channel.id)]
 
-             # txt1 = bot.get_channel(txt1)
+        # txt1 = bot.get_channel(txt1)
 
         # except:
         #     print(traceback.format_exc())
@@ -76,7 +80,7 @@ class MyModalChangeRoomLimit(discord.ui.Modal):
         await interaction.response.send_message(embed=Embed(description="完了."))
 
 
-class MyViewChangeRoomName(discord.ui.View):
+class MyViewMenu(discord.ui.View):
     @discord.ui.button(label="部屋の名前を変える.", style=discord.ButtonStyle.blurple)
     async def button_callback(self, button, interaction):
         await interaction.response.send_modal(MyModalChangeRoomName(title="部屋の名前を入力..."))
@@ -138,6 +142,11 @@ class MyViewChangeRoomName(discord.ui.View):
         )
         await interaction.response.send_message("完了.")
 
+    @discord.ui.button(label='寝落ちした人を移動する')
+    async def button4_callback(self, button, interaction: discord.Interaction):
+        interaction.response: InteractionResponse
+        from cogs.move import MyViewMoveMember
+        await interaction.response.send_message(view=MyViewMoveMember())
 
 
 class Menu(Cog):
@@ -148,14 +157,15 @@ class Menu(Cog):
     @Cog.listener()
     async def on_ready(self):
         print("Menu Cog ready.")
+
     @commands.slash_command(description='メニューを表示する.')
     async def menu(self, ctx: ApplicationContext):
-        # from main import MyViewChangeRoomName
+        # from main import MyViewMenu
         global db
         vcRoleRef = db.collection(str(ctx.guild.id)).document('vcRole')
         if not str(ctx.channel_id) in vcRoleRef.get().to_dict().keys():
             return
-        await ctx.respond(view=MyViewChangeRoomName())
+        await ctx.respond(view=MyViewMenu())
 
 
 def setup(bot):

@@ -16,6 +16,8 @@ from discord.ext import *
 
 from google.cloud import firestore
 
+# import cogs.menu
+
 # from greetings import *
 
 # from discord.ui import *
@@ -40,7 +42,7 @@ db = firestore.Client()
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
 edenNotifyChannel = ""
-bot.load_extension("cogs.init_db")
+# bot.load_extension("cogs.init_db")
 # bot.load_extension("cogs.ticket")
 bot.load_extension("cogs.move")
 bot.load_extension('cogs.note')
@@ -715,7 +717,9 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
             for x in profiless:
                 if x.author.id == member.id:
                     await after.channel.send(x.content)
-            await after.channel.send(view=MyViewChangeRoomName())
+            # await after.channel.send(view=MyViewMenu())
+            from cogs.menu import MyViewMenu
+            await after.channel.send(view=MyViewMenu())
             await after.channel.send(member.mention)
             return
     except:
