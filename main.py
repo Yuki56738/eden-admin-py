@@ -40,7 +40,7 @@ db = firestore.Client()
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
 edenNotifyChannel = ""
-# bot.load_extension("cogs.init_db")
+bot.load_extension("cogs.init_db")
 # bot.load_extension("cogs.ticket")
 bot.load_extension("cogs.move")
 bot.load_extension('cogs.note')
