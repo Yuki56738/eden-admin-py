@@ -5,7 +5,7 @@ import os
 from discord import *
 from discord.ui import *
 
-load_dotenv()
+load_dotenv('../.envDev')
 
 TOKEN = os.environ.get("DISCORD_TOKEN")
 
@@ -30,8 +30,16 @@ class MyView(discord.ui.View):
 async def on_ready():
     print(f"Logged in as: {bot.user}")
 
-    chan = bot.get_channel(977138017095520259)
-    await chan.send(view=MyView())
+    chan = bot.get_channel(1064989376448319612)
+    # await chan.send(Message().)
+    # await chan.send(Button.from_component(Button(label='aaaa')))
+    # button1 = Button(label='aaaaa')
+    # discord.ui.Button(custom_id='abcd', label='aaaaa')
+    # async def callback():
+    #     print(1)
+
+    # await chan.send(View.add_item(Item(Button())))
+    # await chan.send(view=MyView())
 
 
 bot.run(TOKEN)

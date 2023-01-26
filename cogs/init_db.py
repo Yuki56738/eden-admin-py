@@ -105,6 +105,14 @@ class init_db(Cog):
         #         db = firestore.Client()
         #         vcRoleRef = db.collection(str(message.guild.id)).document('vcRole')
         # vcRoleRef.get().to_dict().pop()
+        if message.content.startswith('.update4'):
+            if message.author.guild_permissions.administrator:
+                db = firestore.Client()
+                guilddbRef = db.collection(str(message.guild.id)).document('settings')
+                var3 = guilddbRef.update({
+                    'move_channel': '996369129508450344'
+                })
+                await message.reply(str(var3))
         if message.content.startswith('.debug'):
             if message.author.guild_permissions.administrator:
                 db = firestore.Client()
