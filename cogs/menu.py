@@ -186,6 +186,7 @@ class MyModalSearchProf(discord.ui.Modal):
                 print(f"{x.author.name}: {x.content}")
         if tosendmsg == "":
             tosendmsg = "該当なし"
+        interaction.response: InteractionResponse
         await interaction.response.send_message(embed=Embed(description=tosendmsg), delete_after=3 * 60, ephemeral=True)
         interaction.followup: Webhook
         await interaction.followup.send(embed=Embed(description=f'{interaction.user.mention} 結果を送信しました！\nご確認ください.'))
