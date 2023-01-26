@@ -715,6 +715,7 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
                 if x.author.id == member.id:
                     await after.channel.send(x.content)
             await after.channel.send(view=MyViewChangeRoomName())
+            await after.channel.send(member.mention)
             return
     except:
         pass
