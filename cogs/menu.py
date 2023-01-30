@@ -148,10 +148,12 @@ class MyViewMenu(discord.ui.View):
         from cogs.move import MyViewMoveMember
         await interaction.response.send_message(view=MyViewMoveMember())
 
-    @discord.ui.button(label='プロフ検索')
+    @discord.ui.button(label='プロフ検索', style=discord.ButtonStyle.blurple)
     async def button6_callback(self, button, interaction: Interaction):
         interaction.response: InteractionResponse
         await interaction.response.send_modal(MyModalSearchProf(title='対象の名前を入力...'))
+
+
 
 class MyModalSearchProf(discord.ui.Modal):
     def __init__(self, *args, **kwargs) -> None:
@@ -186,6 +188,7 @@ class MyModalSearchProf(discord.ui.Modal):
                 print(f"{x.author.name}: {x.content}")
         if tosendmsg == "":
             tosendmsg = "該当なし"
+        interaction.response: InteractionResponse
         await interaction.response.send_message(embed=Embed(description=tosendmsg), delete_after=3 * 60, ephemeral=True)
         interaction.followup: Webhook
         await interaction.followup.send(embed=Embed(description=f'{interaction.user.mention} 結果を送信しました！\nご確認ください.'))
@@ -195,7 +198,7 @@ class MyViewMenu2(discord.ui.View):
         interaction.response: InteractionResponse
         from cogs.move import MyViewMoveMember
         await interaction.response.send_message(view=MyViewMoveMember())
-    @discord.ui.button(label='プロフ検索')
+    @discord.ui.button(label='プロフ検索', style=discord.ButtonStyle.blurple)
     async def button6_callback(self, button, interaction: Interaction):
         interaction.response: InteractionResponse
         await interaction.response.send_modal(MyModalSearchProf(title='対象の名前を入力...'))
@@ -216,8 +219,10 @@ class Menu(Cog):
         vcRoleRef = db.collection(str(ctx.guild.id)).document('vcRole')
         if not str(ctx.channel_id) in vcRoleRef.get().to_dict().keys():
             await ctx.respond(view=MyViewMenu2())
+            await ctx.followup.send(embed=Embed(description='Created by Yuki.'))
             return
         await ctx.respond(view=MyViewMenu())
+        await ctx.followup.send(embed=Embed(description='Created by Yuki.'))
 
 
 def setup(bot):

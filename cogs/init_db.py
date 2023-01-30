@@ -113,6 +113,22 @@ class init_db(Cog):
                     'move_channel': '996369129508450344'
                 })
                 await message.reply(str(var3))
+        if message.content.startswith('.update5'):
+            if message.author.guild_permissions.administrator:
+                db = firestore.Client()
+                guilddbRef = db.collection(str(message.guild.id)).document('settings')
+                guilddbRef.update({
+                    'note_channels': {
+                        '1016234230549843979': '''【名前／年齢 ／性別 】／／
+【 対象／好み 】例：女性／カワボ／／
+【属性 】例：S,M、ノーマル、スイッチャー
+【 好きなプレイ 】例：イチャ甘／／
+【 嫌いなプレイ 】例：バチボコ／／
+【 寝落ちの可否 】
+【 公開 ／複数 】例：OK／複数は女性のみ
+【ＰＲ】'''
+                    }
+                })
         if message.content.startswith('.debug'):
             if message.author.guild_permissions.administrator:
                 db = firestore.Client()
