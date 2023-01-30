@@ -10,7 +10,7 @@ from discord import *
 # from deploy.cogs.ticket import MyViewTicket
 
 class MyViewTicket(discord.ui.View):
-    @discord.ui.button(label="問題を作成", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="問題を作成", style=discord.ButtonStyle.green, custom_id='ticket-button-1')
     async def button_callback(self, button, interaction: Interaction):
         # await interaction.response.send("頑張っています...")
         await interaction.response.send_message("頑張っています...")
@@ -103,16 +103,17 @@ class Ticket(Cog):
         # var4 = var3["id"]
         # ticket_channel = ctx.guild.get_channel(int(var4))
 
-        var1 = libyuki.get_guildsettings2_as_dict(str(ctx.guild.id))
-        print(var1)
+        # var1 = libyuki.get_guildsettings2_as_dict(str(ctx.guild.id))
+        # print(var1)
         # var1 = libyuki.get_ticketdb_as_dict(str(ctx.guild.id))
         # print("var1", var1)
         # ticket_channel_id = var1["id"]
         # ticket_channel = ctx.guild.get_channel(int(ticket_channel_id))
         # print(ticket_channel_id)
-        ticket_channel = var1['ticket_channel']
+        # ticket_channel = var1['ticket_channel']
         # ctx.bot.get_channel(ticket_channel)
-        ticket_channel = ctx.guild.get_channel(int(ticket_channel))
+        # ticket_channel = ctx.guild.get_channel(int(ticket_channel))
+        ticket_channel = ctx.channel
         await ticket_channel.send(view=MyViewTicket())
 
         # await ticket_channel.send(view=MyViewTicket())

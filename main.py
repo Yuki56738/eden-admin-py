@@ -47,7 +47,7 @@ edenNotifyChannel = ""
 bot.load_extension("cogs.move")
 bot.load_extension('cogs.note')
 bot.load_extension('cogs.menu')
-# bot.load_extension('cogs.ticket2')
+bot.load_extension('cogs.ticket')
 
 
 # bot.load_extension('cogs.init_db')
