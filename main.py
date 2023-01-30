@@ -42,7 +42,7 @@ db = firestore.Client()
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
 edenNotifyChannel = ""
-bot.load_extension("cogs.init_db")
+# bot.load_extension("cogs.init_db")
 # bot.load_extension("cogs.ticket")
 bot.load_extension("cogs.move")
 bot.load_extension('cogs.note')
@@ -457,29 +457,18 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
     global db
     guilddbRef = db.collection(str(member.guild.id)).document('settings')
     vcRoleRef = db.collection(str(member.guild.id)).document('vcRole')
-    # vcTxtRef = db.collection(str(member.guild.id)).document('vcTxt')
     print('guilddbRef.get().to_dict():', guilddbRef.get().to_dict())
-    # print(guilddbRef.get())
-    # guilddbRef.get(str(member.guild.id))
     print('create_vc_channel:', guilddbRef.get().to_dict()['create_vc_channel'])
     try:
         if str(after.channel.id) == str(guilddbRef.get().to_dict()['create_vc_channel']):
             print("hit. create_vc_channel.")
-            # await member.guild.system_channel.send("hit.")
-            # memberRole = member.guild.get_role(997644021067415642)
-            # memberRole = member.guild.get_role(guildsettings.get().to_dict()[str(member.guild.id)]["member_role"])
             memberRole_id = guilddbRef.get().to_dict()['member_role']
             print(memberRole_id)
             memberRole = member.guild.get_role(int(memberRole_id))
-            # perm1 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.none())
             perm1 = PermissionOverwrite().from_pair(Permissions.advanced().general().voice(), Permissions.none())
             perm2 = PermissionOverwrite().from_pair(Permissions.general(), Permissions.text())
-            # perm2.update(connect=True)
-            # perm2.update(speak=True)
-            # perm2.update(use_slash_commands=True)
             perm2.update(connect=True)
             perm2.update(speak=True)
-            # perm1.update(value=689379286592)
             perm1.update(read_message_history=True)
             perm1.update(read_messages=True)
             perm1.update(send_messages=True)
@@ -767,13 +756,6 @@ async def prof(ctx: ApplicationContext, name: Option(str, required=True, descrip
             # await ctx.send_followup(x.content, delete_after=3 * 60, ephemeral=True)
             tosendmsg = tosendmsg + x.content
             print(f"{x.author.name}: {x.content}")
-
-        # for xuser in ctx.author.voice.channel.members:
-        #     if x.author.id == xuser.id and not ctx.author.id:
-        #         print(x.content)
-        #         # await ctx.send_followup(x.content, delete_after=3*60, ephemeral=True)
-        #         tosendmsg = tosendmsg + x.content
-
         if name in x.author.display_name:
             # await ctx.send_followup(x.content, delete_after=3 * 60, ephemeral=True)
             tosendmsg = tosendmsg + "\n" + x.content
