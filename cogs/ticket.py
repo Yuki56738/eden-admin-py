@@ -1,38 +1,39 @@
-
 from google.cloud import firestore
 from google.cloud.firestore import *
 import discord
 from discord import *
+
+
 # import libyuki
 
 
 # from deploy.cogs.ticket import MyViewTicket
 
 class MyViewTicket(discord.ui.View):
-        @discord.ui.button(label="問題を作成", style=discord.ButtonStyle.green)
-        async def button_callback(self, button, interaction: Interaction):
-            # await interaction.response.send("頑張っています...")
-            await interaction.response.send_message("頑張っています...")
-            # await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
-            permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
-            permow2 = PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())
-            # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
-            db = firestore.Client()
-            guilddb = db.collection("guilddb")
-            guilddb1 = guilddb.document(document_id="guildsettings")
-            guilddb1_dict = guilddb1.get().to_dict()
-            # payload = {}
+    @discord.ui.button(label="問題を作成", style=discord.ButtonStyle.green)
+    async def button_callback(self, button, interaction: Interaction):
+        # await interaction.response.send("頑張っています...")
+        await interaction.response.send_message("頑張っています...")
+        # await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
+        permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
+        permow2 = PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())
+        # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
+        db = firestore.Client()
+        guilddb = db.collection("guilddb")
+        guilddb1 = guilddb.document(document_id="guildsettings")
+        guilddb1_dict = guilddb1.get().to_dict()
+        # payload = {}
 
-            # guilddb1_dict.update({
-            #     str(ctx.guild.id): {'ticket_channel': 0}
-            # })
-            ticket_channel_id = int(guilddb1_dict[str(interaction.guild.id)]['ticket_channel'])
-            # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_channel"]
-            # cat1 = interaction.guild.get_channel(cat1)
-            # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_channel"]
-            # cat1 = bot.get_channel(cat1)
-            # cat1 = interaction.channel
-            users_ids = list('''734472157895196692
+        # guilddb1_dict.update({
+        #     str(ctx.guild.id): {'ticket_channel': 0}
+        # })
+        ticket_channel_id = int(guilddb1_dict[str(interaction.guild.id)]['ticket_channel'])
+        # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_channel"]
+        # cat1 = interaction.guild.get_channel(cat1)
+        # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_channel"]
+        # cat1 = bot.get_channel(cat1)
+        # cat1 = interaction.channel
+        users_ids = list('''734472157895196692
 856815702144712724
 1032396218808148008
 162037483977179145
@@ -48,43 +49,42 @@ class MyViewTicket(discord.ui.View):
 1008042111578419340
 917954810681126952'''.split('\n'))
 
-            txt1: TextChannel = await interaction.guild.create_text_channel(
-                name=f"{interaction.user.display_name}のticket",
-                # category=cat1,
-                overwrites={
-                    interaction.guild.default_role: permow2,
-                    interaction.user: permow1
-                })
-            for x in users_ids:
-                print(x)
-                member1 = interaction.guild.get_member(int(x))
-                if member1 is None:
-                    return await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
-                await txt1.edit(overwrites={
-                    member1: permow1
-                })
-                # await txt1.overwrites_for(interaction.guild.get_member(int(x)))
-                # db = firestore.Client()
-                # db1 = db.collection("guilddb").document(document_id="ticketTxtUser")
-                # db1_dict = db1.get().to_dict()
-                # if db1_dict is None:
-                #     db1_dict1 = {
-                #         str(txt1.id): str(interaction.user.id)
-                #     }
-                #     db1.create(db1_dict1)
-                #
-                # db1_dict[str(txt1.id)] = str(interaction.user.id)
-                # print(db1.update(db1_dict))
-                # db1.update(db1_dict)
-                await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
+        txt1: TextChannel = await interaction.guild.create_text_channel(
+            name=f"{interaction.user.display_name}のticket",
+            # category=cat1,
+            overwrites={
+                interaction.guild.default_role: permow2,
+                interaction.user: permow1
+            })
+        for x in users_ids:
+            print(x)
+            member1 = interaction.guild.get_member(int(x))
+            if member1 is None:
+                return await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
+            await txt1.edit(overwrites={
+                member1: permow1
+            })
+            # await txt1.overwrites_for(interaction.guild.get_member(int(x)))
+            # db = firestore.Client()
+            # db1 = db.collection("guilddb").document(document_id="ticketTxtUser")
+            # db1_dict = db1.get().to_dict()
+            # if db1_dict is None:
+            #     db1_dict1 = {
+            #         str(txt1.id): str(interaction.user.id)
+            #     }
+            #     db1.create(db1_dict1)
+            #
+            # db1_dict[str(txt1.id)] = str(interaction.user.id)
+            # print(db1.update(db1_dict))
+            # db1.update(db1_dict)
+            await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
+
+
 class Ticket(Cog):
 
     def __init__(self, bot):
         self.bot = bot
         self.MyViewTicket = MyViewTicket
-
-
-
 
     @commands.slash_command()
     async def ticket(self, ctx: ApplicationContext):
@@ -115,7 +115,6 @@ class Ticket(Cog):
         ticket_channel = ctx.guild.get_channel(int(ticket_channel))
         await ticket_channel.send(view=MyViewTicket())
 
-
         # await ticket_channel.send(view=MyViewTicket())
 
         # thisguildDoc = thisguildCol_ref.document(document_id="ticket_channel")
@@ -143,7 +142,6 @@ class Ticket(Cog):
         # print("var2:", var2)
         # ticket_channel = self.bot.get_channel()
         # await ticket_channel.send(view=self.MyViewTicket())
-
 
     @commands.slash_command(description="ticketのDBを初期化")
     async def init_ticket(self, ctx: ApplicationContext, ticket_channel_id: str):
@@ -183,5 +181,7 @@ class Ticket(Cog):
         # guilddb1.update()
 
         await ctx.send("完了.")
+
+
 def setup(bot):
     bot.add_cog(Ticket(bot))
