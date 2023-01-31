@@ -66,7 +66,8 @@ class init_db(Cog):
             if message.author.guild_permissions.administrator:
                 db = firestore.Client()
                 guilddbRef = db.collection(str(message.guild.id)).document('settings')
-                guilddbRef.update({
+                var3 = guilddbRef.get().to_dict()
+                var3.update({
                     'note_channels': {
                         '1021255885542137939': '''【 募集する人】
 〇エロイプや猥談を募集する場合は各目的へ該当するOK女子と男性ロールを使う事。
@@ -105,6 +106,36 @@ class init_db(Cog):
         #         db = firestore.Client()
         #         vcRoleRef = db.collection(str(message.guild.id)).document('vcRole')
         # vcRoleRef.get().to_dict().pop()
+        if message.content.startswith('.update4'):
+            if message.author.guild_permissions.administrator:
+                db = firestore.Client()
+                guilddbRef = db.collection(str(message.guild.id)).document('settings')
+                var3 = guilddbRef.update({
+                    'move_channel': '996369129508450344'
+                })
+                await message.reply(str(var3))
+        if message.content.startswith('.update5'):
+            if message.author.guild_permissions.administrator:
+                db = firestore.Client()
+                guilddbRef = db.collection(str(message.guild.id)).document('settings')
+                # guilddbRef.get(
+                # var5 = guilddbRef.get().to_dict()
+#                 var5.update({
+#                     'note_channels': {
+#                         '1016234230549843979': '''【名前／年齢 ／性別 】／／
+# 【 対象／好み 】例：女性／カワボ／／
+# 【属性 】例：S,M、ノーマル、スイッチャー
+# 【 好きなプレイ 】例：イチャ甘／／
+# 【 嫌いなプレイ 】例：バチボコ／／
+# 【 寝落ちの可否 】
+# 【 公開 ／複数 】例：OK／複数は女性のみ
+# 【ＰＲ】''',
+#                         '1017679165945819146': '''頭に思い浮かぶ下ネタを呟こう！規約違反、ネガティブ発言、不穏な投稿、政治、宗教、国際情勢やセンシティブな話も禁止。会話が盛り上がる場合はできれば 【🔞 チャット】等で話しましょう。 '''
+#                     }
+#                 })
+                # print(var5)
+                # var6 = guilddbRef.update(var5)
+                await message.reply(str(var6))
         if message.content.startswith('.debug'):
             if message.author.guild_permissions.administrator:
                 db = firestore.Client()
