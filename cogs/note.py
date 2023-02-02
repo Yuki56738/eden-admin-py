@@ -16,7 +16,10 @@ class Note(Cog):
             return
         db = firestore.Client()
         guilddbRef = db.collection(str(message.guild.id)).document('settings')
-        toSendMsg = guilddbRef.get().to_dict()['note_channels'][str(message.channel.id)]
+        try:
+            toSendMsg = guilddbRef.get().to_dict()['note_channels'][str(message.channel.id)]
+        except:
+            return
         if toSendMsg is None:
            return
         var1 = await message.channel.history(limit=15).flatten()
