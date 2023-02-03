@@ -9,6 +9,9 @@ class init_db(Cog):
         # self._last_member = None
     @commands.slash_command(description='初期化する.')
     async def init(self, ctx: ApplicationContext):
+        if not ctx.user.guild_permissions.administrator:
+            await ctx.respond('権限拒否.')
+            return
         await ctx.respond('頑張っています...')
         global db
         guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
