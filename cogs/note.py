@@ -9,7 +9,7 @@ class Note(Cog):
 
     @Cog.listener()
     async def on_ready(self):
-        print("ready.")
+        print("note ready.")
     @Cog.listener()
     async def on_message(self, message: Message):
         if message.author.bot:

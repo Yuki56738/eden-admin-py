@@ -56,6 +56,7 @@ class DelMessages(Cog):
                     await message.reply('権限拒否. 理由: コマンドの実行者ではない！')
                     return
                 print('deleting:', toDeleteMember.name, toDeleteMember.id)
+                await message.reply('削除しています...')
                 channs = await message.guild.fetch_channels()
                 for chann in channs:
                     # if not chann is TextChannel:
@@ -70,7 +71,7 @@ class DelMessages(Cog):
                         if x.author.id == toDeleteMember.id:
                             print('deleting...:', x.author.name, x.content)
                             await x.delete()
-                await message.reply('削除しました。')
+                await message.channel.send('削除しました。')
                 # print(x.author.name)
                 # if chann is TextChannel:
                 #     print(2)
