@@ -43,6 +43,10 @@ class MyViewMoveMember(discord.ui.View):
         db = firestore.Client()
         guilddbRef = db.collection(str(interaction.guild.id)).document('settings')
         print(guilddbRef.get().to_dict())
+        if guilddbRef.get().to_dict().get('move_channel') is None:
+            interaction.followup: Webhook
+            await interaction.followup.send('/init_1 にて初期化をお願いします！')
+            return
         var1 = guilddbRef.get().to_dict()['move_channel']
         print('var1:', var1)
         # var2 = guilddbRef["994483180927201400"]["move_channel"]

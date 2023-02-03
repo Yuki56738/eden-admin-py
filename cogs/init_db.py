@@ -1,27 +1,61 @@
+import traceback
+
 from discord import *
 from google.cloud import firestore
 from google.cloud.firestore import *
 
 db = firestore.Client()
+
+
 class init_db(Cog):
     def __init__(self, bot):
         self.bot = bot
         # self._last_member = None
+
     @commands.slash_command(description='初期化する.')
-    async def init(self, ctx: ApplicationContext):
+    async def initialize(self, ctx: ApplicationContext):
         if not ctx.user.guild_permissions.administrator:
             await ctx.respond('権限拒否.')
             return
         await ctx.respond('頑張っています...')
         global db
         guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
+        # listen_channel_id = guilddbRef.get().to_dict()['listen_channel']
+        # notify_channel_id = guilddbRef.get().to_dict()['notify_channel']
+        vcRoleRef = db.collection(str(ctx.guild.id)).document('vcRole')
+        if not guilddbRef.get().to_dict() is None and not vcRoleRef.get().to_dict() is None:
+            await ctx.followup.send(
+                'あれ？すでにデータベースに存在する...?\n続行すると、データベースから削除されます！続行するには、/init_force を使用してください！')
+            return
         guilddbRef.create({})
-        await ctx.followup.send('データベースを作成しました！')
+        vcRoleRef.create({})
+        await ctx.followup.send('データベースを作成しました！\n/init_1 にて、次の設定にお進みください！')
+
+    @commands.slash_command(description='強制的に初期化する.')
+    async def init_force(self, ctx: ApplicationContext, force: bool):
+        if not ctx.user.guild_permissions.administrator:
+            await ctx.respond('権限拒否.')
+            return
+        if force == False:
+            await ctx.respond('本当に実行するには、force を True にしてください！')
+            return
+        await ctx.respond('頑張っています...')
+        global db
+        guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
+        vcRoleRef = db.collection(str(ctx.guild.id)).document('vcRole')
+        try:
+            guilddbRef.create({})
+            vcRoleRef.create({})
+        except:
+            traceback.print_exc()
+        await ctx.followup.send('データベースを作成しました！\n/init_1 にて、次の設定にお進みください！')
     @Cog.listener()
     async def on_ready(self):
         print("ready.")
 
     # @Cog.listener()
+
+
 #     async def on_message(self, message: Message):
 #         if '.init1' in message.content:
 #             if not message.author.guild_permissions.administrator:
