@@ -1,12 +1,14 @@
 from discord import *
 
+
 class DelMsgById(Cog):
     def __init__(self, bot):
         self.bot = bot
 
         # self._last_member = None
-    @commands.slash_command()
-    async def delusermsgbyid(self, ctx:ApplicationContext, arg:str):
+
+    @commands.slash_command(description='指定されたユーザーのメッセージを全て削除する。')
+    async def delusermsgbyid(self, ctx: ApplicationContext, arg: str):
         if not ctx.user.guild_permissions.administrator:
             await ctx.respond('権限拒否.')
             return
@@ -29,8 +31,11 @@ class DelMsgById(Cog):
                     print('deleting:', x.content)
                     await x.delete()
         await ctx.followup.send('削除しました。')
+
     @Cog.listener()
     async def on_ready(self):
         print("DelMsgById ready.")
+
+
 def setup(bot):
     bot.add_cog(DelMsgById(bot))
