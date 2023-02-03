@@ -163,7 +163,10 @@ class MyModalSearchProf(discord.ui.Modal):
 
     async def callback(self, interaction: discord.Interaction):
         interaction.response: InteractionResponse
-        prof_channel_id = db.collection(str(interaction.guild.id)).document('settings').get().to_dict()['profile_channel']
+        prof_channel_id = db.collection(str(interaction.guild.id)).document('settings').get().to_dict().get('profile_channel')
+        if prof_channel_id is None:
+            await interaction.response.send_message('/init_1 にて初期化をお願いします！')
+            return
         prof_channel = interaction.guild.get_channel(int(prof_channel_id))
         prof_messages = await prof_channel.history(limit=1000).flatten()
         # await ctx.respond("自己紹介...", ephemeral=True, delete_after=3*60)
@@ -217,10 +220,14 @@ class Menu(Cog):
         # from main import MyViewMenu
         global db
         vcRoleRef = db.collection(str(ctx.guild.id)).document('vcRole')
-        if not str(ctx.channel_id) in vcRoleRef.get().to_dict().keys():
+
+        if vcRoleRef.get().to_dict() is None or not str(ctx.channel_id) in vcRoleRef.get().to_dict().keys():
             await ctx.respond(view=MyViewMenu2())
             await ctx.followup.send(embed=Embed(description='Created by Yuki.'))
             return
+        # else:
+            # if vcRoleRef.get().to_dict() is None:
+                # await ctx.respond('寝落ちした')
         await ctx.respond(view=MyViewMenu())
         await ctx.followup.send(embed=Embed(description='Created by Yuki.'))
 

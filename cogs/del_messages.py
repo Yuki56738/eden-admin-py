@@ -5,6 +5,7 @@ from discord import *
 flag = False
 flag2 = False
 toDeleteMember = 0
+command_author = 0
 
 
 class DelMessages(Cog):
@@ -22,6 +23,8 @@ class DelMessages(Cog):
         await ctx.followup.send(f'{ctx.user.mention} 相手をメンションすると、相手の全てのメッセージが削除されます！\nメンションしてください...')
         global flag
         flag = True
+        global command_author
+        command_author = ctx.user.id
 
     @Cog.listener()
     async def on_message(self, message: Message):
@@ -47,6 +50,10 @@ class DelMessages(Cog):
             if message.content == '!YES':
                 if not message.author.guild_permissions.administrator:
                     await message.reply('権限拒否.')
+                    return
+                global command_author
+                if not message.author.id == command_author:
+                    await message.reply('権限拒否. 理由: コマンドの実行者ではない！')
                     return
                 print('deleting:', toDeleteMember.name, toDeleteMember.id)
                 channs = await message.guild.fetch_channels()
