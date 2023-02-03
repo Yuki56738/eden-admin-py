@@ -23,7 +23,7 @@ from google.cloud import firestore
 # from discord.ui import *
 # import init_db
 
-load_dotenv('.envDev')
+load_dotenv()
 TOKEN = os.environ.get("DISCORD_TOKEN")
 # DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -208,6 +208,11 @@ async def on_ready():
     print(f"Logged in as: {bot.user}")
 
     await bot.change_presence(activity=Game(name="Created by Yuki."))
+
+    print('Connected following guilds...')
+    for x in bot.guilds:
+        print(x.name)
+    print('------------------------------')
 
 @bot.event
 async def on_raw_reaction_add(reaction: RawReactionActionEvent):

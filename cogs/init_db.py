@@ -51,7 +51,7 @@ class init_db(Cog):
         await ctx.followup.send('データベースを作成しました！\n/init_1 にて、次の設定にお進みください！')
     @Cog.listener()
     async def on_ready(self):
-        print("ready.")
+        print("init_db ready.")
 
     # @Cog.listener()
 
