@@ -166,9 +166,9 @@ class init_db(Cog):
         guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
         # notify_channel_id = guilddbRef.get().to_dict().get('notify_member_joined_channel')
         var1 = guilddbRef.get().to_dict()
-        var1['notify_member_joined_channel'] = channel_id
-        guilddbRef.update(var1)
-        await ctx.followup.send(var1)
+        var1['notify_member_leave_channel'] = channel_id
+        var2 = guilddbRef.update(var1)
+        await ctx.followup.send(var2)
         await ctx.followup.send('設定完了.')
 
 
