@@ -102,10 +102,14 @@ class init_db(Cog):
         var2 = guilddbRef.update(var1)
         await ctx.followup.send(var2)
         await ctx.followup.send('設定完了。')
+
     @Cog.listener()
     async def on_ready(self):
         print("init_db ready.")
-
+    @Cog.listener()
+    async def on_guild_join(self, guild: Guild):
+        print('Joined to:', guild.name)
+        await guild.system_channel.send('こんにちは。Yuki\'s 管理BOTです！\n/initialize にて初期化してください！')
     # @Cog.listener()
 
 
