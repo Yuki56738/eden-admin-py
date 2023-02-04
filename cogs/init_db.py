@@ -36,7 +36,8 @@ class init_db(Cog):
 
     @commands.slash_command(description='初期化する.')
     async def initialize(self, ctx: ApplicationContext):
-        if not ctx.user.guild_permissions.administrator or not ctx.user.id == bot_author_id:
+        global bot_author_id
+        if not ctx.user.guild_permissions.administrator or not int(ctx.user.id) == int(bot_author_id):
             await ctx.respond('権限拒否.')
             return
         await ctx.respond('頑張っています...')
