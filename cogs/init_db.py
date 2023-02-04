@@ -36,10 +36,16 @@ class init_db(Cog):
 
     @commands.slash_command(description='初期化する.')
     async def initialize(self, ctx: ApplicationContext):
-        if not ctx.user.guild_permissions.administrator or not ctx.user.id == bot_author_id:
+        global bot_author_id
+        flag = False
+        if int(ctx.user.id) == int(bot_author_id):
+            flag = True
+        print(str(flag))
+        if not ctx.user.guild_permissions.administrator and not flag:
             await ctx.respond('権限拒否.')
             return
         await ctx.respond('頑張っています...')
+        flag = False
         global db
         guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
         # listen_channel_id = guilddbRef.get().to_dict()['listen_channel']
@@ -55,9 +61,16 @@ class init_db(Cog):
 
     @commands.slash_command(description='強制的に初期化する.')
     async def init_force(self, ctx: ApplicationContext, force: bool):
-        if not ctx.user.guild_permissions.administrator or not ctx.user.id == bot_author_id:
+        global bot_author_id
+        flag = False
+        if int(ctx.user.id) == int(bot_author_id):
+            flag = True
+        print(str(flag))
+        if not ctx.user.guild_permissions.administrator and not flag:
             await ctx.respond('権限拒否.')
             return
+        await ctx.respond('頑張っています...')
+        flag = False
         if force == False:
             await ctx.respond('本当に実行するには、force を True にしてください！')
             return
@@ -74,9 +87,16 @@ class init_db(Cog):
 
     @commands.slash_command(description='寝落ちした人の移動先を指定する.')
     async def init_1(self, ctx: ApplicationContext, channel_id: str):
-        if not ctx.user.guild_permissions.administrator or not ctx.user.id == bot_author_id:
+        global bot_author_id
+        flag = False
+        if int(ctx.user.id) == int(bot_author_id):
+            flag = True
+        print(str(flag))
+        if not ctx.user.guild_permissions.administrator and not flag:
             await ctx.respond('権限拒否.')
             return
+        await ctx.respond('頑張っています...')
+        flag = False
         global db
         guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
         move_channel_id = guilddbRef.get().to_dict().get('move_channel')
@@ -91,9 +111,16 @@ class init_db(Cog):
 
     @commands.slash_command(description='プロフィールの検索するチャンネルを指定する.')
     async def init_2(self, ctx: ApplicationContext, channel_id: str):
-        if not ctx.user.guild_permissions.administrator or not ctx.user.id == bot_author_id:
+        global bot_author_id
+        flag = False
+        if int(ctx.user.id) == int(bot_author_id):
+            flag = True
+        print(str(flag))
+        if not ctx.user.guild_permissions.administrator and not flag:
             await ctx.respond('権限拒否.')
             return
+        await ctx.respond('頑張っています...')
+        flag = False
         global db
         guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
         await ctx.respond(f'"{ctx.guild.get_channel(int(channel_id)).name}" を、プロフィールの検索するチャンネルとして指定します...')
