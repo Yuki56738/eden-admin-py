@@ -9,6 +9,7 @@ from discord.ui import *
 db = firestore.Client()
 bot_author_id = 451028171131977738
 
+
 class MyViewSelectChannel(discord.ui.View):
     # @discord.ui.sel(
     #     placeholder="ユーザーを選択してください",
@@ -129,6 +130,7 @@ class init_db(Cog):
         var2 = guilddbRef.update(var1)
         await ctx.followup.send(var2)
         await ctx.followup.send('設定完了。/init_3 を実行してください。')
+
     @commands.slash_command(description='入退出ログを投稿するチャンネルを指定する。')
     async def init_3(self, ctx: ApplicationContext, channel_id: str):
         global bot_author_id
@@ -149,6 +151,7 @@ class init_db(Cog):
         var2 = guilddbRef.update(var1)
         await ctx.followup.send(str(var2))
         await ctx.followup.send('設定完了. /init_4 を実行してください！')
+
     @commands.slash_command(description='サーバーからの退出を通知するチャンネルを指定する。')
     async def init_4(self, ctx: ApplicationContext, channel_id: str):
         global bot_author_id
@@ -171,11 +174,10 @@ class init_db(Cog):
         await ctx.followup.send(var2)
         await ctx.followup.send('設定完了.')
 
-
-
     @Cog.listener()
     async def on_ready(self):
         print("init_db ready.")
+
     @Cog.listener()
     async def on_guild_join(self, guild: Guild):
         print('Joined to:', guild.name)
