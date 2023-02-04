@@ -129,7 +129,26 @@ class init_db(Cog):
         var2 = guilddbRef.update(var1)
         await ctx.followup.send(var2)
         await ctx.followup.send('設定完了。')
+    @commands.slash_command(description='入退出ログを投稿するチャンネルを指定する。')
+    async def init_3(self, ctx: ApplicationContext, channel_id: str):
+        global bot_author_id
+        flag = False
+        if int(ctx.user.id) == int(bot_author_id):
+            flag = True
+        print(str(flag))
+        if not ctx.user.guild_permissions.administrator and not flag:
+            await ctx.respond('権限拒否.')
+            return
+        await ctx.respond('頑張っています...')
 
+        flag = False
+        global db
+        guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
+        var1 = guilddbRef.get().to_dict()
+        var1['notify_member_joined_channel'] = channel_id
+        var2 = guilddbRef.update(var1)
+        await ctx.followup.send(str(var2))
+        await ctx.followup.send('設定完了.')
     @Cog.listener()
     async def on_ready(self):
         print("init_db ready.")

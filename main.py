@@ -23,7 +23,7 @@ from google.cloud import firestore
 # from discord.ui import *
 # import init_db
 
-load_dotenv()
+load_dotenv('.envDev')
 TOKEN = os.environ.get("DISCORD_TOKEN")
 # DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -43,6 +43,7 @@ bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
 # edenNotifyChannel = ""
 bot.load_extension("cogs.init_db")
+bot.load_extension('cogs.notify_member_joined')
 # bot.load_extension("cogs.ticket")
 bot.load_extension('cogs.del_messages_by_id')
 bot.load_extension('cogs.del_messages')
@@ -240,8 +241,8 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
     global db
     guilddbRef = db.collection(str(member.guild.id)).document('settings')
     vcRoleRef = db.collection(str(member.guild.id)).document('vcRole')
-    print('guilddbRef.get().to_dict():', guilddbRef.get().to_dict())
-    print('create_vc_channel:', guilddbRef.get().to_dict()['create_vc_channel'])
+    # print('guilddbRef.get().to_dict():', guilddbRef.get().to_dict())
+    # print('create_vc_channel:', guilddbRef.get().to_dict()['create_vc_channel'])
     try:
         if str(after.channel.id) == str(guilddbRef.get().to_dict()['create_vc_channel']):
             print("hit. create_vc_channel.")
@@ -505,7 +506,8 @@ async def on_voice_state_update(member: Member, before: VoiceState, after: Voice
         # vcRoleDic = vcRoleRef.get()
         vcRoleDic = vcRoleRef.get()
 
-        var = vcRoleDic.to_dict()[str(before.channel.id)]
+        # var = vcRoleDic.to_dict()[str(before.channel.id)]
+        var = vcRoleDic.to_dict().get(str(before.channel.id))
         print(var)
         role1 = member.guild.get_role(int(var))
 
