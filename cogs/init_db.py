@@ -128,7 +128,7 @@ class init_db(Cog):
         var1['profile_channel'] = channel_id
         var2 = guilddbRef.update(var1)
         await ctx.followup.send(var2)
-        await ctx.followup.send('設定完了。')
+        await ctx.followup.send('設定完了。/init_3 を実行してください。')
     @commands.slash_command(description='入退出ログを投稿するチャンネルを指定する。')
     async def init_3(self, ctx: ApplicationContext, channel_id: str):
         global bot_author_id
