@@ -7,7 +7,7 @@ import discord
 from discord.ui import *
 
 db = firestore.Client()
-
+bot_author_id = 451028171131977738
 
 class MyViewSelectChannel(discord.ui.View):
     # @discord.ui.sel(
@@ -36,7 +36,7 @@ class init_db(Cog):
 
     @commands.slash_command(description='初期化する.')
     async def initialize(self, ctx: ApplicationContext):
-        if not ctx.user.guild_permissions.administrator:
+        if not ctx.user.guild_permissions.administrator or not ctx.user.id == bot_author_id:
             await ctx.respond('権限拒否.')
             return
         await ctx.respond('頑張っています...')
@@ -55,7 +55,7 @@ class init_db(Cog):
 
     @commands.slash_command(description='強制的に初期化する.')
     async def init_force(self, ctx: ApplicationContext, force: bool):
-        if not ctx.user.guild_permissions.administrator:
+        if not ctx.user.guild_permissions.administrator or not ctx.user.id == bot_author_id:
             await ctx.respond('権限拒否.')
             return
         if force == False:
@@ -74,7 +74,7 @@ class init_db(Cog):
 
     @commands.slash_command(description='寝落ちした人の移動先を指定する.')
     async def init_1(self, ctx: ApplicationContext, channel_id: str):
-        if not ctx.user.guild_permissions.administrator:
+        if not ctx.user.guild_permissions.administrator or not ctx.user.id == bot_author_id:
             await ctx.respond('権限拒否.')
             return
         global db
@@ -91,7 +91,7 @@ class init_db(Cog):
 
     @commands.slash_command(description='プロフィールの検索するチャンネルを指定する.')
     async def init_2(self, ctx: ApplicationContext, channel_id: str):
-        if not ctx.user.guild_permissions.administrator:
+        if not ctx.user.guild_permissions.administrator or not ctx.user.id == bot_author_id:
             await ctx.respond('権限拒否.')
             return
         global db
