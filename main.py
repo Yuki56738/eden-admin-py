@@ -23,7 +23,7 @@ from google.cloud import firestore
 # from discord.ui import *
 # import init_db
 
-load_dotenv()
+load_dotenv('.envDev')
 TOKEN = os.environ.get("DISCORD_TOKEN")
 # DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -41,7 +41,7 @@ db = firestore.Client()
 
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
-edenNotifyChannel = ""
+# edenNotifyChannel = ""
 bot.load_extension("cogs.init_db")
 # bot.load_extension("cogs.ticket")
 bot.load_extension('cogs.del_messages_by_id')

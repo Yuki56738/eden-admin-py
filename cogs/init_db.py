@@ -3,8 +3,30 @@ import traceback
 from discord import *
 from google.cloud import firestore
 from google.cloud.firestore import *
+import discord
+from discord.ui import *
 
 db = firestore.Client()
+
+
+class MyViewSelectChannel(discord.ui.View):
+    # @discord.ui.sel(
+    #     placeholder="ユーザーを選択してください",
+    #     min_values=1,
+    #     max_values=1
+    #
+    # )
+    @discord.ui.select(
+        select_type=discord.ComponentType.channel_select,
+        placeholder="選択してください...",
+        min_values=1,
+        max_values=1,
+        # channel_select()
+    )
+    async def select_callback(self, select: Select, interaction: Interaction):
+        interaction.response: InteractionResponse
+        print(select.values[0])
+        # await interaction.response.send_modal()
 
 
 class init_db(Cog):
@@ -49,6 +71,37 @@ class init_db(Cog):
         except:
             traceback.print_exc()
         await ctx.followup.send('データベースを作成しました！\n/init_1 にて、次の設定にお進みください！')
+
+    @commands.slash_command(description='寝落ちした人の移動先を指定する.')
+    async def init_1(self, ctx: ApplicationContext, channel_id: str):
+        if not ctx.user.guild_permissions.administrator:
+            await ctx.respond('権限拒否.')
+            return
+        global db
+        guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
+        move_channel_id = guilddbRef.get().to_dict().get('move_channel')
+        # if move_channel_id is None:
+        # await ctx.respond(view=MyViewSelectChannel())
+        await ctx.respond(f'"{ctx.guild.get_channel(int(channel_id)).name}" を、寝落ちした人の移動先として設定します...')
+        var1 = guilddbRef.get().to_dict()
+        var1['move_channel'] = channel_id
+        var2 = guilddbRef.update(var1)
+        await ctx.followup.send(var2)
+        await ctx.followup.send('設定完了。 /init_2 を実行してください。')
+
+    @commands.slash_command(description='プロフィールの検索するチャンネルを指定する.')
+    async def init_2(self, ctx: ApplicationContext, channel_id: str):
+        if not ctx.user.guild_permissions.administrator:
+            await ctx.respond('権限拒否.')
+            return
+        global db
+        guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
+        await ctx.respond(f'"{ctx.guild.get_channel(int(channel_id)).name}" を、プロフィールの検索するチャンネルとして指定します...')
+        var1 = guilddbRef.get().to_dict()
+        var1['profile_channel'] = channel_id
+        var2 = guilddbRef.update(var1)
+        await ctx.followup.send(var2)
+        await ctx.followup.send('設定完了。')
     @Cog.listener()
     async def on_ready(self):
         print("init_db ready.")
