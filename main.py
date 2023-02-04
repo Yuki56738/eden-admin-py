@@ -51,6 +51,8 @@ bot.load_extension('cogs.del_messages')
 bot.load_extension("cogs.move")
 bot.load_extension('cogs.note')
 bot.load_extension('cogs.menu')
+
+
 # bot.load_extension('cogs.ticket')
 
 
@@ -206,7 +208,6 @@ class MyModalChangeRoomLimit(discord.ui.Modal):
 
 @bot.event
 async def on_ready():
-
     print(f"Logged in as: {bot.user}")
 
     await bot.change_presence(activity=Game(name="Created by Yuki."))
@@ -216,12 +217,9 @@ async def on_ready():
         print(x.name)
     print('------------------------------')
 
+
 @bot.event
 async def on_raw_reaction_add(reaction: RawReactionActionEvent):
-    # global vcRole
-    # global vcTxt
-    # global txtMsg
-    # global guildsettings
     print("reaction")
     # reaction_channel_id = guildsettings[str(reaction.guild_id)]["reaction_channel"]
     # db = firestore.Client()
@@ -234,7 +232,6 @@ async def on_raw_reaction_add(reaction: RawReactionActionEvent):
     msg1 = await listen_channel.fetch_message(reaction.message_id)
     if reaction.channel_id == listen_channel.id:
         await notify_channel.send(f"{reaction.member.mention} から {msg1.author.mention} へ反応がありました！")
-
 
 
 @bot.event
@@ -550,7 +547,6 @@ async def prof(ctx: ApplicationContext, name: Option(str, required=True, descrip
     if tosendmsg == "":
         tosendmsg = "該当なし"
     await ctx.respond(embed=Embed(description=tosendmsg), delete_after=3 * 60, ephemeral=True)
-
 
 
 @bot.slash_command()
