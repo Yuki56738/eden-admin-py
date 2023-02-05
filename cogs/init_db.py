@@ -43,7 +43,7 @@ class init_db(Cog):
         if int(ctx.user.id) == int(bot_author_id):
             flag = True
         print(str(flag))
-        if not ctx.user.guild_permissions.administrator and not flag:
+        if not ctx.user.guild_permissions.administrator or not flag:
             await ctx.respond('権限拒否.')
             return
         await ctx.respond('頑張っています...')
@@ -63,6 +63,12 @@ class init_db(Cog):
             vcRoleRef.create({})
         except:
             pass
+        try:
+            guilddbRef.set({})
+            vcRoleRef.set({})
+        except:
+            pass
+
         await ctx.followup.send('データベースを作成しました！\n/init_1 にて、次の設定にお進みください！')
 
     # @commands.slash_command(description='強制的に初期化する.')
@@ -98,7 +104,7 @@ class init_db(Cog):
         if int(ctx.user.id) == int(bot_author_id):
             flag = True
         print(str(flag))
-        if not ctx.user.guild_permissions.administrator and not flag:
+        if not ctx.user.guild_permissions.administrator or not flag:
             await ctx.respond('権限拒否.')
             return
         await ctx.respond('頑張っています...')
@@ -122,7 +128,7 @@ class init_db(Cog):
         if int(ctx.user.id) == int(bot_author_id):
             flag = True
         print(str(flag))
-        if not ctx.user.guild_permissions.administrator and not flag:
+        if not ctx.user.guild_permissions.administrator or not flag:
             await ctx.respond('権限拒否.')
             return
         await ctx.respond('頑張っています...')
@@ -143,7 +149,7 @@ class init_db(Cog):
         if int(ctx.user.id) == int(bot_author_id):
             flag = True
         print(str(flag))
-        if not ctx.user.guild_permissions.administrator and not flag:
+        if not ctx.user.guild_permissions.administrator or not flag:
             await ctx.respond('権限拒否.')
             return
         await ctx.respond('頑張っています...')
@@ -165,7 +171,7 @@ class init_db(Cog):
         if int(ctx.user.id) == int(bot_author_id):
             flag = True
         print(str(flag))
-        if not ctx.user.guild_permissions.administrator and not flag:
+        if not ctx.user.guild_permissions.administrator or not flag:
             flag = False
             await ctx.respond('権限拒否.')
             return
@@ -187,7 +193,7 @@ class init_db(Cog):
         if int(ctx.user.id) == int(bot_author_id):
             flag = True
         print(str(flag))
-        if not ctx.user.guild_permissions.administrator and not flag:
+        if not ctx.user.guild_permissions.administrator or not flag:
             flag = False
             await ctx.respond('権限拒否.')
             return
@@ -207,7 +213,7 @@ class init_db(Cog):
         if int(ctx.user.id) == int(bot_author_id):
             flag = True
         print(str(flag))
-        if not ctx.user.guild_permissions.administrator and not flag:
+        if not ctx.user.guild_permissions.administrator or not flag:
             flag = False
             await ctx.respond('権限拒否.')
             return
