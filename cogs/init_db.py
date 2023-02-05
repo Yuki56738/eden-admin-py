@@ -44,9 +44,12 @@ class init_db(Cog):
             flag = True
         print(str(flag))
         print(ctx.user.guild_permissions.administrator)
-        if not ctx.user.guild_permissions.administrator or flag:
-            await ctx.respond('権限拒否.')
-            return
+        if not flag:
+            if not ctx.user.guild_permissions.administrator:
+                await ctx.respond('権限拒否.')
+                return
+        # elif flag:
+            # pass
 
         await ctx.respond('頑張っています...')
         flag = False
@@ -107,9 +110,10 @@ class init_db(Cog):
             flag = True
         print(str(flag))
         print(ctx.user.guild_permissions.administrator)
-        if not ctx.user.guild_permissions.administrator or flag:
-            await ctx.respond('権限拒否.')
-            return
+        if not flag:
+            if not ctx.user.guild_permissions.administrator:
+                await ctx.respond('権限拒否.')
+                return
         await ctx.respond('頑張っています...')
         flag = False
         global db
@@ -132,9 +136,10 @@ class init_db(Cog):
             flag = True
         print(str(flag))
         print(ctx.user.guild_permissions.administrator)
-        if not ctx.user.guild_permissions.administrator or flag:
-            await ctx.respond('権限拒否.')
-            return
+        if not flag:
+            if not ctx.user.guild_permissions.administrator:
+                await ctx.respond('権限拒否.')
+                return
         await ctx.respond('頑張っています...')
         flag = False
         global db
@@ -154,9 +159,10 @@ class init_db(Cog):
             flag = True
         print(str(flag))
         print(ctx.user.guild_permissions.administrator)
-        if not ctx.user.guild_permissions.administrator or flag:
-            await ctx.respond('権限拒否.')
-            return
+        if not flag:
+            if not ctx.user.guild_permissions.administrator:
+                await ctx.respond('権限拒否.')
+                return
         print(str(flag))
         if not ctx.user.guild_permissions.administrator or not flag:
             await ctx.respond('権限拒否.')
@@ -181,9 +187,10 @@ class init_db(Cog):
             flag = True
         print(str(flag))
         print(ctx.user.guild_permissions.administrator)
-        if not ctx.user.guild_permissions.administrator or flag:
-            await ctx.respond('権限拒否.')
-            return
+        if not flag:
+            if not ctx.user.guild_permissions.administrator:
+                await ctx.respond('権限拒否.')
+                return
         flag = False
         await ctx.respond('頑張っています...')
         global db
@@ -195,6 +202,7 @@ class init_db(Cog):
         var2 = guilddbRef.update(var1)
         await ctx.followup.send(var2)
         await ctx.followup.send('設定完了. /init_5 を実行してください。')
+
     @commands.slash_command(description='メンバーロールの指定。')
     async def init_5(self, ctx: ApplicationContext, role_id: str):
         global bot_author_id
@@ -203,9 +211,10 @@ class init_db(Cog):
             flag = True
         print(str(flag))
         print(ctx.user.guild_permissions.administrator)
-        if not ctx.user.guild_permissions.administrator or flag:
-            await ctx.respond('権限拒否.')
-            return
+        if not flag:
+            if not ctx.user.guild_permissions.administrator:
+                await ctx.respond('権限拒否.')
+                return
         await ctx.respond('頑張っています...')
 
         guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
@@ -215,6 +224,7 @@ class init_db(Cog):
         var2 = guilddbRef.update(var1)
         await ctx.respond(var2)
         await ctx.followup.send('設定完了。 /init_6 を実行してください。')
+
     @commands.slash_command(description='VCを自動生成するためのトリガーVCチャンネルを指定する。')
     async def init_6(self, ctx: ApplicationContext, channel_id: str):
         global bot_author_id
@@ -223,9 +233,10 @@ class init_db(Cog):
             flag = True
         print(str(flag))
         print(ctx.user.guild_permissions.administrator)
-        if not ctx.user.guild_permissions.administrator or flag:
-            await ctx.respond('権限拒否.')
-            return
+        if not flag:
+            if not ctx.user.guild_permissions.administrator:
+                await ctx.respond('権限拒否.')
+                return
         await ctx.respond('頑張っています...')
 
         guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
@@ -235,7 +246,6 @@ class init_db(Cog):
         var2 = guilddbRef.update(var1)
         await ctx.followup.send(var2)
         await ctx.followup.send('設定完了。お疲れ様でした。')
-
 
     @Cog.listener()
     async def on_ready(self):
