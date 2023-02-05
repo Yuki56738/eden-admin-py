@@ -151,6 +151,7 @@ class init_db(Cog):
         flag = False
         global db
         guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
+        await ctx.followup.send(f'{ctx.guild.get_channel(int(channel_id))} を、入退室のログにします...')
         var1 = guilddbRef.get().to_dict()
         var1['notify_member_joined_channel'] = channel_id
         var2 = guilddbRef.update(var1)
@@ -173,11 +174,53 @@ class init_db(Cog):
         global db
         guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
         # notify_channel_id = guilddbRef.get().to_dict().get('notify_member_joined_channel')
+        await ctx.followup.send(f'{ctx.guild.get_channel(int(channel_id))} を、サーバーからの退出のログにします...')
         var1 = guilddbRef.get().to_dict()
         var1['notify_member_leave_channel'] = channel_id
         var2 = guilddbRef.update(var1)
         await ctx.followup.send(var2)
-        await ctx.followup.send('設定完了.')
+        await ctx.followup.send('設定完了. /init_5 を実行してください。')
+    @commands.slash_command(description='メンバーロールの指定。')
+    async def init_5(self, ctx: ApplicationContext, role_id: str):
+        global bot_author_id
+        flag = False
+        if int(ctx.user.id) == int(bot_author_id):
+            flag = True
+        print(str(flag))
+        if not ctx.user.guild_permissions.administrator and not flag:
+            flag = False
+            await ctx.respond('権限拒否.')
+            return
+        await ctx.respond('頑張っています...')
+
+        guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
+        await ctx.followup.send(f'{ctx.guild.get_role(int(role_id))} を、このサーバーのメンバーとみなします...')
+        var1 = guilddbRef.get().to_dict()
+        var1['member_role'] = role_id
+        var2 = guilddbRef.update(var1)
+        await ctx.respond(var2)
+        await ctx.followup.send('設定完了。 /init_6 を実行してください。')
+    @commands.slash_command(description='VCを自動生成するためのトリガーVCチャンネルを指定する。')
+    async def init_6(self, ctx: ApplicationContext, channel_id: str):
+        global bot_author_id
+        flag = False
+        if int(ctx.user.id) == int(bot_author_id):
+            flag = True
+        print(str(flag))
+        if not ctx.user.guild_permissions.administrator and not flag:
+            flag = False
+            await ctx.respond('権限拒否.')
+            return
+        await ctx.respond('頑張っています...')
+
+        guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
+        await ctx.followup.send(f'{ctx.guild.get_channel(int(channel_id))} を、VC作成のトリガーにします...')
+        var1 = guilddbRef.get().to_dict()
+        var1['create_vc_channel'] = channel_id
+        var2 = guilddbRef.update(var1)
+        await ctx.followup.send(var2)
+        await ctx.followup.send('設定完了。お疲れ様でした。')
+
 
     @Cog.listener()
     async def on_ready(self):
