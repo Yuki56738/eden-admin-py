@@ -5,39 +5,22 @@ from dotenv import load_dotenv
 # pip3 install py-cord[voice] --pre
 import discord
 from discord import *
-from discord.ui import *
-from discord.ext import *
-# import json
+from discord.ext import commands
 
 # import deepl
-# from google.cloud.firestore_v1 import DocumentReference
 
-# import libyuki
 
 from google.cloud import firestore
 
-# import cogs.menu
 
-# from greetings import *
-
-# from discord.ui import *
-# import init_db
-
-load_dotenv()
+load_dotenv('.envDev')
 TOKEN = os.environ.get("DISCORD_TOKEN")
 # DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
 intents = discord.Intents.all()
-bot = discord.Bot(intents=intents)
+bot = discord.Bot(intents=intents, help_command=commands.MinimalHelpCommand())
 db = firestore.Client()
 
-# bot.add_cog(Greetings(bot))
-# bot.add_cog(init_db.Init_db(bot))
-# vcRole = {}
-# vcTxt = {}
-# txtMsg = {}
-# guildsettings = {}
-# vcOwnerRole = {"1234": "2345"}
 
 bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
@@ -52,24 +35,6 @@ bot.load_extension("cogs.move")
 bot.load_extension('cogs.note')
 bot.load_extension('cogs.menu')
 
-
-# bot.load_extension('cogs.ticket')
-
-
-# bot.load_extension('cogs.init_db')
-# bot.load_extension('cogs.init_db')
-
-
-# guildsettings = guilddb.document(str(member.guild.id))
-# db = Client()
-
-
-# bot.add_cog()
-
-# class TestView(discord.ui.View):
-#     @discord.ui.button(label="Button 1", style=ButtonStyle.red)
-#     async def first_button(self, button: discord.ui.Button, interaction: Interaction):
-#         await interaction.response(content="ボタンが押されました。", view=self)
 
 class MyModalChangeRoomName(discord.ui.Modal):
     def __init__(self, *args, **kwargs) -> None:
@@ -553,6 +518,8 @@ async def prof(ctx: ApplicationContext, name: Option(str, required=True, descrip
 async def ping(ctx: ApplicationContext):
     lat = bot.latency
     await ctx.respond(embed=Embed(description=f"レイテンシーは、{lat * 60}ms."))
+
+
 
 
 bot.run(TOKEN)

@@ -36,7 +36,8 @@ class init_db(Cog):
         # self._last_member = None
 
     @commands.slash_command(description='初期化する.')
-    async def initialize(self, ctx: ApplicationContext):
+    @commands.option(name='force', required=False)
+    async def initialize(self, ctx: ApplicationContext, force: bool):
         global bot_author_id
         flag = False
         if int(ctx.user.id) == int(bot_author_id):
@@ -54,37 +55,41 @@ class init_db(Cog):
         vcRoleRef = db.collection(str(ctx.guild.id)).document('vcRole')
         if not guilddbRef.get().to_dict() is None and not vcRoleRef.get().to_dict() is None:
             await ctx.followup.send(
-                'あれ？すでにデータベースに存在する...?\n続行すると、データベースから削除されます！続行するには、/init_force を使用してください！')
-            return
-        guilddbRef.create({})
-        vcRoleRef.create({})
-        await ctx.followup.send('データベースを作成しました！\n/init_1 にて、次の設定にお進みください！')
-
-    @commands.slash_command(description='強制的に初期化する.')
-    async def init_force(self, ctx: ApplicationContext, force: bool):
-        global bot_author_id
-        flag = False
-        if int(ctx.user.id) == int(bot_author_id):
-            flag = True
-        print(str(flag))
-        if not ctx.user.guild_permissions.administrator and not flag:
-            await ctx.respond('権限拒否.')
-            return
-        await ctx.respond('頑張っています...')
-        flag = False
-        if force == False:
-            await ctx.respond('本当に実行するには、force を True にしてください！')
-            return
-        await ctx.respond('頑張っています...')
-        global db
-        guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
-        vcRoleRef = db.collection(str(ctx.guild.id)).document('vcRole')
+                'あれ？すでにデータベースに存在する...?')
+            if not force:
+                return
         try:
             guilddbRef.create({})
             vcRoleRef.create({})
         except:
-            traceback.print_exc()
+            pass
         await ctx.followup.send('データベースを作成しました！\n/init_1 にて、次の設定にお進みください！')
+
+    # @commands.slash_command(description='強制的に初期化する.')
+    # async def init_force(self, ctx: ApplicationContext, force: bool):
+    #     global bot_author_id
+    #     flag = False
+    #     if int(ctx.user.id) == int(bot_author_id):
+    #         flag = True
+    #     print(str(flag))
+    #     if not ctx.user.guild_permissions.administrator and not flag:
+    #         await ctx.respond('権限拒否.')
+    #         return
+    #     await ctx.respond('頑張っています...')
+    #     flag = False
+    #     if force == False:
+    #         await ctx.respond('本当に実行するには、force を True にしてください！')
+    #         return
+    #     await ctx.respond('頑張っています...')
+    #     global db
+    #     guilddbRef = db.collection(str(ctx.guild.id)).document('settings')
+    #     vcRoleRef = db.collection(str(ctx.guild.id)).document('vcRole')
+    #     try:
+    #         guilddbRef.create({})
+    #         vcRoleRef.create({})
+    #     except:
+    #         traceback.print_exc()
+    #     await ctx.followup.send('データベースを作成しました！\n/init_1 にて、次の設定にお進みください！')
 
     @commands.slash_command(description='寝落ちした人の移動先を指定する.')
     async def init_1(self, ctx: ApplicationContext, channel_id: str):
