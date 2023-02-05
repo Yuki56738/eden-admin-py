@@ -33,7 +33,7 @@ class DelMsgById(Cog):
                     if channel_id is None:
                         print('deleting:', x.content)
                         await x.delete()
-                    elif int(x.channel.id) == int(channel_id):
+                    elif not channel_id is None and int(x.channel.id) == int(channel_id):
                         print('deleting at channel:', self.bot.get_channel(int(channel_id)).name)
                         print('deleting:', x.content)
                         await x.delete()
