@@ -18,7 +18,7 @@ TOKEN = os.environ.get("DISCORD_TOKEN")
 # DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
 intents = discord.Intents.all()
-bot = discord.Bot(intents=intents, help_command=commands.MinimalHelpCommand())
+bot = discord.Bot(intents=intents)
 db = firestore.Client()
 
 
