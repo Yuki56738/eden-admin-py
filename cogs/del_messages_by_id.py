@@ -8,8 +8,9 @@ class DelMsgById(Cog):
         # self._last_member = None
 
     @commands.slash_command(description='指定されたユーザーのメッセージを全て削除する。')
-    @commands.option(name='user_id', required=False)
-    async def delusermsgbyid(self, ctx: ApplicationContext, user_id: str):
+    @commands.option(name='user_id', required=True, description='削除するユーザーのID')
+    @commands.option(name='channel_id', required=False, description='削除対象のチャンネルのID')
+    async def delusermsgbyid(self, ctx: ApplicationContext, user_id: str, channel_id: str):
         if not ctx.user.guild_permissions.administrator:
             await ctx.respond('権限拒否.')
             return
@@ -29,8 +30,13 @@ class DelMsgById(Cog):
                 continue
             for x in msgs:
                 if x.author == toDeleteember:
-                    print('deleting:', x.content)
-                    await x.delete()
+                    if channel_id is None:
+                        print('deleting:', x.content)
+                        await x.delete()
+                    elif int(x.channel.id) == int(channel_id):
+                        print('deleting at channel:', self.bot.get_channel(int(channel_id)).name)
+                        print('deleting:', x.content)
+                        await x.delete()
         await ctx.followup.send('削除しました。')
 
     @Cog.listener()
