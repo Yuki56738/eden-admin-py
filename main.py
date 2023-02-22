@@ -191,12 +191,32 @@ async def on_raw_reaction_add(reaction: RawReactionActionEvent):
     global db
     guilddbRef = db.collection(str(reaction.guild_id)).document('settings')
     listen_channel_id = guilddbRef.get().to_dict()['listen_channel']
+    listen_channel2_id = guilddbRef.get().to_dict()['listen_channel2']
     notify_channel_id = guilddbRef.get().to_dict()['notify_channel']
     notify_channel = bot.get_channel(int(notify_channel_id))
     listen_channel = bot.get_channel(int(listen_channel_id))
-    msg1 = await listen_channel.fetch_message(reaction.message_id)
+    listen_channel2 = bot.get_channel(int(listen_channel2_id))
+    # try:
+    #     msg1 = await listen_channel.fetch_message(reaction.message_id)
+    # except:
+    #     traceback.print_exc()
     if reaction.channel_id == listen_channel.id:
-        await notify_channel.send(f"{reaction.member.mention} から {msg1.author.mention} へ反応がありました！")
+        try:
+            msg1 = await listen_channel.fetch_message(reaction.message_id)
+            await notify_channel.send(f"{reaction.member.mention} から {msg1.author.mention} へ反応がありました！")
+        except:
+            traceback.print_exc()
+    # try:
+    #     msg2 = await listen_channel2.fetch_message(reaction.message_id)
+    # except:
+    #     traceback.print_exc()
+    if reaction.channel_id == int(listen_channel2_id):
+        try:
+            msg2 = await listen_channel2.fetch_message(reaction.message_id)
+            await notify_channel.send(f"{reaction.member.mention} から {msg2.author.mention} へ反応がありました！")
+        except:
+            traceback.print_exc()
+
 
 
 @bot.event
