@@ -25,7 +25,7 @@ class DelMsgById(Cog):
             # if chann == TextChannel:
             #     print(3)
             try:
-                msgs = await chann.history(limit=1000).flatten()
+                msgs = await chann.history(limit=10000).flatten()
             except:
                 continue
             for x in msgs:

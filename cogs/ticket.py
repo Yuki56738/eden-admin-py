@@ -2,6 +2,9 @@ from google.cloud import firestore
 from google.cloud.firestore import *
 import discord
 from discord import *
+from discord.ui.button import *
+
+db = firestore.Client()
 
 
 # import libyuki
@@ -10,30 +13,37 @@ from discord import *
 # from deploy.cogs.ticket import MyViewTicket
 
 class MyViewTicket(discord.ui.View):
-    @discord.ui.button(label="問題を作成", style=discord.ButtonStyle.green, custom_id='ticket-button-1')
-    async def button_callback(self, button, interaction: Interaction):
-        # await interaction.response.send("頑張っています...")
-        await interaction.response.send_message("頑張っています...")
-        # await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
-        permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
-        permow2 = PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())
-        # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
-        db = firestore.Client()
-        guilddb = db.collection("guilddb")
-        guilddb1 = guilddb.document(document_id="guildsettings")
-        guilddb1_dict = guilddb1.get().to_dict()
-        # payload = {}
+    discord.ui.button(label="問題を作成", style=discord.ButtonStyle.green, custom_id='ticket-button-1')
 
-        # guilddb1_dict.update({
-        #     str(ctx.guild.id): {'ticket_channel': 0}
-        # })
-        ticket_channel_id = int(guilddb1_dict[str(interaction.guild.id)]['ticket_channel'])
-        # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_channel"]
-        # cat1 = interaction.guild.get_channel(cat1)
-        # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_channel"]
-        # cat1 = bot.get_channel(cat1)
-        # cat1 = interaction.channel
-        users_ids = list('''734472157895196692
+    # async def button_callback(self, button, interaction: Interaction):
+
+    '''
+    # await interaction.response.send("頑張っています...")
+    await interaction.response.send_message("頑張っています...")
+    # await interaction.response.send_modal(MyModalChangeRoomLimit(title="人数を入力..."))
+    permow1 = PermissionOverwrite().from_pair(Permissions.text(), Permissions.none())
+    permow2 = PermissionOverwrite().from_pair(Permissions.none(), Permissions.all())
+    # memberRole = ctx.guild.get_role(guildsettings[str(member.guild.id)]["member_role"])
+    global db
+    guilddbRef = db.collection(str(interaction.guild_id)).document('settings')
+    # guilddb1 = guilddb.document(document_id="guildsettings")
+    guilddb1_dict = guilddbRef.get().to_dict()
+    # guilddb1_dict = guilddb1.get().to_dict()
+    # payload = {}
+
+    # guilddb1_dict.update({
+    #     str(ctx.guild.id): {'ticket_channel': 0}
+    # })
+    ticket_channel_id = int(guilddb1_dict['ticket_channel'])
+    # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_channel"]
+    # cat1 = interaction.guild.get_channel(cat1)
+    # cat1 = guilddb1_dict[str(interaction.guild.id)]["ticket_channel"]
+    # cat1 = bot.get_channel(cat1)
+    # cat1 = interaction.channel
+    users_ids = list('''
+    734472157895196692
+
+
 856815702144712724
 1032396218808148008
 162037483977179145
@@ -47,7 +57,8 @@ class MyViewTicket(discord.ui.View):
 470602114008088577
 839188877754236936
 1008042111578419340
-917954810681126952'''.split('\n'))
+917954810681126952
+'''.split('\n'))
 
         txt1: TextChannel = await interaction.guild.create_text_channel(
             name=f"{interaction.user.display_name}のticket",
@@ -78,6 +89,7 @@ class MyViewTicket(discord.ui.View):
             # print(db1.update(db1_dict))
             # db1.update(db1_dict)
             await txt1.send(f"問題が作成されました。ただいま対応しますので、少々お待ちください... {interaction.user.mention}")
+'''
 
 
 class Ticket(Cog):
@@ -86,10 +98,18 @@ class Ticket(Cog):
         self.bot = bot
         self.MyViewTicket = MyViewTicket
 
+    @discord.ui.button(custom_id='ticket-button-1')
+    async def callback(self, ctx: ApplicationContext):
+        await ctx.respond('1')
+
+    @Cog.listener('ticket-button-1')
+    async def callback(self, ctx: ApplicationContext):
+        print(1)
+
     @commands.slash_command()
     async def ticket(self, ctx: ApplicationContext):
         print("ready ticket.")
-
+        # await ctx.defer()
         # for x in self.bot.guilds:
         #     print(x.id, x.name)
 
@@ -144,7 +164,7 @@ class Ticket(Cog):
         # ticket_channel = self.bot.get_channel()
         # await ticket_channel.send(view=self.MyViewTicket())
 
-    @commands.slash_command(description="ticketのDBを初期化")
+    @commands.slash_command(name='init_ticket', description="ticketのDBを初期化")
     async def init_ticket(self, ctx: ApplicationContext, ticket_channel_id: str):
         if not ctx.user.guild_permissions.administrator:
             await ctx.respond("管理者のみ使用できます.")
@@ -157,10 +177,10 @@ class Ticket(Cog):
         # thisguildCol_ref: CollectionReference = guildsettingsDoc_ref.collection(str(ctx.guild.id))
         #
         # thisguildDoc = thisguildCol_ref.document(document_id="ticket_channel")
-        db = firestore.Client()
-        guilddb = db.collection("guilddb")
-        guilddb1 = guilddb.document(document_id="guildsettings")
-        guilddb1_dict = guilddb1.get().to_dict()
+        global db
+        guilddbRef = db.collection(str(ctx.guild_id)).document('settings')
+        # guilddb1 = guilddb.document(document_id="guildsettings")
+        guilddb1_dict = guilddbRef.get().to_dict()
         # payload = {}
 
         guilddb1_dict.update({
@@ -173,11 +193,11 @@ class Ticket(Cog):
         #     "id": str(ctx.guild.get_channel(int(ticket_channel_id)).id),
         #     "name": str(ctx.guild.get_channel(int(ticket_channel_id)).name)
         # })
-        if not guilddb1.get().exists:
-            guilddb1.create(document_data=guilddb1_dict)
+        if not guilddbRef.get().exists:
+            guilddbRef.create(document_data=guilddb1_dict)
         else:
             # guilddb1.update(guilddb1_dict)
-            guilddb1.set(guilddb1_dict)
+            guilddbRef.set(guilddb1_dict)
 
         # guilddb1.update()
 

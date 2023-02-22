@@ -13,7 +13,7 @@ from discord.ext import commands
 from google.cloud import firestore
 
 
-load_dotenv('.envDev')
+load_dotenv()
 TOKEN = os.environ.get("DISCORD_TOKEN")
 # DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
