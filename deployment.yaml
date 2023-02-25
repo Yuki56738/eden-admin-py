@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eden-admin-bot-1
+  labels:
+    app: eden-admin-bot-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eden-admin-bot-1
+  template:
+    metadata:
+      labels:
+        app: eden-admin-bot-1
+    spec:
+      containers:
+      - name: eden-admin-bot-1
+        image: us-east1-docker.pkg.dev/eden-admin-bot/yuki-repo/eden-admin-bot:v1
+        env:
+        - name: DISCORD_TOKEN
