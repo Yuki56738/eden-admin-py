@@ -26,6 +26,7 @@ bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
 # edenNotifyChannel = ""
 bot.load_extension("cogs.init_db")
+bot.load_extension("cogs.event")
 bot.load_extension('cogs.notify_member_joined')
 bot.load_extension('cogs.notify_member_left_guild')
 # bot.load_extension("cogs.ticket")
