@@ -77,6 +77,8 @@ class DelMsgById(Cog):
     class ModalToConfirmDelete(discord.ui.Modal):
         def __init__(self, user_id:str ,channel_id: str, *args, **kwargs) -> None:
             super().__init__(*args, **kwargs)
+            self.channel_id = channel_id
+            self.user_id = user_id
             self.add_item(discord.ui.InputText(label="Type yes in uppercase..."))
         async def callback(self, interaction: Interaction):
             interaction.response: InteractionResponse
@@ -87,7 +89,30 @@ class DelMsgById(Cog):
             else:
                 await interaction.response.send_message('Type "yes" in uppercase!')
                 return
-
+            interaction.followup: Webhook
+            # await interaction.followup.send(f"user_id: {self.user_id}")
+            toDeleteember = await interaction.client.fetch_user(int(self.user_id))
+            print(toDeleteember.name, toDeleteember.id)
+            channs = await interaction.guild.fetch_channels()
+            for chann in channs:
+                # if not chann is TextChannel:
+                #     continue
+                # if chann == TextChannel:
+                #     print(3)
+                try:
+                    msgs = await chann.history(limit=10000).flatten()
+                except:
+                    continue
+                for x in msgs:
+                    if x.author == toDeleteember:
+                        if self.channel_id is None:
+                            print('deleting:', x.content)
+                            await x.delete()
+                        elif not self.channel_id is None and int(x.channel.id) == int(self.channel_id):
+                            print('deleting at channel:', interaction.client.get_channel(int(self.channel_id)).name)
+                            print('deleting:', x.content)
+                            await x.delete()
+            await interaction.followup.send('削除しました。')
             # toDeleteember = await self.bot.fetch_user(int(user_id))
             # print(toDeleteember.name, toDeleteember.id)
             # channs = await interaction.guild.fetch_channels()
