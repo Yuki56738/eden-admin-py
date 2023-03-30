@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 # Set environment variable for Discord bot token
-ENV DISCORD_TOKEN=<your-discord-bot-token>
+#ENV DISCORD_TOKEN=<your-discord-bot-token>
 
 # Install dependencies
 RUN apt-get update && \
@@ -10,6 +10,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the Discord bot files to the container
+RUN mkdir -p /app
 COPY . /app
 
 # Install Python dependencies
@@ -19,4 +20,5 @@ RUN pip3 install -r /app/requirements.txt
 WORKDIR /app
 
 # Set the DISCORD_TOKEN environment variable before running the bot
-CMD ["bash", "-c", "export DISCORD_TOKEN=$DISCORD_TOKEN && python3 main.py"]
+#CMD ["bash", "-c", "export DISCORD_TOKEN=$DISCORD_TOKEN && python3 main.py"]
+CMD ["python3", "main.py"]
