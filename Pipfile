@@ -24,7 +24,6 @@ idna = "==3.4"
 multidict = "==6.0.4"
 proto-plus = "==1.22.2"
 protobuf = "==4.21.12"
-py-cord = "==2.3.2"
 pyasn1 = "==0.4.8"
 pyasn1-modules = "==0.2.8"
 python-dotenv = "==0.21.1"
@@ -33,6 +32,7 @@ rsa = "==4.9"
 six = "==1.16.0"
 urllib3 = "==1.26.14"
 yarl = "==1.8.2"
+py-cord = {extras = ["voice"], version = "*"}
 
 [dev-packages]
 
