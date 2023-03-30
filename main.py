@@ -13,7 +13,7 @@ from discord.ext import commands
 from google.cloud import firestore
 
 
-load_dotenv()
+# load_dotenv(".env")
 TOKEN = os.environ.get("DISCORD_TOKEN")
 # DEEPL_KEY = os.environ.get("DEEPL_KEY")
 
@@ -26,6 +26,7 @@ bot_author_id = 451028171131977738
 bot_author = bot.get_user(bot_author_id)
 # edenNotifyChannel = ""
 bot.load_extension("cogs.init_db")
+bot.load_extension("cogs.event")
 bot.load_extension('cogs.notify_member_joined')
 bot.load_extension('cogs.notify_member_left_guild')
 # bot.load_extension("cogs.ticket")
@@ -182,6 +183,43 @@ async def on_ready():
         print(x.name)
     print('------------------------------')
 
+@bot.user_command(name="プロフィールを表示.")
+async def show_profile(ctx: ApplicationContext, member: discord.Member):
+    # await ctx.respond(member.display_name)
+    await ctx.defer()
+    prof_channel_id = db.collection(str(ctx.guild.id)).document('settings').get().to_dict().get(
+        'profile_channel')
+    if prof_channel_id is None:
+        await ctx.send_followup('/init_2 にて初期化をお願いします！')
+        return
+    prof_channel = ctx.guild.get_channel(int(prof_channel_id))
+    prof_messages = await prof_channel.history(limit=1000).flatten()
+    # await ctx.respond("自己紹介...", ephemeral=True, delete_after=3*60)
+    # print(ctx.author.guild_permissions)
+    tosendmsg = ""
+    for x in prof_messages:
+        # if x.author.id == xuser.id:
+        if x.author.id == ctx.user.id:
+            # await ctx.send_followup(x.content, delete_after=3 * 60, ephemeral=True)
+            tosendmsg = tosendmsg + x.content
+            print(f"{x.author.name}: {x.content}")
+
+        # for xuser in ctx.author.voice.channel.members:
+        #     if x.author.id == xuser.id and not ctx.author.id:
+        #         print(x.content)
+        #         # await ctx.send_followup(x.content, delete_after=3*60, ephemeral=True)
+        #         tosendmsg = tosendmsg + x.content
+        # name = self.children[0].value
+        name = member.display_name
+        if name in x.author.display_name:
+            # await ctx.send_followup(x.content, delete_after=3 * 60, ephemeral=True)
+            tosendmsg = tosendmsg + "\n" + x.content
+            print(f"{x.author.name}: {x.content}")
+    if tosendmsg == "":
+        tosendmsg = "該当なし"
+    await ctx.send_followup(embed=Embed(description=tosendmsg), delete_after=3 * 60, ephemeral=True)
+    # interaction.followup: Webhook
+    await ctx.send_followup(embed=Embed(description=f'{ctx.user.mention} 結果を送信しました！\nご確認ください.'))
 
 @bot.event
 async def on_raw_reaction_add(reaction: RawReactionActionEvent):
