@@ -32,6 +32,8 @@ rsa = "==4.9"
 six = "==1.16.0"
 urllib3 = "==1.26.14"
 yarl = "==1.8.2"
+#py-cord = {extras = ["voice"], version = "*"}
+#"discord.py" = "*"
 py-cord = {extras = ["voice"], version = "*"}
 
 [dev-packages]
