@@ -1,11 +1,13 @@
 import os
 import traceback
 
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 # pip3 install py-cord[voice] --pre
 import discord
 from discord import *
-from discord.ext import commands
+# from discord import app_commands
+
+# from discord.ext import commands
 
 # import deepl
 
@@ -182,6 +184,7 @@ async def on_ready():
     for x in bot.guilds:
         print(x.name)
     print('------------------------------')
+    await bot.tree.sync()
 
 @bot.user_command(name="プロフィールを表示.")
 async def show_profile(ctx: ApplicationContext, member: discord.Member):
