@@ -1,7 +1,7 @@
 import os
 import traceback
 
-#from dotenv import load_dotenv
+
 # pip3 install py-cord[voice] --pre
 import discord
 from discord import *
