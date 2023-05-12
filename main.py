@@ -5,6 +5,7 @@ import traceback
 # pip3 install py-cord[voice] --pre
 import discord
 from discord import *
+from discord.ext import *
 # from discord import app_commands
 
 # from discord.ext import commands
@@ -37,6 +38,7 @@ bot.load_extension('cogs.del_messages')
 bot.load_extension("cogs.move")
 bot.load_extension('cogs.note')
 bot.load_extension('cogs.menu')
+bot.load_extension('cogs.setvar')
 
 
 class MyModalChangeRoomName(discord.ui.Modal):
@@ -184,7 +186,7 @@ async def on_ready():
     for x in bot.guilds:
         print(x.name)
     print('------------------------------')
-    await bot.tree.sync()
+    bot.add_application_command(ping)
 
 @bot.user_command(name="プロフィールを表示.")
 async def show_profile(ctx: ApplicationContext, member: discord.Member):

@@ -73,7 +73,7 @@ class Move(Cog):
         await ctx.respond(view=MyViewMoveMember())
         # @bot.slash_command(name="move", description="ユーザーを移動させる")
     # async def move(ctx: ApplicationContext):
-    #     await ctx.respond(view=MyViewMoveMember())
+
 
 
 def setup(bot):
