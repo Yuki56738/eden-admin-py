@@ -29,7 +29,8 @@ class setvar(Cog):
         # await
         global db
         docref = db.collection(str(ctx.guild.id)).document('settings')
-        await docref.set(document_data={varname: payload})
+        if ctx.user.id == bot_author_id:
+            await docref.set(document_data={varname: payload})
 
     # async def move(self, ctx: ApplicationContext):
         # await ctx.respond(view=MyViewMoveMember())
