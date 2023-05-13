@@ -14,12 +14,13 @@ class setvar(Cog):
     async def printvar(self, ctx: ApplicationContext):
         global db
         docs = db.collection(str(ctx.guild.id))
-        for x in docs.get():
-            x:DocumentSnapshot
-            if not x == '':
-                await ctx.channel.send(str(x))
+        if ctx.user.id == bot_author_id:
+            for x in docs.get():
+                x:DocumentSnapshot
+                if not x == '':
+                    await ctx.channel.send(str(x))
 
-            print(x.to_dict())
+                print(x.to_dict())
 
     @commands.slash_command(description='設定する。')
     async def setvar(self, ctx: ApplicationContext, varname:str, payload:str):
