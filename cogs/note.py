@@ -6,6 +6,15 @@ class Note(Cog):
     def __init__(self, bot):
         self.bot = bot
         # self._last_member = None
+    # @commands.slash_command(description='投稿するnoteを作成する')
+    # async def setnote(self, ctx: ApplicationContext, notechannelid: str, value: str):
+    #     db = firestore.Client()
+    #     guilddbRef = db.collection(str(message.guild.id)).document('settings')
+        # try:
+        # toSendMsg = guilddbRef.get().to_dict()['note_channels'][str(message.channel.id)]
+        # except:
+            # return
+        # guilddbRef.collection('note_')
 
     @Cog.listener()
     async def on_ready(self):

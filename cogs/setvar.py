@@ -14,11 +14,11 @@ class setvar(Cog):
     async def printvar(self, ctx: ApplicationContext):
         global db
         docs = db.collection(str(ctx.guild.id))
-        if ctx.user.id == bot_author_id:
+        if ctx.user.id == bot_author_id or ctx.user.guild_permissions.administrator:
             for x in docs.get():
                 x:DocumentSnapshot
                 if not x == '':
-                    await ctx.channel.send(str(x))
+                    await ctx.channel.send(str(x.to_dict()))
 
                 print(x.to_dict())
 
@@ -29,7 +29,7 @@ class setvar(Cog):
         # await
         global db
         docref = db.collection(str(ctx.guild.id)).document('settings')
-        if ctx.user.id == bot_author_id:
+        if ctx.user.id == bot_author_id or ctx.user.guild_permissions.administrator:
             await docref.set(document_data={varname: payload})
 
     # async def move(self, ctx: ApplicationContext):
