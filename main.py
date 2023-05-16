@@ -39,6 +39,7 @@ bot.load_extension("cogs.move")
 bot.load_extension('cogs.note')
 bot.load_extension('cogs.menu')
 bot.load_extension('cogs.setvar')
+bot.load_extension('cogs.selfintrod')
 
 
 class MyModalChangeRoomName(discord.ui.Modal):
