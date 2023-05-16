@@ -45,8 +45,6 @@ class selfintrod(Cog):
     async def on_ready(self):
         print("selfintrod ready.")
 
-
-
 def setup(bot):
     bot.add_cog(selfintrod(bot))
 

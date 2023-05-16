@@ -187,6 +187,7 @@ async def on_ready():
     for x in bot.guilds:
         print(x.name)
     print('------------------------------')
+
     # bot.add_application_command(ping)
 
 @bot.user_command(name="プロフィールを表示.")
