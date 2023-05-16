@@ -11,11 +11,14 @@ class Note(Cog):
     #     db = firestore.Client()
     #     guilddbRef = db.collection(str(message.guild.id)).document('settings')
         # try:
-        # toSendMsg = guilddbRef.get().to_dict()['note_channels'][str(message.channel.id)]
+        # toSendMsgs = guilddbRef.get().to_dict()['note_channels']
+        #
         # except:
-            # return
-        # guilddbRef.collection('note_')
-
+        #     return
+        # sendmsgscol = guilddbRef.collection('note_channels')
+        # note_channels = guilddbRef.collection('note_channels')
+        # note_channels: firestore.CollectionReference
+        # note_channels.add()
     @Cog.listener()
     async def on_ready(self):
         print("note ready.")
