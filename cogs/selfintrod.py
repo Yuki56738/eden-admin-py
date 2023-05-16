@@ -28,7 +28,7 @@ class selfintrod(Cog):
                 citizenrole = x
         # if message.channel.id == 965426636436697088:
         if hasvillager and message.channel.id == 1107916826924564480:
-            print('debug: now to do run some code')
+            # print('debug: now to do run some code')
             msg = message.content
             tosendchan = message.guild.get_channel(965426636436697088)
             msg = f"{message.author.mention} さんのプロフ:\n" + msg
@@ -36,8 +36,6 @@ class selfintrod(Cog):
             await message.delete()
             await message.author.remove_roles(villagerrole)
             await message.author.add_roles(citizenrole)
-
-
     # @commands.slash_command
     # async def debug(self, ctx: ApplicationContext):
             # ctx.guild.guild
