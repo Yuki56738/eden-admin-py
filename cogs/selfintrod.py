@@ -10,6 +10,8 @@ bot_author_id = 451028171131977738
 class selfintrod(Cog):
     @Cog.listener()
     async def on_message(self, message: Message):
+        if not message.channel.id == 1107916826924564480:
+            return
         if message.author.bot:
             return
         msgauthorroles = message.author.roles
