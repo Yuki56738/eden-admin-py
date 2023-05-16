@@ -39,6 +39,7 @@ bot.load_extension("cogs.move")
 bot.load_extension('cogs.note')
 bot.load_extension('cogs.menu')
 bot.load_extension('cogs.setvar')
+bot.load_extension('cogs.selfintrod')
 
 
 class MyModalChangeRoomName(discord.ui.Modal):
@@ -186,6 +187,7 @@ async def on_ready():
     for x in bot.guilds:
         print(x.name)
     print('------------------------------')
+
     # bot.add_application_command(ping)
 
 @bot.user_command(name="プロフィールを表示.")
