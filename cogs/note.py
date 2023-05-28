@@ -47,6 +47,6 @@ class Note(Cog):
                 # return
                 # break
                 # break
-
+    # @commands.slash_command(description=)
 def setup(bot):
     bot.add_cog(Note(bot))
