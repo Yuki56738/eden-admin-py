@@ -7,3 +7,5 @@ __pycache__/
 deploy/
 *.key
 Pipfile.lock
+result.txt
+
